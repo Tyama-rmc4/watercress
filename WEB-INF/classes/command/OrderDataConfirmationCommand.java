@@ -49,7 +49,7 @@ public class OrderDataConfirmationCommand extends AbstractCommand {
 		
 		/*リクエストスコープから注文する商品のIDを取得する*/
 		String[] orderProductsId
-		= requestContext.getParameter("orderProducts");
+		= requestContext.getParameter("orderproducts");
 		
 		/*Arrays.AsListメソッドを利用し、注文する商品のIDのString配列を
 		ArrayListに変換する*/
