@@ -1,3 +1,11 @@
+package command; 
+
+import logic.RequestContext;
+import logic.ResponseContext;
+import dao.AbstractDaoFactory;
+import dao.MemberDao;
+import ex.IntegrationException;
+
 import ex.LogicException;
 import bean.MemberBean;
 /**
@@ -43,15 +51,26 @@ public class NonMenberPurchaseCommand extends AbstractCommand{
 		memberbean.setMemberPassword( memberPassword );//必要ない？
 		memberbean.setMemberStatusId( memberStatusId );
 		
-		OraMemberDao memberdao = new OraMemberDao();
+		//OraMemberDao memberdao = new OraMemberDao();
 		//member情報を登録させるdaoのインスタンスを生成
-		
-		memberdao.registMember( memberbean );
-		
+		try{
+			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
+			MemberDao memberdao = factory.getMemberDao();
+			
+			memberdao.registMember( memberbean );
+		}catch(IntegrationException e){
+			throw new LogicException(e.getMessage(), e);
+		}
+		/*
 		ResponceContext resc = new WebResponceContext();
 		resc.setTarget( "payinput" );
 		//支払い情報を入力するページに移動？
 		return resc;
+		*/
+		responseContext.setTarget( "payinput" );
+		
+		return responseContext;
+		
 	}
 }
 /**
