@@ -47,8 +47,8 @@ public class OraPurchaseOrderDao implements PurchaseOrderDao {
 			
 			/*SQL文を持つ変数の宣言*/
 			String sql = "select purchase_order_id, purchase_order_date, "
-			+ "purchase_order_delivery_status, member_id "
-			+ "from purchase_order";
+			+ "purchase_order_delivery_status, member_id, "
+			+ "purchase_order_payment_method from purchase_order";
 			
 			/*SQLを実行し、結果をResultSetに格納する*/
 			result = statement.executeQuery(sql);
@@ -62,6 +62,8 @@ public class OraPurchaseOrderDao implements PurchaseOrderDao {
 				purchaseOrder.setPurchaseOrderDeliveryStatus(
 					result.getString(3));
 				purchaseOrder.setMemberId(result.getInt(4));
+				purchaseOrder.setPurchaseOrderPaymentMethod(
+					result.getString(5));
 				/*リストにBeanを格納する*/
 				purchaseOrders.add(purchaseOrder);
 			}
@@ -137,13 +139,15 @@ public class OraPurchaseOrderDao implements PurchaseOrderDao {
 			/*SQL文を持つ変数の宣言*/
 			String sql = "insert into purchase_order "
 			+ "values(purchase_order_id_seq.NEXTVAL, SYSDATE, "
-			+ "'発送中', ?)";
+			+ "'発送中', ?, ?)";
 			
 			/*SQLの実行準備を行う*/
 			preparedStatement = connection.prepareStatement(sql);
 			
 			/*Beanから値を取り出し、SQL文の?にその値を代入する*/
 			preparedStatement.setInt(1, purchaseOrder.getMemberId());
+			preparedStatement.setString(
+				2, purchaseOrder.getPurchaseOrderPaymentMethod());
 			
 			/*SQLを実行する*/
 			preparedStatement.executeUpdate();

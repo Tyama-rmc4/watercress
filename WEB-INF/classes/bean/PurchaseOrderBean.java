@@ -1,6 +1,8 @@
 /*
   @ author ‰F’Ã–ìŒõ
+  ’r“c‘å˜a purchaseOrderPaymentMethod‚ð’Ç‰Á‚µ‚Ü‚µ‚½
 */
+
 
 package bean;
 
@@ -11,6 +13,7 @@ public class PurchaseOrderBean implements Serializable{
 	private String purchaseOrderDate;
 	private String purchaseOrderDeliveryStatus;
 	private int memberId;
+	private String purchaseOrderPaymentMethod;
 
 	public int getPurchaseOrderId() {
 		return purchaseOrderId;
@@ -35,6 +38,12 @@ public class PurchaseOrderBean implements Serializable{
 	}
 	public void setMemberId(int memberId) {
 		this.memberId = memberId;
+	}
+	public String getPurchaseOrderPaymentMethod() {
+		return purchaseOrderPaymentMethod;
+	}
+	public void setPurchaseOrderPaymentMethod(String purchaseOrderPaymentMethod) {
+		this.purchaseOrderPaymentMethod = purchaseOrderPaymentMethod;
 	}
 
 }
