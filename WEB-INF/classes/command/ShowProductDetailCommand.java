@@ -19,10 +19,10 @@ import ex.IntegrationException;
 import ex.LogicException;
 
 /*クリックされた商品の詳細を表示するコマンドのクラス*/
-public class ShowProductDetailCommand extends AbstractCommand{
+public class ShowProductDetailCommand extends AbstractCommand {
 	/*クリックされた商品の詳細を返すメソッド*/
 	public ResponseContext execute(ResponseContext responseContext)
-	throws LogicException{
+	throws LogicException {
 		/*initメソッドによって準備されていたRequestContextを取得する*/
 		RequestContext requestContext = getRequestContext();
 		
