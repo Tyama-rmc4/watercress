@@ -34,14 +34,21 @@ public interface RequestContext {
 	public void setRequest(Object request);
 	
 	/**
-	 *@see WebRequestContext#setSession
-	 *@param session クライアントのセッション情報
+	 *@see WebRequestContext#setSessionAttribute
+	 *@param key セッションスコープに登録したい値に対応したキー値
+	 *@param value セッションスコープに登録したい値
 	 */
-	public void setSession(Object session);
+	public void setSessionAttribute(String key, Object value);
 
 	/**
-	 *@see WebRequestContext#getSession
-	 *@return クライアントのセッション情報
+	 *@see WebRequestContext#getSessionAttribute
+	 *@return セッションスコープに登録されている、キー値に対応した値
 	 */
-	public Object getSession();
+	public Object getSessionAttribute(String key);
+	
+	/**
+	 *@see WebRequestContext#removeSessionAttribute
+	 *@param key セッションスコープに登録されている値に対応したキー値
+	 */
+	public void removeSessionAttribute(String key);
 }
