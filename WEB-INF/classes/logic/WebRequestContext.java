@@ -7,7 +7,7 @@ import javax.servlet.http.HttpSession;
 /**
  *@className WebRequestContext
  *@author Fumihiro Miyazaki
- *@date 2017/01/26
+ *@date 2017/02/01
  *@description HTTP通信のリクエスト情報をラップするクラス
  */
 public class WebRequestContext implements RequestContext {
@@ -62,22 +62,25 @@ public class WebRequestContext implements RequestContext {
 	public void setRequest(Object request) {
 		this.request = (HttpServletRequest)request;
 		
+		session = this.request.getSession();
+		
 		parameters = this.request.getParameterMap();
 	}
 	
 	/**
-	 *@see WebRequestContext#setSession
-	 *@param session クライアントのセッション情報
+	 *@see WebRequestContext#setSessionAttribute
+	 *@param key セッションスコープに登録したい値に、対応したキー値
+	 *@param value セッションスコープに登録したい値
 	 */
-	public void setSession(Object session) {
-		this.session = (HttpSession)session;
+	public void setSessionAttribute(String key, Object value) {
+		session.setAttribute(key, value);
 	}
 
 	/**
-	 *@see WebRequestContext#getSession
-	 *@return クライアントのセッション情報
+	 *@see WebRequestContext#getSessionAttribute
+	 *@return セッションに登録されている、キー値に対応した値
 	 */
-	public Object getSession() {
-		return session;
+	public Object getSessionAttribute(String key) {
+		return session.getAttribute(key);
 	}
 }

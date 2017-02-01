@@ -34,7 +34,7 @@ public class OrderDataConfirmationCommand extends AbstractCommand {
 		HttpSession session = (HttpSession)requestContext.getSession();
 		
 		/*リクエストスコープから取り出し、セッションスコープに登録したい値の
-		全てのキーを定義する*/
+		キーを定義する。ここでは、入力値が必ず一つであるキーを定義する。*/
 		String[] keyNames = {"familyname","name","zipcode","prefectures",
 			"city","blocknumber","buildingname","phonenumber","requesteddate",
 			"requestedtime","paymentmethod","creditcardnumber","securitycode",
@@ -46,6 +46,10 @@ public class OrderDataConfirmationCommand extends AbstractCommand {
 		for(String key : keyNames){
 			session.setAttribute(key,requestContext.getParameter(key)[0]);
 		}
+		
+		/*リクエストスコープにある、商品の注文数をセッションスコープに追加*/
+		session.setAttribute(
+			"ordercount",requestContext.getParameter("ordercount"));
 		
 		/*リクエストスコープから注文する商品のIDを取得する*/
 		String[] orderProductsId
@@ -96,3 +100,24 @@ public class OrderDataConfirmationCommand extends AbstractCommand {
 		return responseContext;
 	}
 }
+
+/*
+スコープに保存するデータのキーが何を表すかを列挙する。
+"familyname"		名字
+"name"				名前
+"zipcode"			郵便番号
+"prefectures"		都道府県
+"city"				市区町村
+"blocknumber"		番地
+"buildingname"		建物名
+"phonenumber"		電話番号
+"requesteddate"		配達希望日
+"requestedtime"		配達希望時間
+"paymentmethod"		支払い方法（代引きかクレジットカード）
+"creditcardnumber"	クレジットカード番号
+"securitycode"		クレジットカードのセキュリティコード
+"expirationdate"	クレジットカードの有効期限
+"orderprice"		注文する商品の金額
+"commission"		手数料（代引きの際の追加料金）
+"totalprice"		注文する商品の金額と手数料の合計
+*/
