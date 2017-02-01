@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Arrays;
 
-import javax.servlet.http.HttpSession;
-
 /*入力された注文情報を確認する画面を表示するコマンドのクラス*/
 public class OrderDataConfirmationCommand extends AbstractCommand {
 	/*入力された注文情報をセッションスコープに保存し、
@@ -30,26 +28,32 @@ public class OrderDataConfirmationCommand extends AbstractCommand {
 		/*initメソッドによって準備されていたRequestContextを取得する*/
 		RequestContext requestContext = getRequestContext();
 		
-		/*注文情報を保存するためのセッションを取得する*/
-		HttpSession session = (HttpSession)requestContext.getSession();
-		
 		/*リクエストスコープから取り出し、セッションスコープに登録したい値の
 		キーを定義する。ここでは、入力値が必ず一つであるキーを定義する。*/
-		String[] keyNames = {"familyname","name","zipcode","prefectures",
-			"city","blocknumber","buildingname","phonenumber","requesteddate",
-			"requestedtime","paymentmethod","creditcardnumber","securitycode",
-			"expirationdate","orderprice","commission","totalprice"
+		String[] singleValueKeyNames = {"familyname","name","zipcode",
+			"prefectures","city","blocknumber","buildingname","phonenumber",
+			"requesteddate","requestedtime","paymentmethod","creditcardnumber",
+			"securitycode","expirationdate","orderprice","commission",
+			"totalprice"
 		};
 		
 		/*リクエストスコープにある上記配列内の名前のキーの値を、
 		セッションスコープに追加する*/
-		for(String key : keyNames){
-			session.setAttribute(key,requestContext.getParameter(key)[0]);
+		for(String keyName : singleValueKeyNames){
+			requestContext.setSessionAttribute(
+				keyName,requestContext.getParameter(keyName)[0]);
 		}
 		
-		/*リクエストスコープにある、商品の注文数をセッションスコープに追加*/
-		session.setAttribute(
-			"ordercount",requestContext.getParameter("ordercount"));
+		/*リクエストスコープから取り出し、セッションスコープに登録したい値の
+		キーを定義する。ここでは、入力値が複数になるキーを定義する。*/
+		String[] multipleValueKeyNames = {"ordercounts","orderproducts"};
+		
+		/*リクエストスコープにある上記配列内の名前のキーの値を、
+		セッションスコープに追加する*/
+		for(String keyName : multipleValueKeyNames){
+			requestContext.setSessionAttribute(
+				keyName,requestContext.getParameter(keyName));
+		}
 		
 		/*リクエストスコープから注文する商品のIDを取得する*/
 		String[] orderProductsId
@@ -120,4 +124,8 @@ public class OrderDataConfirmationCommand extends AbstractCommand {
 "orderprice"		注文する商品の金額
 "commission"		手数料（代引きの際の追加料金）
 "totalprice"		注文する商品の金額と手数料の合計
+
+"ordercount"		注文する個数の配列
+					１番目の商品の個数は[0]、２番目の商品は[1]・・・
+"orderproducts"		注文する商品のIDの配列
 */
