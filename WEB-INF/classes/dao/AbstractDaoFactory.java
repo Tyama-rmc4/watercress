@@ -15,7 +15,8 @@ public abstract class AbstractDaoFactory{
 	throws IntegrationException{
 		AbstractDaoFactory factory = null;
 		Properties prop = new Properties();
-		try{prop.load(new FileInputStream("c:/kari/database.properties"));
+		try{
+			prop.load(new FileInputStream("c:/kari/database.properties"));
 			String name = prop.getProperty("dao");
 			Class c = Class.forName(name);
 			factory = (AbstractDaoFactory)c.newInstance();
