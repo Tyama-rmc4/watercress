@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Iterator;
 
 import java.io.IOException;
+import javax.servlet.http.HttpSession;
 
 import bean.ProductCatalogBean;
 import bean.SubCategoryBean;
@@ -14,13 +15,14 @@ import dao.AbstractDaoFactory;
 
 import logic.ResponseContext;
 import logic.RequestContext;
+import logic.WebRequestContext;
 import ex.IntegrationException;
 import ex.LogicException;
 
 /**
  *@className ShowProductsListCommand
  *@author 河野
- *@date 2017/01/31
+ *@date 2017/01/31 ページ番号をセッションで管理する修正をしました。
  *@description 
  */
 
@@ -29,7 +31,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 	public ResponseContext execute(ResponseContext responseContext) throws LogicException{
 		
 		/*RequestContextのインスタンスを取得*/
-		RequestContext requestContext = getRequestContext();
+		RequestContext requestContext = new WebRequestContext();
 		
 		/*ページの番号*/
 		int pageNum = Integer.parseInt(requestContext.getParameter("pageNumber")[0]);
@@ -133,6 +135,10 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
+		
+		/*セッションスコープにインスタンスを保存*/
+		requestContext.setSessionAttribute("pageNum",pageNum);
+		
 		/*responseで送る値をセット*/
 		responseContext.setResult(returnProductsList);
 		
