@@ -9,7 +9,7 @@
 	</servlet-mapping>
 
 	
-<!--	<filter>
+	<filter>
 		<filter-name>logincheckfilter</filter-name>
 		<filter-class>filter.LogInCheckFilter</filter-class>
 	</filter>
@@ -42,5 +42,5 @@
 		<url-pattern>/payinput.jsp</url-pattern>
 		<dispatcher>REQUEST</dispatcher>
 		<dispatcher>FORWARD</dispatcher>
-	</filter-mapping> -->
+	</filter-mapping>
 </web-app>
