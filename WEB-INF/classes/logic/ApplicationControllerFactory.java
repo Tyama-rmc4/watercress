@@ -18,7 +18,7 @@ public abstract class ApplicationControllerFactory {
 	// todo プロパティファイルへのパスを真面目に考える
 	/** @value FILE_PATH プロパティファイルへの相対パス */
 	private static final String FILE_PATH
-	= "c:/j2ee4/ApplicationControllers.properties";
+	= "c:/watercress/ApplicationControllers.properties";
 	
 	/**
 	 *@see ApplicationControllerFactory#getController
