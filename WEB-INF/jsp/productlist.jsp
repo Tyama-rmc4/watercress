@@ -59,16 +59,36 @@
 </ul>
 </nav>
 	<h1>商品一覧</h1>
-		<c:forEach var="data" items="${data}">
-		
-			<section class="list">
-		    <a href="item.html">
-		    <figure><img src="${pageContext.request.contextPath}/WEB-INF/data/images${data.productImagePath}" alt="商品名"></figure>
-		    <h4>${data.productName}《${data.productPrice}》</h4>
-		    <p>説明文は短めに入力して下さい。沢山詰め込むと表示が途中で切れます。</p>
-		    </a>
-			</section>
-		</c:forEach>
+	
+	<c:forEach var="product" items="${data}">
+	
+		<section class="list">
+			<a href="item.html">
+				<figure>
+					<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
+					
+					<c:if test="${product.}">
+						<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
+					</c:if>
+				</figure>
+				<h4>${product.productName}《${product.productPrice}》</h4>
+				<p>${product.productDescription}</p>
+				<!-- <p>説明文は短めに入力して下さい。沢山詰め込むと表示が途中で切れます。</p> -->
+			</a>
+		</section>
+	</c:forEach>
+	
+	<%
+		int pageCount = 0;
+	%>
+	<!-- 商品数１５毎に１個ページ移動ボタンを増やす -->
+	<c:forEach items="${data}" step="15">
+			<%
+				pageCount += 1;
+				pageContext.setAttribute("pageCount",pageCount);
+			%>
+		<a href ="productlist?pageNumber=${pageScope.pageCount}">${pageScope.pageCount}</a>
+	</c:forEach>
 <footer>
 <div class="footermenu">
 <ul>
