@@ -76,14 +76,14 @@ data : List<Map> 【${data}】
 	<section class="list">
 		<a href="item.html">
 			<figure>
-				<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productCatalog.productImagePath}" alt="商品名">
+				<a href ="productdetail?productName=${product.productCatalog.productName}">
+					<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productCatalog.productImagePath}" alt="商品名">
+				</a>
 				
 				<!-- 各タグの表示 -->
 				<c:forEach var="tagName" items="${product.tagNames}">
 					<c:if test="${tagName == 'タグ名'}">
-						<a href ="productdetail?pageNumber=${pageScope.pageNumber-1}">
-							<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
-						</a>
+						<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
 					</c:if>
 				</c:forEach>
 				
