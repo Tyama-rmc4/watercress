@@ -1,3 +1,14 @@
+<!--
+式言語で取得できるデータ
+data : List<Map> 【${data}】
+ ┃
+ ┗Map<String, Object>
+   ┃
+   ┗"productCatalog",ProductCatalogBean
+   ┗"tagNames",List<String>
+-->
+
+
 <%@page pageEncoding="UTF-8"
    contentType="text/html;charset=UTF-8"
    %>
@@ -58,37 +69,66 @@
 </li>
 </ul>
 </nav>
-	<h1>商品一覧</h1>
-	
-	<c:forEach var="product" items="${data}">
-	
-		<section class="list">
-			<a href="item.html">
-				<figure>
-					<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
-					
-					<c:if test="${product.}">
-						<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
+<h1>商品一覧</h1>
+
+<c:forEach var="product" items="${data}">
+
+	<section class="list">
+		<a href="item.html">
+			<figure>
+				<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productCatalog.productImagePath}" alt="商品名">
+				
+				<!-- 各タグの表示 -->
+				<c:forEach var="tagName" items="${product.tagNames}">
+					<c:if test="${tagName == 'タグ名'}">
+						<a href ="productdetail?pageNumber=${pageScope.pageNumber-1}">
+							<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
+						</a>
 					</c:if>
-				</figure>
-				<h4>${product.productName}《${product.productPrice}》</h4>
-				<p>${product.productDescription}</p>
-				<!-- <p>説明文は短めに入力して下さい。沢山詰め込むと表示が途中で切れます。</p> -->
-			</a>
-		</section>
-	</c:forEach>
-	
-	<%
-		int pageCount = 0;
-	%>
-	<!-- 商品数１５毎に１個ページ移動ボタンを増やす -->
-	<c:forEach items="${data}" step="15">
-			<%
-				pageCount += 1;
-				pageContext.setAttribute("pageCount",pageCount);
-			%>
-		<a href ="productlist?pageNumber=${pageScope.pageCount}">${pageScope.pageCount}</a>
-	</c:forEach>
+				</c:forEach>
+				
+				<!-- 売り切れの表示 -->
+				<c:if test="${product.productCatalog.productStockCount == 0}">
+					<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
+				</c:if>
+				
+			</figure>
+			<h4>${product.productName}《${product.productPrice}》</h4>
+			<p>${product.productDescription}</p>
+			<!-- <p>説明文は短めに入力して下さい。沢山詰め込むと表示が途中で切れます。</p> -->
+		</a>
+	</section>
+</c:forEach>
+
+<%
+	int pageNumber = 1;
+	if(session.getAttribute("pageNumber") != null){
+		pageNumber = Integer.parseInt(session.getAttribute("pageNumber"));
+	}
+	pageContext.setAttribute("pageNumber",pageNumber);
+%>
+
+<c:if test="${pageScope.pageNumber > 1}" >
+	<a href ="productlist?pageNumber=${pageScope.pageNumber-1}">前のページへ</a>
+</c:if>
+
+
+<!-- 商品数１５毎に１個ページ移動ボタンを増やす -->
+<%
+	int pageCount = 0;
+%>
+<c:forEach items="${data}" step="15">
+		<%
+			pageCount += 1;
+			pageContext.setAttribute("pageCount",pageCount);
+		%>
+	<a href ="productlist?pageNumber=${pageScope.pageCount}">${pageScope.pageCount}</a>
+</c:forEach>
+
+<c:if test="${pageScope.pageNumber < pageScope.pageCount}" >
+	<a href ="productlist?pageNumber=${pageScope.pageNumber-1}">前のページへ</a>
+</c:if>
+
 <footer>
 <div class="footermenu">
 <ul>

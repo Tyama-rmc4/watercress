@@ -48,7 +48,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 		RequestContext requestContext = new WebRequestContext();
 		
 		/*ページの番号*/
-		int pageNum = Integer.parseInt(requestContext.getParameter("pageNumber")[0]);
+		int pageNumber = Integer.parseInt(requestContext.getParameter("pageNumber")[0]);
 		
 		/*選択されたサブカテゴリ*/
 		String selectedSubCategory = requestContext.getParameter("subCategory")[0];
@@ -156,8 +156,8 @@ public class ShowProductsListCommand extends AbstractCommand{
 				
 				/*現在のページ番号で表示すべき商品なら、
 				  その情報とそれに付加されているタグの名前をListに格納する*/
-				if((pageNum - 1) * 15 < foundProductCount 
-				&& foundProductCount <= pageNum * 15){
+				if((pageNumber - 1) * 15 < foundProductCount 
+				&& foundProductCount <= pageNumber * 15){
 					
 					/*現在の商品情報が持つタグの名前を格納するListの宣言*/
 					List tagNames = new ArrayList();
@@ -187,8 +187,8 @@ public class ShowProductsListCommand extends AbstractCommand{
 			throw new LogicException(e.getMessage(), e);
 		}
 		
-		/*セッションスコープにインスタンスを保存*/
-		requestContext.setSessionAttribute("pageNumber",pageNum);
+		/*セッションスコープにを保存*/
+		requestContext.setSessionAttribute("pageNumber",pageNumber);
 		
 		/*responseで送る値をセット*/
 		responseContext.setResult(returnProductsDataList);

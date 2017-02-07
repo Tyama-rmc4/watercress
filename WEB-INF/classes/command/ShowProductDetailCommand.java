@@ -35,7 +35,7 @@ public class ShowProductDetailCommand extends AbstractCommand {
 		
 		/*ユーザーが選択した商品の名前を取得*/
 		String selectedProductName
-		= requestContext.getParameter("product_name")[0];
+		= requestContext.getParameter("productName")[0];
 		
 		try{
 			/*商品詳細の表からデータを取得するためのDAOを取得する*/
