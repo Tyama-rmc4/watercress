@@ -66,6 +66,24 @@ public class WebRequestContext implements RequestContext {
 		
 		parameters = this.request.getParameterMap();
 	}
+
+	/**
+	 *@see WebRequestContext#setRequestAttribute
+	 *@param key リクエストスコープに登録したい値に対応したキー値
+	 *@param value リクエストスコープに登録したい値
+	 */
+	public void setRequestAttribute(String key, Object value) {
+		request.setAttribute(key, value);
+	}
+
+	/**
+	 *@see WebRequestContext#getRequestAttribute
+	 *@return リクエストスコープに登録されている、キー値に対応した値
+	 */
+	public Object getRequestAttribute(String key) {
+		return request.getAttribute(key);
+	}
+	
 	
 	/**
 	 *@see WebRequestContext#setSessionAttribute
