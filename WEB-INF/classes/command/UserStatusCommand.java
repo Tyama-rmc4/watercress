@@ -31,6 +31,10 @@ public class UserStatusCommand extends AbstractCommand{
 	
 	/*クライアントからのリクエスト*/
 	private RequestContext requestContext;
+<<<<<<< HEAD
+	
+=======
+>>>>>>> origin/master
 	/*Daoからお気に入り表全件入れるList*/
 	private List favoriteList;
 	/*会員のお気に入り商品IDのみ入れるList*/
@@ -43,6 +47,26 @@ public class UserStatusCommand extends AbstractCommand{
 		new ArrayList<ProductBean>();
 	
 	public ResponseContext execute(ResponseContext responseContext) throws LogicException{
+<<<<<<< HEAD
+		
+		
+		/*親クラスのメソッドを利用しRequestContextのインスタンスを取得*/
+		requestContext = getRequestContext();
+		
+		MemberBean member = new MemberBean();
+	
+		/*会員のIDを取得*/
+		String id = (String)requestContext.getSessionAttribute("login");
+		int memberId = Integer.parseInt(id);
+		
+		/*メンバーリストを全件取得のためのリスト*/
+		List allMemberList = null;
+		/*最後にResponseContextにセットして返すためのリスト*/
+		List myPageList = null;
+		
+		try{
+/*プロフィールの取得処理ーーーーーーーーーーーーーーーーーーーー*/
+=======
 		/*RequestContextのインスタンスを取得*/
 		RequestContext requestContext = new WebRequestContext();
 		
@@ -58,6 +82,7 @@ public class UserStatusCommand extends AbstractCommand{
 		
 		try{
 		/*プロフィールの取得処理ーーーーーーーーーーーーーーーーーーーー*/
+>>>>>>> origin/master
 			
 			/*AbstractDaoFactoryのインスタンスを取得*/
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
@@ -80,7 +105,11 @@ public class UserStatusCommand extends AbstractCommand{
 			/*プロフィール情報をListに格納*/
 			myPageList.add(member);
 			
+<<<<<<< HEAD
+/*お気に入り一覧の取得処理ーーーーーーーーーーーーーーーーーーーーーーーー*/
+=======
 		/*お気に入り一覧の取得処理ーーーーーーーーーーーーーーーーーーー*/
+>>>>>>> origin/master
 			
 			/*FavoriteDao型の変数ににOraFavoriteDaoインスタンスを入れる*/
 			FavoriteDao favoriteDao = factory.getFavoriteDao();
@@ -125,7 +154,11 @@ public class UserStatusCommand extends AbstractCommand{
 			responseで送る値をセット
 			一つ目にMemberBean
 			二つ目にお気に入り商品の入ったArrayList型で、ProductBeanが
+<<<<<<< HEAD
+			複数入っているmyPageListをセット
+=======
 			複数入っている
+>>>>>>> origin/master
 		*/
 		responseContext.setResult(myPageList);
 		
