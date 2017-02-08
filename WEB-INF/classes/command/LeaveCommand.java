@@ -42,16 +42,13 @@ public class LeaveCommand extends AbstractCommand{
 			
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
 			MemberDao memberDao = factory.getMemberDao();
-			
+			//Beanをインスタンス化
+			MemberBean member = new MemberBean();
 			
 			
 			//sessionからidを取り出す
 			int id = (int)req.getSessionAttribute("memberid");
 			
-			
-			
-			//Beanをインスタンス化
-			MemberBean member = new MemberBean();
 			
 			//MemberBeanを全部取ってくる
 			List members = memberDao.getMembers();
