@@ -28,7 +28,7 @@ public class AddProductsToCartCommand extends AbstractCommand{
 	public ResponseContext execute( ResponseContext responseContext )
 	throws LogicException{
 		
-		RequestContext req = new WebRequestContext();
+		RequestContext req = getRequestContext();
 		Map<String,String> cart;
 		/*商品名と商品個数を入れるcartを作成*/
 		if(req.getSessionAttribute("cart") == null){
@@ -56,7 +56,7 @@ public class AddProductsToCartCommand extends AbstractCommand{
 		/*mapの変数cartをcartって名前でcart.jspに飛ばす*/
 		req.setSessionAttribute("cart", cart);
 		//カートに商品名と個数を登録しましたページへ飛ぶけど、まだ未定
-		responseContext.setTarget("showAddProductComp");
+		responseContext.setTarget("cartadd");
 		
 		return responseContext;
 	}
