@@ -12,7 +12,7 @@ import dao.OraMemberDao;
  *@date 2017/01/26
  *@description 
  */
-public class SignUpCommand extends AbstractCommand{
+public class CheckEntryCommand extends AbstractCommand{
 	/**クライアントからのリクエスト*/
 	private RequestContext requestContext;
 
@@ -21,24 +21,27 @@ public class SignUpCommand extends AbstractCommand{
 	
 		RequestContext reqc = getRequestContext();
 		
+		
 		/*メンバー情報を登録*/
-		int memberId = Integer.parseInt( reqc.getParameter( "memberId" )[0]);
-		String memberName = reqc.getParameter( "memberName" )[0];
+		//int memberId = Integer.parseInt( reqc.getParameter( "memberId" )[0]);
+		
+		String memberName=reqc.getParameter("memberName")[0];
 		String memberKana = reqc.getParameter( "memberKana" )[0];
 		String memberZipCode = reqc.getParameter( "memberZipCode" )[0];
+		
+		
 		String memberAddress = reqc.getParameter( "memberAddress" )[0];
 		String memberPhoneNumber = reqc.getParameter( "memberPhoneNumber" )[0];
 		String memberBirthday = reqc.getParameter( "memberBirthday" )[0];
 		String memberEmail = reqc.getParameter( "memberEmail" )[0];
 		String memberPassword = reqc.getParameter( "memberPassword" )[0];
-		int memberStatusId = Integer.parseInt(reqc.getParameter( "memberStatusId" )[0]);
+		//int memberStatusId = Integer.parseInt(reqc.getParameter( "memberStatusId" )[0]);
 		//データを引っ張ってくる
-		
 		MemberBean memberbean = new MemberBean();
 		//member表を参照
 		
 		/*memberBeanに情報を登録*/
-		memberbean.setMemberId( memberId );
+		//memberbean.setMemberId( memberId );
 		memberbean.setMemberName( memberName );
 		memberbean.setMemberKana( memberKana );
 		memberbean.setMemberZipCode( memberZipCode );
@@ -47,18 +50,9 @@ public class SignUpCommand extends AbstractCommand{
 		memberbean.setMemberBirthday( memberBirthday );
 		memberbean.setMemberEmail( memberEmail );
 		memberbean.setMemberPassword( memberPassword );
-		memberbean.setMemberStatusId( memberStatusId );
-	
-		OraMemberDao memberdao = new OraMemberDao();
-		//member情報を登録させるdaoのインスタンスを生成
-		try{
-			memberdao.registMember(memberbean);
-		}catch(IntegrationException e){
-			throw new LogicException(e.getMessage(),e);
-		}
+		//memberbean.setMemberStatusId( memberStatusId );
 		
-		
-		responseContext.setTarget( "signupconfirmation" );
+		responseContext.setTarget( "entrycheck" );
 		//登録確認ページに移動
 		responseContext.setResult(memberbean);
 		//AppricationControllerのsetAttributeに
