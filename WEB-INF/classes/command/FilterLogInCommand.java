@@ -1,6 +1,6 @@
 /*
   @author 池田千鶴
-  @date 2017/02/01
+  @date 2017/02/09
 */
 
 package command;
@@ -40,35 +40,32 @@ public class FilterLogInCommand extends AbstractCommand {
 			/* 一行ずつ検索(見づらいのでチェックは別メソッドに分離) */
 			for(int i = 0; i < memberlist.size(); i++){
 				MemberBean member = (MemberBean)memberlist.get(i);
-				checkPassword(member, reqc);
+				/* 入力されたメールアドレスと一致するメールアドレスがあった場合 */
+				if(member.getMemberEmail().equals(reqc.getParameter("email"))){
+					checkPassword(member, reqc);
+				}
 			}
+			
+			responseContext.setTarget((String)reqc.getSessionAttribute("target"));
+			
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
-		
-		//移動先用のコマンドを呼び出す処理がここに入る
-		//responseContextもらう？
 		
 		return responseContext;
 	}
 	
 	/* 会員情報が登録されているかチェック */
 	private static void checkPassword(MemberBean member, RequestContext reqc) {
-		/* 入力されたメールアドレスと一致するメールアドレスがあった場合 */
-		if(member.getMemberEmail().equals(reqc.getParameter("email"))){
-			/* 入力されたパスワードと、
-				メールアドレスに応じたパスワードが同じ場合(ログイン成功)、
-				セッションにmember_idを登録*/
-			if(member.getMemberPassword().equals(reqc.getParameter("pass"))) {
-				reqc.setSessionAttribute("login", member.getMemberId());
-			/* メールアドレスまたはパスワードが違う場合(ログイン失敗)、
-				セッションにログインが失敗したことを登録*/
-			}else{
-				System.out.println("パスワードが違います");
-				reqc.setSessionAttribute("login", "NG");
-			}
+		/* 入力されたパスワードと、
+			メールアドレスに応じたパスワードが同じ場合(ログイン成功)、
+			セッションにmember_idを登録*/
+		if(member.getMemberPassword().equals(reqc.getParameter("pass"))) {
+			reqc.setSessionAttribute("login", member.getMemberId());
+		/* メールアドレスまたはパスワードが違う場合(ログイン失敗)、
+			セッションにログインが失敗したことを登録*/
 		}else{
-			System.out.println("メルアドがないです");
+			System.out.println("パスワードが違います");
 			reqc.setSessionAttribute("login", "NG");
 		}
 	}

@@ -1,6 +1,6 @@
 /*
   @author 池田千鶴
-  @date 2017/02/01
+  @date 2017/02/09
 */
 
 package command;
@@ -29,6 +29,7 @@ public class LogInCommand extends AbstractCommand {
 		System.out.println("--LogInCommand--");
 		
 		RequestContext reqc = getRequestContext();
+		boolean flag = true;
 		
 		try{
 			/* 会員表のリストを取得 */
@@ -39,16 +40,28 @@ public class LogInCommand extends AbstractCommand {
 			/* 一行ずつ検索(見づらいのでチェックは別メソッドに分離) */
 			for(int i = 0; i < memberlist.size(); i++){
 				MemberBean member = (MemberBean)memberlist.get(i);
-				checkPassword(member, reqc);
+				/* 入力されたメールアドレスと
+					一致するメールアドレスがあった場合、パスワードをチェック */
+				if(member.getMemberEmail().equals(reqc.getParameter("email"))) {
+					flag = false;
+					checkPassword(member, reqc);
+				}
 			}
 			
+			/* 入力されたメールアドレスに一致するメールアドレスが
+				データベース内に存在しなかった場合 */
+			if(flag){
+				System.out.println("メールアドレスが違います");
+				reqc.setSessionAttribute("login", "NG");
+			}
 			
 			/* ここからフィルター機能に近い動作 */
 			/* セッションからログイン情報を取得 */
 			String login = (String)reqc.getSessionAttribute("login");
 			System.out.println("login=" + login);
 			
-			/* 未ログイン・ログインに失敗した場合、再度ログイン画面へ飛ばす */
+			/* 未ログイン・ログインに失敗した場合、
+				再度ログイン画面へ飛ばす */
 			if(login == null || "".equals(login) || "NG".equals(login)) {
 				responseContext.setTarget("login");
 			/* ログイン済の場合、トップページへ飛ばす */
@@ -63,23 +76,19 @@ public class LogInCommand extends AbstractCommand {
 		return responseContext;
 	}
 	
-	/* 会員情報が登録されているかチェック */
-	private static void checkPassword(MemberBean member, RequestContext reqc) {
-		/* 入力されたメールアドレスと一致するメールアドレスがあった場合 */
-		if(member.getMemberEmail().equals(reqc.getParameter("email"))){
-			/* 入力されたパスワードと、
-				メールアドレスに応じたパスワードが同じ場合(ログイン成功)、
-				セッションにmember_idを登録*/
-			if(member.getMemberPassword().equals(reqc.getParameter("pass"))) {
-				reqc.setSessionAttribute("login", member.getMemberId());
-			/* メールアドレスまたはパスワードが違う場合(ログイン失敗)、
-				セッションにログインが失敗したことを登録*/
-			}else{
-				System.out.println("パスワードが違います");
-				reqc.setSessionAttribute("login", "NG");
-			}
+	/* パスワードが正しいかチェック */
+	private static void checkPassword
+		(MemberBean member, RequestContext reqc) {
+		/* 入力されたパスワードと、
+			メールアドレスに応じたパスワードが同じ場合(ログイン成功)、
+			セッションにmember_idを登録*/
+		if(member.getMemberPassword().equals(reqc.getParameter("pass"))) {
+			System.out.println("ログイン成功");
+			reqc.setSessionAttribute("login", member.getMemberId());
+		/* パスワードが違う場合(ログイン失敗)、
+			セッションにログインが失敗したことを登録*/
 		}else{
-			System.out.println("メルアドがないです");
+			System.out.println("パスワードが違います");
 			reqc.setSessionAttribute("login", "NG");
 		}
 	}
