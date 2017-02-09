@@ -30,20 +30,29 @@ public class FilterLogInCommand extends AbstractCommand {
 		System.out.println("--FilterLogInCommand--");
 		
 		try{
+			RequestContext reqc = getRequestContext();
+			boolean flag = true;
+			
 			/* 会員表のリストを取得 */
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
 			MemberDao memberdao = factory.getMemberDao();
 			List memberlist = memberdao.getMembers();
-			
-			RequestContext reqc = getRequestContext();
 			
 			/* 一行ずつ検索(見づらいのでチェックは別メソッドに分離) */
 			for(int i = 0; i < memberlist.size(); i++){
 				MemberBean member = (MemberBean)memberlist.get(i);
 				/* 入力されたメールアドレスと一致するメールアドレスがあった場合 */
 				if(member.getMemberEmail().equals(reqc.getParameter("email"))){
+					flag = false;
 					checkPassword(member, reqc);
 				}
+			}
+			
+			/* 入力されたメールアドレスに一致するメールアドレスが
+				データベース内に存在しなかった場合 */
+			if(flag){
+				System.out.println("メールアドレスが違います");
+				reqc.setSessionAttribute("login", "NG");
 			}
 			
 			responseContext.setTarget((String)reqc.getSessionAttribute("target"));
@@ -61,6 +70,7 @@ public class FilterLogInCommand extends AbstractCommand {
 			メールアドレスに応じたパスワードが同じ場合(ログイン成功)、
 			セッションにmember_idを登録*/
 		if(member.getMemberPassword().equals(reqc.getParameter("pass"))) {
+			System.out.println("ログイン成功");
 			reqc.setSessionAttribute("login", member.getMemberId());
 		/* メールアドレスまたはパスワードが違う場合(ログイン失敗)、
 			セッションにログインが失敗したことを登録*/
