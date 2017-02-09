@@ -36,22 +36,16 @@ public class AddProductsToCartCommand extends AbstractCommand{
 		}else{
 			cart = (Map<String,String>)req.getSessionAttribute("cart");
 		}
-		
 		/*入力\されたパラメータを受け取る*/
 		String productId = req.getParameter("productid")[0];
 		String itemCount =req.getParameter("itemcount")[0];
-		
 		/*
 		商品と商品の個数をcartに登録
 		cart.put("key","value");
 		まったく同じ商品を追加した場合とりあえず例外へ
 		今後に期待
 		*/
-		if(cart.containsKey(productId) == true){
-			cart.put(productId,itemCount);
-		}else{
-			System.out.println("追加する商品が重複してます例外を飛ばす");
-		}
+		cart.put(productId,itemCount);
 		
 		/*mapの変数cartをcartって名前でcart.jspに飛ばす*/
 		req.setSessionAttribute("cart", cart);

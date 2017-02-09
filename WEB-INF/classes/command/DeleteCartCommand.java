@@ -52,14 +52,16 @@ public class DeleteCartCommand extends AbstractCommand{
 			*/
 			if(0 <= checkNumber){
 				if(cart.containsKey(productId) == true){
+					cart.get(productId+"表示");
 					cart.remove(productId);
+					cart.get(productId+"たぶんnull");
 					req.setSessionAttribute("cart",cart);
 				}
 			}else{
 				System.out.println("削除する商品を選択してね！");
 			}
 		}
-		responseContext.setTarget("cart");
+		responseContext.setTarget("cartdelete");
 		
 		return responseContext;
 	}

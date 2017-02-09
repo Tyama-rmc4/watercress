@@ -39,7 +39,7 @@ public class EditCartCommand extends AbstractCommand{
 		}
 		
 		
-		responseContext.setTarget("cart");
+		responseContext.setTarget("cartedit");
 		
 		return responseContext;
 	}
