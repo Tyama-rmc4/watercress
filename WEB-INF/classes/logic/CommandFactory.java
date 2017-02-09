@@ -17,7 +17,7 @@ public abstract class CommandFactory {
 	// todo プロパティファイルへのパスを真面目に考える
 	/** @value FILE_PATH プロパティファイルへの相対パス */
 	private static final String FILE_PATH
-	= "c:/j2ee4/AbstractCommands.properties";
+	= "c:/watercress/WEB-INF/data/properties/AbstractCommands.properties";
 
 	/**
 	 *@see CommandFactory#getCommand

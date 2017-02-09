@@ -14,7 +14,7 @@ public abstract class AbstractDaoFactory{
 	// todo プロパティファイルへのパスを真面目に考える
 	/** @value FILE_PATH プロパティファイルへの相対パス */
 	private static final String FILE_PATH
-	= "c:/j2ee4/AbstractDaoFactories.properties";
+	= "c:/watercress/WEB-INF/data/properties/AbstractDaoFactories.properties";
 	
 	public static AbstractDaoFactory getFactory() 
 	throws IntegrationException{
