@@ -8,12 +8,14 @@ import bean.MemberBean;
 import bean.ProductBean;
 import bean.FavoriteBean;
 import bean.TagBean;
+import bean.ProductImageBean;
 
 import dao.AbstractDaoFactory;
 import dao.MemberDao;
 import dao.ProductDao;
 import dao.FavoriteDao;
 import dao.TagDao;
+import dao.ProductImageDao;
 
 
 import logic.ResponseContext;
@@ -48,10 +50,17 @@ public class ShowMyPageCommand extends AbstractCommand{
 		/*RequestContextのインスタンスを取得*/
 		RequestContext requestContext = new WebRequestContext();
 		
-		MemberBean member = new MemberBean();
-	
 		/*入力されたパラメータを受け取る*/
-		int memberId = Integer.parseInt(requestContext.getSessionAttribute("login").toString()) ;
+		int memberId = Integer.parseInt(requestContext.getSessionAttribute("login").toString());
+		
+		/*MemberBeanのインスタンス*/
+		MemberBean member = new MemberBean();
+		
+		/*ProductImageBeanの情報が格納してある変数*/
+		ProductImageBean productsImageBean = null;
+		
+		/*商品画像のIDを格納してある変数*/
+		String imageProductId = null;
 		
 		/*タグのリストを全件取得するための変数*/
 		List tags = null;
@@ -62,9 +71,23 @@ public class ShowMyPageCommand extends AbstractCommand{
 		/*メンバーリストを全件取得のためのリスト*/
 		List allMemberList = null;
 		
-		/*returnで返すためのリスト*/
-		List myPageList = null;
+		/*商品画像を全件取得のためのリスト*/
+		List allProductsImage = null;
 		
+		/*最終的に返すアカウント情報のリスト*/
+		List membersProfile = null;
+		
+		/*最終的に返すお気に入り商品のリスト*/
+		List favoriteProducts = null;
+		
+		/*最終的に返すおすすめ商品リスト*/
+		List adviceProducts = null;
+		
+		/*最終的に返すおすすめ商品画像リスト*/
+		List adviceProductImage = null;
+		
+		/*最終的に返すお気に入り商品画像リスト*/
+		List favoriteProductImage = null;
 		try{
 		/*プロフィールの取得処理ーーーーーーーーーーーーーーーーーーーー*/
 			
@@ -87,7 +110,7 @@ public class ShowMyPageCommand extends AbstractCommand{
 				}
 			}
 			/*プロフィール情報をListに格納*/
-			myPageList.add(member);
+			membersProfile.add(member);
 			
 		/*お気に入り一覧の取得処理ーーーーーーーーーーーーーーーーーーー*/
 			
@@ -120,11 +143,9 @@ public class ShowMyPageCommand extends AbstractCommand{
 				/*memberFavoriteList内にある
 					複数の商品IDのどれかと合致する商品IDの商品を入れる*/
 				if(memberFavoriteList.contains(pb.getProductId())){
-					memberProductList.add(pb);
+					favoriteProducts.add(pb);
 				}
 			}
-			
-			myPageList.add(memberProductList);
 			
 			/*おすすめ商品の表示－－－－－－－－－－－－－－－－－*/
 			
@@ -155,21 +176,71 @@ public class ShowMyPageCommand extends AbstractCommand{
 				/*商品のProductIdを格納*/
 					String productId = productBean.getProductId();
 					if(productId == tagProductId){
-						myPageList.add(productBean);
+						adviceProducts.add(productBean);
+					}
+				}
+			}
+			/*おすすめ商品の商品画像の処理－－－－－－－－－－－－－*/
+			
+			/*ProductImageDaoのインスタンスを取得*/
+			ProductImageDao productImage = factory.getProductImageDao();
+			
+			/*ProductsImageリストを全件取得*/
+			allProductsImage = productImage.getProductImages();
+			
+			Iterator productsImageIterator = allProductsImage.iterator();
+			Iterator adviceProductsIterator = adviceProducts.iterator();
+			
+			while(productsImageIterator.hasNext()){
+				productsImageBean 
+				= (ProductImageBean)productsImageIterator.next();
+				/*ProductImageBeanのproductIdを格納*/
+				imageProductId = productsImageBean.getProductId();
+				
+				while(adviceProductsIterator.hasNext()){
+					String adviceProductId 
+					= ((ProductBean)adviceProductsIterator.next())
+					.getProductId();
+					if(imageProductId == adviceProductId){
+						adviceProductImage.add(productsImageBean);
+					}
+				}
+			}
+			
+			/*お気に入り商品の商品画像の処理*/
+			Iterator favoriteProductsIterator = favoriteProducts.iterator();
+			
+			while(productsImageIterator.hasNext()){
+				productsImageBean 
+				= (ProductImageBean)productsImageIterator.next();
+				/*ProductImageBeanのproductIdを格納*/
+				imageProductId = productsImageBean.getProductId();
+				
+				while(favoriteProductsIterator.hasNext()){
+					String favoriteProductId 
+					= ((ProductBean)favoriteProductsIterator.next())
+					.getProductId();
+					if(favoriteProductId == imageProductId){
+						favoriteProductImage.add(productsImageBean);
 					}
 				}
 			}
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
+		/*アカウント情報表示用のリスト*/
+		requestContext.setRequestAttribute("membersProfile",membersProfile);
 		
-		/*
-			responseで送る値をセット
-			一つ目にMemberBean
-			二つ目にお気に入り商品の入ったArrayList型で、ProductBeanが
-			複数入っている
-		*/
-		responseContext.setResult(myPageList);
+		/*お気に入り商品表示用のリスト*/
+		requestContext.setRequestAttribute("favoriteProducts",favoriteProducts);
+		/*おすすめ商品表示用のリスト*/
+		requestContext.setRequestAttribute("adviceProducts",adviceProducts);
+		
+		/*おすすめ商品画像表示用のリスト*/
+		requestContext.setRequestAttribute("adviceProductImage",adviceProductImage);
+		
+		/*おすすめ商品表示用のリスト*/
+		requestContext.setRequestAttribute("favoriteProductImage",favoriteProductImage);
 		
 		/*転送先のビューを指定*/
 		responseContext.setTarget("mypage");
