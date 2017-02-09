@@ -30,6 +30,8 @@ import bean.TagBean;
 import dao.TagDao;
 import bean.ProductBean;
 import dao.ProductDao;
+import bean.FavoriteBean;
+import dao.FavoriteDao;
 
 /**
  *@className ShowProductsListCommand
@@ -40,14 +42,17 @@ import dao.ProductDao;
  *@date 2017/02/08 商品名、タグ名での検索を行うことができるようにしました。
  *@date 2017/02/09 結果のproductDataに、商品の色を表す画像のパスのListである
                    "productColors"を追加しました。
+                   結果のproductDataに、その商品はログイン中の会員のお気に入り
+                   であるかを表すBooleanである"isFavoirte"を追加しました。
  *@description 
  data : List<Map> 【jspで${data}で取り出される部分】
  ┃
  ┗productData : Map<String, Object>
    ┃
    ┗"productCatalog",ProductCatalogBean
-   ┗"productTagNames",List<String>
-   ┗"productColors",List<String>
+   ┗"productTagNames",List<String> その商品に付加されているタグの名前のList
+   ┗"productColors",List<String> その商品の色の画像パスのList
+   ┗"isFavorite",Boolean その商品はログイン中の会員のお気に入りであるか
  */
 
 public class ShowProductsListCommand extends AbstractCommand{
@@ -75,29 +80,38 @@ public class ShowProductsListCommand extends AbstractCommand{
 		/*検索する名前  全角スペースを半角スペースに変換した後、
 		  半角スペースで分割して配列にする*/
 		String[] searchTexts = null;
-		String searchTextParam
-		= requestContext.getParameter("searchText")[0];
+		String[] searchTextParam
+		= requestContext.getParameter("searchText");
 		if(searchTextParam != null){
-			searchTextParam = searchTextParam.replaceAll("　"," ");
-			searchTexts = searchTextParam.split(" ");
+			String searchTextString
+			= searchTextParam[0].replaceAll("　"," ");
+			searchTexts = searchTextString.split(" ");
 		}
 		/*検索するタグ  全角スペースを半角スペースに変換した後、
 		  半角スペースで分割して配列にし、Listにする*/
-		String searchTagParam = requestContext.getParameter("searchTag")[0];
+		String[] searchTagParam = requestContext.getParameter("searchTag");
 		String[] searchTagArray = null;
 		List searchTags = null;
 		if(searchTagParam != null){
-			searchTagParam = searchTagParam.replaceAll("　"," ");
-			searchTagArray = searchTagParam.split(" ");
+			String searchTagString = searchTagParam[0].replaceAll("　"," ");
+			searchTagArray = searchTagString.split(" ");
 			searchTags = new ArrayList(Arrays.asList(searchTagArray));
 		}
 		/*ソート条件*/
 		String[] sortParams = requestContext.getParameter("sort");
-		
 		/*getProductCatalogsに渡す、ソート条件の引数を作成する*/
 		/*sortParamsの文字列を、createSortArrayメソッドのルールに
 		  従ってint配列に変換する。これを商品検索の際に引数にする*/
 		int[] sortArray = createSortArray(sortParams);
+		
+		/*ログイン中の会員のIDを取得する。*/
+		/*ログインしていない場合は-1を格納する。*/
+		int loginMemberId = -1;
+		if(requestContext.getSessionAttribute("login") != null){
+			String idAttribute
+			= (String)requestContext.getSessionAttribute("login");
+			loginMemberId = Integer.parseInt(idAttribute);
+		}
 		
 		/*全サブカテゴリの情報のリスト*/
 		List allSubCategoryList = null; 
@@ -105,6 +119,8 @@ public class ShowProductsListCommand extends AbstractCommand{
 		List allCatalogList = null; 
 		/*全タグの情報のリスト*/
 		List allTagList = null;
+		/*全お気に入りの情報のリスト*/
+		List allFavoriteList = null;
 		
 		/*このコマンドのResultとなる、商品情報とそのタグ名のリスト*/
 		List<Map> returnProductsDataList = new ArrayList<Map>();
@@ -146,7 +162,24 @@ public class ShowProductsListCommand extends AbstractCommand{
 			/*Daoからタグの情報を取得する*/
 			allTagList = tagDao.getTags();
 			
-			/*お気に入りの取得も必要だろうか？*/
+			/*現在ログイン中の会員の、お気に入りの商品のIDのリストを宣言*/
+			List memberFavoriteList = new ArrayList();
+			/*会員がログインしているなら、お気に入りの商品のIDを取得する*/
+			if(loginMemberId != -1){
+				/*お気に入りの情報を取得するためのDaoを取得する*/
+				FavoriteDao favoriteDao = factory.getFavoriteDao();
+				/*Daoからお気に入りの情報を取得する*/
+				allFavoriteList = favoriteDao.getFavorites();
+				
+				Iterator favoriteIterator = allFavoriteList.iterator();
+				while(favoriteIterator.hasNext()){
+					FavoriteBean favorite
+					= (FavoriteBean)favoriteIterator.next();
+					if(loginMemberId == favorite.getMemberId()){
+						memberFavoriteList.add(favorite.getProductId());
+					}
+				}
+			}
 			
 			/*選択されたサブカテゴリの商品が見つかった個数の変数を宣言*/
 			int foundProductCount = 0;
@@ -236,22 +269,32 @@ public class ShowProductsListCommand extends AbstractCommand{
 						/*現在のページでその商品を表示すべきかを判定する*/
 						/*現在のページ番号で表示すべき商品なら、その情報と
 						  それに付加されているタグの名前と
-						  その商品の色を表す画像のパスを
+						  その商品の色を表す画像のパスと
+						  ログイン中の会員のお気に入りであるかを
 						  Mapに格納し、それをListに格納する*/
 						if((pageNumber - 1) * 15 < foundProductCount 
 						&& foundProductCount <= pageNumber * 15){
 							
 							/*商品の情報と、付加されているタグの名前と
-							  商品の色を表す画像のパスを
+							  商品の色を表す画像のパスと
+							  ログイン中の会員のお気に入りであるかを
 							  Mapに格納する。*/
-							/*商品の色を表す画像のパスは
-							  分割したメソッドから取得する*/
 							Map productData = new HashMap();
 							productData.put("productCatalog",product);
 							productData.put("productTagNames",productTagNames);
+							/*商品の色を表す画像のパスは
+							  分割したメソッドから取得する*/
 							List<String> productColors
 							= getProductColors(product.getProductName());
 							productData.put("productColors",productColors);
+							/*この商品はログイン中の会員のお気に入り
+							  であるかを確認する*/
+							Boolean isFavorite = new Boolean(false);
+							if(memberFavoriteList.contains(
+								product.getExampleProductId())){
+								isFavorite = true;
+							}
+							productData.put("isFavorite",isFavorite);
 							/*格納したMapをListに追加する*/
 							returnProductsDataList.add(productData);
 						}/*if(現在のページで表示すべきか) の終端*/
