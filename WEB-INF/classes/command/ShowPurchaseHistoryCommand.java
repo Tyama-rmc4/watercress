@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Iterator;
 
 import java.io.IOException;
-import javax.servlet.http.HttpSession;
 
 import bean.ProductBean;
 import bean.ProductImageBean;
@@ -37,7 +36,12 @@ public class ShowPurchaseHistoryCommand extends AbstractCommand{
 		RequestContext requestContext = new WebRequestContext();
 		
 		/*getParameter‚Åƒy[ƒW”Ô†‚ğæ“¾*/
-		int pageNum = Integer.parseInt(requestContext.getParameter("pageNumber")[0]);
+		int pageNum = 0;
+		String cushionPage = requestContext.getParameter("pageNumber")[0];
+		if(cushionPage != null){
+			pageNum = Integer.parseInt(requestContext.getParameter("pageNumber")[0]);
+		}
+		
 		
 		/*memberId‚ğó‚¯æ‚é*/
 		int memberId = Integer.parseInt(requestContext.getSessionAttribute("login").toString()) ;
