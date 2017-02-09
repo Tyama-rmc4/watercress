@@ -1,22 +1,21 @@
 package logic;
 
 import java.io.IOException;
-import javax.servlet.RequestDispatcher;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import ex.LogicException;
-import logic.RequestContext;
-import logic.ResponseContext;
 /**
  *@className FrontServlet
  *@author Fumihiro Miyazaki
  *@date 2017/01/26
- *@description すべてのリクエストを受け取るサーブレット
+ *@description 縺吶∋縺ｦ縺ｮ繝ｪ繧ｯ繧ｨ繧ｹ繝医ｒ蜿励￠蜿悶ｋ繧ｵ繝ｼ繝悶Ξ繝�繝�
  */
 public class FrontServlet extends HttpServlet {
-	
+
 	/**
 	 *@see ApplicationControllerFactory#getController
 	 *@param req
@@ -28,8 +27,8 @@ public class FrontServlet extends HttpServlet {
 	throws ServletException,IOException {
 		doPost(req, res);
 	}
-	
-	
+
+
 	/**
 	 *@see ApplicationControllerFactory#getController
 	 *@param req
@@ -40,16 +39,16 @@ public class FrontServlet extends HttpServlet {
 	public void doPost(HttpServletRequest req, HttpServletResponse res)
 	throws ServletException, IOException {
 		req.setCharacterEncoding("Windows-31J");
-		try {		
+		try {
 			ApplicationController ac
 			= ApplicationControllerFactory.getController("Web");
-			
+
 			RequestContext requestContext = ac.getRequest(req);
-			
+
 			ResponseContext responseContext = ac.handleRequest(requestContext);
-			
+
 			responseContext.setResponse(res);
-			
+
 			ac.handleResponse(requestContext, responseContext);
 		}catch (LogicException e) {
 			throw new ServletException(e.getMessage(), e);

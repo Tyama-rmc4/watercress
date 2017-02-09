@@ -1,6 +1,7 @@
 package logic;
 
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -8,87 +9,69 @@ import javax.servlet.http.HttpSession;
  *@className WebRequestContext
  *@author Fumihiro Miyazaki
  *@date 2017/02/01
- *@description HTTP’ÊM‚ÌƒŠƒNƒGƒXƒgî•ñ‚ðƒ‰ƒbƒv‚·‚éƒNƒ‰ƒX
+ *@description HTTPé€šä¿¡ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±ã‚’ãƒ©ãƒƒãƒ—ã™ã‚‹ã‚¯ãƒ©ã‚¹
  */
 public class WebRequestContext implements RequestContext {
-	/**ƒT[ƒuƒŒƒbƒgƒpƒX‚ðAƒRƒ}ƒ“ƒh¶¬—p‚Ì•¶Žš—ñ‚É•ÏŠ·‚·‚é‚½‚ß‚Ì’è”*/
+	/**ã‚µãƒ¼ãƒ–ãƒ¬ãƒƒãƒˆãƒ‘ã‚¹ã‚’ã€ã‚³ãƒžãƒ³ãƒ‰ç”Ÿæˆç”¨ã®æ–‡å­—åˆ—ã«å¤‰æ›ã™ã‚‹ãŸã‚ã®å®šæ•°*/
 	private static final int REMOVE_SLASH = 1;
-	/**ƒŠƒNƒGƒXƒg‚ÉŠÜ‚Ü‚ê‚éŠeƒpƒ‰ƒ[ƒ^*/
+	/**ãƒªã‚¯ã‚¨ã‚¹ãƒˆã«å«ã¾ã‚Œã‚‹å„ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿*/
 	private Map parameters;
-	/**HTTPServlet‚Å‚ÌƒŠƒNƒGƒXƒgî•ñ*/
+	/**HTTPServletã§ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±*/
 	private HttpServletRequest request;
-	/**HTTPServlet‚Å‚ÌƒZƒbƒVƒ‡ƒ“î•ñ*/
+	/**HTTPServletã§ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³æƒ…å ±*/
 	private HttpSession session;
-	
+
 	/**
 	 *@see WebRequestContext#WebRequestContext
-	 *@return Ž©g‚ð•\‚·ƒCƒ“ƒXƒ^ƒ“ƒX
-	 */	
+	 *@return è‡ªèº«ã‚’è¡¨ã™ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	 */
 	public WebRequestContext() {}
-	
+
 	/**
 	 *@see WebRequestContext#getCommandPath
-	 *@return ŽÀs‚·‚éƒRƒ}ƒ“ƒh‚ÌƒpƒXî•ñ‚ð•Ô‚·
+	 *@return å®Ÿè¡Œã™ã‚‹ã‚³ãƒžãƒ³ãƒ‰ã®ãƒ‘ã‚¹æƒ…å ±ã‚’è¿”ã™
 	 */
 	public String getCommandPath() {
 		String servletPath = request.getServletPath();
-		
+
 		String commandPath = servletPath.substring(REMOVE_SLASH);
-		
+
 		return commandPath;
 	}
-	
+
 	/**
 	 *@see WebRequestContext#getParameter
-	 *@param key ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒg‚Ìƒpƒ‰ƒ[ƒ^‚É‘Î‰ž‚µ‚½ƒL[’l
-	 *@return ƒL[’l‚É‘Î‰ž‚µ‚½ƒpƒ‰ƒ[ƒ^
+	 *@param key ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã«å¯¾å¿œã—ãŸã‚­ãƒ¼å€¤
+	 *@return ã‚­ãƒ¼å€¤ã«å¯¾å¿œã—ãŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
 	 */
 	public String[] getParameter(String key) {
 		return (String[]) parameters.get(key);
 	}
-	
+
 	/**
 	 *@see WebRequestContext#getRequest
-	 *@return ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒgî•ñ
+	 *@return ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±
 	 */
 	public Object getRequest() {
 		return request;
 	}
-	
+
 	/**
 	 *@see WebRequestContext#setRequest
-	 *@param request ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒgî•ñ
+	 *@param request ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±
 	 */
 	public void setRequest(Object request) {
 		this.request = (HttpServletRequest)request;
-		
+
 		session = this.request.getSession();
-		
+
 		parameters = this.request.getParameterMap();
 	}
 
 	/**
-	 *@see WebRequestContext#setRequestAttribute
-	 *@param key ƒŠƒNƒGƒXƒgƒXƒR[ƒv‚É“o˜^‚µ‚½‚¢’l‚É‘Î‰ž‚µ‚½ƒL[’l
-	 *@param value ƒŠƒNƒGƒXƒgƒXƒR[ƒv‚É“o˜^‚µ‚½‚¢’l
-	 */
-	public void setRequestAttribute(String key, Object value) {
-		request.setAttribute(key, value);
-	}
-
-	/**
-	 *@see WebRequestContext#getRequestAttribute
-	 *@return ƒŠƒNƒGƒXƒgƒXƒR[ƒv‚É“o˜^‚³‚ê‚Ä‚¢‚éAƒL[’l‚É‘Î‰ž‚µ‚½’l
-	 */
-	public Object getRequestAttribute(String key) {
-		return request.getAttribute(key);
-	}
-	
-	
-	/**
 	 *@see WebRequestContext#setSessionAttribute
-	 *@param key ƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚É“o˜^‚µ‚½‚¢’l‚ÉA‘Î‰ž‚µ‚½ƒL[’l
-	 *@param value ƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚É“o˜^‚µ‚½‚¢’l
+	 *@param key ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã«ç™»éŒ²ã—ãŸã„å€¤ã«ã€å¯¾å¿œã—ãŸã‚­ãƒ¼å€¤
+	 *@param value ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã«ç™»éŒ²ã—ãŸã„å€¤
 	 */
 	public void setSessionAttribute(String key, Object value) {
 		session.setAttribute(key, value);
@@ -96,7 +79,7 @@ public class WebRequestContext implements RequestContext {
 
 	/**
 	 *@see WebRequestContext#getSessionAttribute
-	 *@return ƒZƒbƒVƒ‡ƒ“‚É“o˜^‚³‚ê‚Ä‚¢‚éAƒL[’l‚É‘Î‰ž‚µ‚½’l
+	 *@return ã‚»ãƒƒã‚·ãƒ§ãƒ³ã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹ã€ã‚­ãƒ¼å€¤ã«å¯¾å¿œã—ãŸå€¤
 	 */
 	public Object getSessionAttribute(String key) {
 		return session.getAttribute(key);
@@ -104,7 +87,7 @@ public class WebRequestContext implements RequestContext {
 
 	/**
 	 *@see WebRequestContext#removeSessionAttribute
-	 *@param key ƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚É“o˜^‚³‚ê‚Ä‚¢‚é’l‚É‘Î‰ž‚µ‚½ƒL[’l
+	 *@param key ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹å€¤ã«å¯¾å¿œã—ãŸã‚­ãƒ¼å€¤
 	 */
 	public void removeSessionAttribute(String key) {
 		session.removeAttribute(key);

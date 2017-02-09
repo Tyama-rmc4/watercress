@@ -1,35 +1,37 @@
 package logic;
 
-import ex.LogicException;
-import javax.servlet.ServletException;
 import java.io.IOException;
+
+import javax.servlet.ServletException;
+
+import ex.LogicException;
 /**
  *@className ApplicationControllerFactory
  *@author Fumihiro Miyazaki
  *@date 2017/01/26
- *@description §ŒäƒƒWƒbƒN‚ğÀs‚·‚éƒNƒ‰ƒX‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX
+ *@description åˆ¶å¾¡ãƒ­ã‚¸ãƒƒã‚¯ã‚’å®Ÿè¡Œã™ã‚‹ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹
  */
 public interface ApplicationController {
 	/**
 	 *@see ApplicationController#getRequest
-	 *@param request ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‘—‚ç‚ê‚½ƒŠƒNƒGƒXƒgî•ñ
-	 *@return ƒŠƒNƒGƒXƒgî•ñ‚ğƒ‰ƒbƒv‚µ‚½ARequestContext‚ÌƒTƒuƒNƒ‰ƒX
+	 *@param request ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰é€ã‚‰ã‚ŒãŸãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±
+	 *@return ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±ã‚’ãƒ©ãƒƒãƒ—ã—ãŸã€RequestContextã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹
 	 */
 	RequestContext getRequest(Object request);
 
 	/**
 	 *@see ApplicationController#handleRequest
-	 *@param requestContext ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒg
-	 *@return ƒRƒ}ƒ“ƒh‚ÌÀsŒ‹‰Ê
-	 *@exception LogicException ƒrƒWƒlƒXƒƒWƒbƒNƒŒƒCƒ„‚Å”­¶‚µ‚½—áŠO‚Ìƒ‰ƒbƒp[
+	 *@param requestContext ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
+	 *@return ã‚³ãƒãƒ³ãƒ‰ã®å®Ÿè¡Œçµæœ
+	 *@exception LogicException ãƒ“ã‚¸ãƒã‚¹ãƒ­ã‚¸ãƒƒã‚¯ãƒ¬ã‚¤ãƒ¤ã§ç™ºç”Ÿã—ãŸä¾‹å¤–ã®ãƒ©ãƒƒãƒ‘ãƒ¼
 	 */
 	ResponseContext handleRequest (RequestContext requestContext)
 	throws LogicException;
-	
+
 	/**
 	 *@see ApplicationController#handleResponse
-	 *@param requestContext ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒgî•ñ
-	 *@param responseContext ƒRƒ}ƒ“ƒhŒnƒNƒ‰ƒX‚ÌÀsŒ‹‰Ê
+	 *@param requestContext ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±
+	 *@param responseContext ã‚³ãƒãƒ³ãƒ‰ç³»ã‚¯ãƒ©ã‚¹ã®å®Ÿè¡Œçµæœ
 	 *@exception ServletException
 	 *@exception IOException
 	 */

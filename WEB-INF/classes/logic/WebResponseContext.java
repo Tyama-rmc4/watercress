@@ -6,65 +6,65 @@ import javax.servlet.http.HttpServletResponse;
  *@className WebResponseContext
  *@author Fumihiro Miyazaki
  *@date 2017/01/26
- *@description HTTP’ÊM‚ÌÛ‚ÌƒŒƒXƒ|ƒ“ƒXî•ñ‚Ìƒ‰ƒbƒp[ƒNƒ‰ƒX
+ *@description HTTPé€šä¿¡ã®éš›ã®ãƒ¬ã‚¹ãƒãƒ³ã‚¹æƒ…å ±ã®ãƒ©ãƒƒãƒ‘ãƒ¼ã‚¯ãƒ©ã‚¹
  */
 public class WebResponseContext implements ResponseContext {
-	/**ƒRƒ}ƒ“ƒh‚ÌÀsŒ‹‰Ê*/
+	/**ã‚³ãƒãƒ³ãƒ‰ã®å®Ÿè¡Œçµæœ*/
 	private Object result;
-	/**“]‘—æ‚ÌURL*/
+	/**è»¢é€å…ˆã®URL*/
 	private String target;
-	/**HTTPServlet‚Å‚ÌƒŒƒXƒ|ƒ“ƒXî•ñ*/
+	/**HTTPServletã§ã®ãƒ¬ã‚¹ãƒãƒ³ã‚¹æƒ…å ±*/
 	private HttpServletResponse response;
-	
+
 	/**
 	 *@see WebResponseContext#WebResponseContext
-	 *@return ©g‚ğ•\‚·ƒCƒ“ƒXƒ^ƒ“ƒX
-	 */	
+	 *@return è‡ªèº«ã‚’è¡¨ã™ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	 */
 	public WebResponseContext() {}
-	
+
 	/**
 	 *@see WebResponseContext#setTarget
-	 *@param transferinfo “]‘—æ‚Ìjspƒtƒ@ƒCƒ‹‚ÌŠg’£q‚ğœ‚¢‚½ƒtƒ@ƒCƒ‹–¼
+	 *@param transferinfo è»¢é€å…ˆã®jspãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ã‚’é™¤ã„ãŸãƒ•ã‚¡ã‚¤ãƒ«å
 	 */
 	public void setTarget(String transferInfo) {
 		target = "/WEB-INF/jsp/" + transferInfo + ".jsp";
 	}
-	
+
 	/**
 	 *@see WebResponseContext#getTarget
-	 *@return “]‘—æ‚ÌURLî•ñ
+	 *@return è»¢é€å…ˆã®URLæƒ…å ±
 	 */
 	public String getTarget() {
 		return target;
 	}
-	
+
 	/**
 	 *@see WebResponseContext#setResult
-	 *@param bean ƒRƒ}ƒ“ƒh‚ÌÀsŒ‹‰Ê‚ğ•Ô‚·‚½‚ß‚Ìbean
+	 *@param bean ã‚³ãƒãƒ³ãƒ‰ã®å®Ÿè¡Œçµæœã‚’è¿”ã™ãŸã‚ã®bean
 	 */
 	public void setResult(Object bean) {
 		result = bean;
 	}
-	
+
 	/**
 	 *@see WebResponseContext#getResult
-	 *@return ƒRƒ}ƒ“ƒh‚ÌÀsŒ‹‰Ê
+	 *@return ã‚³ãƒãƒ³ãƒ‰ã®å®Ÿè¡Œçµæœ
 	 */
 	public Object getResult() {
 		return result;
 	}
-	
+
 	/**
 	 *@see WebResponseContext#getResponse
-	 *@return ƒŒƒXƒ|ƒ“ƒXî•ñ
+	 *@return ãƒ¬ã‚¹ãƒãƒ³ã‚¹æƒ…å ±
 	 */
 	public Object getResponse() {
 		return response;
 	}
-	
+
 	/**
 	 *@see WebResponseContext#setResponse
-	 *@param object ƒŒƒXƒ|ƒ“ƒX‚ÌÛ‚É•K—v‚Èî•ñ
+	 *@param object ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã®éš›ã«å¿…è¦ãªæƒ…å ±
 	 */
 	public void setResponse(Object response){
 		this.response = (HttpServletResponse) response;

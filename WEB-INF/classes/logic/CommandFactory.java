@@ -1,43 +1,43 @@
 package logic;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
-import ex.LogicException;
+
 import command.AbstractCommand;
+import ex.LogicException;
 /**
  *@className CommandFactory
  *@author Fumihiro Miyazaki
  *@date 2017/01/25
- *@description AbstractCommand‚ÌƒTƒuƒNƒ‰ƒX‚Ìƒtƒ@ƒNƒgƒŠƒƒ\ƒbƒh
+ *@description AbstractCommandã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®ãƒ•ã‚¡ã‚¯ãƒˆãƒªãƒ¡ã‚½ãƒƒãƒ‰
  */
 public abstract class CommandFactory {
-	// todo ƒvƒƒpƒeƒBƒtƒ@ƒCƒ‹‚Ö‚ÌƒpƒX‚ğ^–Ê–Ú‚Él‚¦‚é
-	/** @value FILE_PATH ƒvƒƒpƒeƒBƒtƒ@ƒCƒ‹‚Ö‚Ì‘Š‘ÎƒpƒX */
+	// todo ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®ãƒ‘ã‚¹ã‚’çœŸé¢ç›®ã«è€ƒãˆã‚‹
+	/** @value FILE_PATH ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®ç›¸å¯¾ãƒ‘ã‚¹ */
 	private static final String FILE_PATH
 	= "c:/watercress/WEB-INF/data/properties/AbstractCommands.properties";
 
 	/**
 	 *@see CommandFactory#getCommand
-	 *@param requestContext ƒRƒ}ƒ“ƒh‚É‘Î‰‚µ‚½URL‚ğæ“¾‚·‚é‚½‚ß‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-	 *@return ˆø”‚Åw’è‚µ‚½ƒL[’l‚É‘Î‰‚µ‚½A
-	 *        AbstractCommand‚ÌƒTƒuƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-	 *@exception LogicException ƒrƒWƒlƒXƒƒWƒbƒNƒŒƒCƒ„‚Å”­¶‚µ‚½—áŠO‚Ìƒ‰ƒbƒp[
+	 *@param requestContext ã‚³ãƒãƒ³ãƒ‰ã«å¯¾å¿œã—ãŸURLã‚’å–å¾—ã™ã‚‹ãŸã‚ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	 *@return å¼•æ•°ã§æŒ‡å®šã—ãŸã‚­ãƒ¼å€¤ã«å¯¾å¿œã—ãŸã€
+	 *        AbstractCommandã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	 *@exception LogicException ãƒ“ã‚¸ãƒã‚¹ãƒ­ã‚¸ãƒƒã‚¯ãƒ¬ã‚¤ãƒ¤ã§ç™ºç”Ÿã—ãŸä¾‹å¤–ã®ãƒ©ãƒƒãƒ‘ãƒ¼
 	 */
 	public static AbstractCommand getCommand(RequestContext requestContext)
 	throws LogicException {
 		AbstractCommand command = null;
 		Properties properties = new Properties();
-		
+
 		try {
 			properties.load(new FileInputStream(FILE_PATH));
-			
+
 			String className = properties.getProperty(requestContext.getCommandPath());
-			
+
 			Class c = Class.forName(className);
-			
+
 			command = (AbstractCommand) c.newInstance();
 		}catch(FileNotFoundException e) {
 			throw new LogicException(e.getMessage(), e);
@@ -54,25 +54,25 @@ public abstract class CommandFactory {
 		}
 		return command;
 	}
-	
+
 	/**
 	 *@see CommandFactory#getCommand
-	 *@param key “Á’è‚ÌƒRƒ}ƒ“ƒh‚É‘Î‰‚·‚éƒL[’l
-	 *@return ˆø”‚Åw’è‚µ‚½ƒL[’l‚É‘Î‰‚µ‚½A
-	 *        AbstractCommand‚ÌƒTƒuƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-	 *@exception LogicException ƒrƒWƒlƒXƒƒWƒbƒNƒŒƒCƒ„‚Å”­¶‚µ‚½—áŠO‚Ìƒ‰ƒbƒp[
+	 *@param key ç‰¹å®šã®ã‚³ãƒãƒ³ãƒ‰ã«å¯¾å¿œã™ã‚‹ã‚­ãƒ¼å€¤
+	 *@return å¼•æ•°ã§æŒ‡å®šã—ãŸã‚­ãƒ¼å€¤ã«å¯¾å¿œã—ãŸã€
+	 *        AbstractCommandã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	 *@exception LogicException ãƒ“ã‚¸ãƒã‚¹ãƒ­ã‚¸ãƒƒã‚¯ãƒ¬ã‚¤ãƒ¤ã§ç™ºç”Ÿã—ãŸä¾‹å¤–ã®ãƒ©ãƒƒãƒ‘ãƒ¼
 	 */
 	public static AbstractCommand getCommand(String key) throws LogicException {
 		AbstractCommand command = null;
 		Properties properties = new Properties();
-		
+
 		try {
 			properties.load(new FileInputStream(FILE_PATH));
-			
+
 			String className = properties.getProperty(key);
-			
+
 			Class c = Class.forName(className);
-			
+
 			command = (AbstractCommand) c.newInstance();
 		}catch(FileNotFoundException e) {
 			throw new LogicException(e.getMessage(), e);

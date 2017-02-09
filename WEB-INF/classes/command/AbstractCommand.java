@@ -1,41 +1,41 @@
 package command;
 
+import ex.LogicException;
 import logic.RequestContext;
 import logic.ResponseContext;
-import ex.LogicException;
 
 /**
  *@className AbstractCommand
  *@author Fumihiro Miyazaki
  *@date 2017/01/26
- *@description 
+ *@description
  */
 public abstract class AbstractCommand{
-	/**ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒg*/
+	/**ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆ*/
 	private RequestContext requestContext;
-	
+
 	/**
 	 *@see ResponseContext#init
-	 *@param requestContext ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒg
+	 *@param requestContext ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
 	 */
 	public void init(RequestContext requestContext){
 		this.requestContext = requestContext;
 	}
-	
+
 	/**
 	 *@see ResponseContext#getRequestContext
-	 *@return ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒg
+	 *@return ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
 	 */
 	public RequestContext getRequestContext(){
 		return requestContext;
 	}
-	
+
 	/**
 	 *@see ResponseContext#execute
-	 *@param responseContext ÀsŒ‹‰Ê‚ğƒ‰ƒbƒv‚·‚é‚½‚ß‚Ì
-							 ResponseContext‚ÌƒTƒuƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-	 *@return ÀsŒ‹‰Ê‚ğƒ‰ƒbƒv‚µ‚½ResponseContext‚ÌƒTƒuƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-	 *@exception LogicException ƒrƒWƒlƒXƒƒWƒbƒNƒŒƒCƒ„‚Å”­¶‚µ‚½—áŠO‚Ìƒ‰ƒbƒp[
+	 *@param responseContext å®Ÿè¡Œçµæœã‚’ãƒ©ãƒƒãƒ—ã™ã‚‹ãŸã‚ã®
+							 ResponseContextã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	 *@return å®Ÿè¡Œçµæœã‚’ãƒ©ãƒƒãƒ—ã—ãŸResponseContextã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	 *@exception LogicException ãƒ“ã‚¸ãƒã‚¹ãƒ­ã‚¸ãƒƒã‚¯ãƒ¬ã‚¤ãƒ¤ã§ç™ºç”Ÿã—ãŸä¾‹å¤–ã®ãƒ©ãƒƒãƒ‘ãƒ¼
 	 */
 	public abstract ResponseContext execute(ResponseContext responseContext)throws LogicException;
 }

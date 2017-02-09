@@ -1,53 +1,55 @@
 package logic;
 
 import java.io.IOException;
+
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import ex.LogicException;
+
 import command.AbstractCommand;
+import ex.LogicException;
 /**
  *@className FrontServlet
  *@author Fumihiro Miyazaki
  *@date 2017/01/26
- *@description HTTP’ÊM—p‚Ì§ŒäƒƒWƒbƒNÀsƒNƒ‰ƒX
+ *@description HTTPé€šä¿¡ç”¨ã®åˆ¶å¾¡ãƒ­ã‚¸ãƒƒã‚¯å®Ÿè¡Œã‚¯ãƒ©ã‚¹
  */
 public class WebApplicationController implements ApplicationController {
-	
+
 	/**
 	 *@see WebApplicationController#getRequest
-	 *@param request ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‘—‚ç‚ê‚½ƒŠƒNƒGƒXƒgî•ñ
-	 *@return ƒŠƒNƒGƒXƒgî•ñ‚ğƒ‰ƒbƒv‚µ‚½ARequestContext‚ÌƒTƒuƒNƒ‰ƒX
+	 *@param request ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰é€ã‚‰ã‚ŒãŸãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±
+	 *@return ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±ã‚’ãƒ©ãƒƒãƒ—ã—ãŸã€RequestContextã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹
 	 */
 	public RequestContext getRequest(Object request) {
 		RequestContext requestContext = new WebRequestContext();
 		requestContext.setRequest(request);
-		
+
 		return requestContext;
 	}
-	
+
 	/**
 	 *@see WebApplicationController#handleRequest
-	 *@param requestContext ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒg
-	 *@return ƒRƒ}ƒ“ƒh‚ÌÀsŒ‹‰Ê
-	 *@exception LogicException ƒrƒWƒlƒXƒƒWƒbƒNƒŒƒCƒ„‚Å”­¶‚µ‚½—áŠO‚Ìƒ‰ƒbƒp[
+	 *@param requestContext ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
+	 *@return ã‚³ãƒãƒ³ãƒ‰ã®å®Ÿè¡Œçµæœ
+	 *@exception LogicException ãƒ“ã‚¸ãƒã‚¹ãƒ­ã‚¸ãƒƒã‚¯ãƒ¬ã‚¤ãƒ¤ã§ç™ºç”Ÿã—ãŸä¾‹å¤–ã®ãƒ©ãƒƒãƒ‘ãƒ¼
 	 */
 	public ResponseContext handleRequest(RequestContext requestContext)
 	throws LogicException {
 		AbstractCommand command = CommandFactory.getCommand(requestContext);
 		command.init(requestContext);
-		
+
 		ResponseContext responseContext
 		= command.execute(new WebResponseContext());
-		
+
 		return responseContext;
 	}
-	
+
 	/**
 	 *@see WebApplicationController#handleResponse
-	 *@param requestContext ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒgî•ñ
-	 *@param responseContext ƒRƒ}ƒ“ƒhŒnƒNƒ‰ƒX‚ÌÀsŒ‹‰Ê
+	 *@param requestContext ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±
+	 *@param responseContext ã‚³ãƒãƒ³ãƒ‰ç³»ã‚¯ãƒ©ã‚¹ã®å®Ÿè¡Œçµæœ
 	 *@exception ServletException
 	 *@exception IOException
 	 */
@@ -56,15 +58,15 @@ public class WebApplicationController implements ApplicationController {
 	throws ServletException, IOException {
 		HttpServletRequest req
 		= (HttpServletRequest) requestContext.getRequest();
-		
+
 		HttpServletResponse res
 		= (HttpServletResponse) responseContext.getResponse();
 
 		req.setAttribute("data", responseContext.getResult());
-		
+
 		RequestDispatcher requestDispatcher
 		= req.getRequestDispatcher(responseContext.getTarget());
-		
+
 		requestDispatcher.forward (req, res);
 	}
 }

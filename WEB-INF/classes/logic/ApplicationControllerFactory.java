@@ -1,46 +1,46 @@
 package logic;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Properties;
+
 import ex.LogicException;
 
 /**
  *@className ApplicationControllerFactory
  *@author Fumihiro Miyazaki
  *@date 2017/01/25
- *@description ApplicationControllerƒTƒuƒNƒ‰ƒX‚Ìƒtƒ@ƒNƒgƒŠƒNƒ‰ƒX
+ *@description ApplicationControllerã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®ãƒ•ã‚¡ã‚¯ãƒˆãƒªã‚¯ãƒ©ã‚¹
  */
 public abstract class ApplicationControllerFactory {
-	
-	// todo ƒvƒƒpƒeƒBƒtƒ@ƒCƒ‹‚Ö‚ÌƒpƒX‚ğ^–Ê–Ú‚Él‚¦‚é
-	/** @value FILE_PATH ƒvƒƒpƒeƒBƒtƒ@ƒCƒ‹‚Ö‚Ì‘Š‘ÎƒpƒX */
+
+	// todo ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®ãƒ‘ã‚¹ã‚’çœŸé¢ç›®ã«è€ƒãˆã‚‹
+	/** @value FILE_PATH ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®ç›¸å¯¾ãƒ‘ã‚¹ */
 	private static final String FILE_PATH
 	= "c:/watercress/WEB-INF/data/properties/ApplicationControllers.properties";
-	
+
 	/**
 	 *@see ApplicationControllerFactory#getController
-	 *@param key “Á’è‚ÌApplicationController‚ÌƒTƒuƒNƒ‰ƒX‚É‘Î‰‚µ‚½ƒL[’l
-	 *@return ˆø”‚Åw’è‚µ‚½ƒL[’l‚É‘Î‰‚µ‚½A
-	 *        ApplicationController‚ÌƒTƒuƒNƒ‰ƒX‚ÌƒCƒ“ƒXƒ^ƒ“ƒX
-	 *@exception LogicException ƒrƒWƒlƒXƒƒWƒbƒNƒŒƒCƒ„‚Å”­¶‚µ‚½—áŠO‚Ìƒ‰ƒbƒp[
+	 *@param key ç‰¹å®šã®ApplicationControllerã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã«å¯¾å¿œã—ãŸã‚­ãƒ¼å€¤
+	 *@return å¼•æ•°ã§æŒ‡å®šã—ãŸã‚­ãƒ¼å€¤ã«å¯¾å¿œã—ãŸã€
+	 *        ApplicationControllerã®ã‚µãƒ–ã‚¯ãƒ©ã‚¹ã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
+	 *@exception LogicException ãƒ“ã‚¸ãƒã‚¹ãƒ­ã‚¸ãƒƒã‚¯ãƒ¬ã‚¤ãƒ¤ã§ç™ºç”Ÿã—ãŸä¾‹å¤–ã®ãƒ©ãƒƒãƒ‘ãƒ¼
 	 */
 	public static ApplicationController getController(String key)
 	throws LogicException {
 		ApplicationController controller = null;
 		Properties properties = new Properties();
-		
+
 		try {
 			properties.load(new FileInputStream(FILE_PATH));
-			
+
 			String className = properties.getProperty(key);
-			
+
 			Class c = Class.forName(className);
-			
+
 			controller = (ApplicationController) c.newInstance();
-		// —áŠO‚Í‚·‚×‚Äƒ‰ƒbƒv‚µ‚ÄãˆÊƒNƒ‰ƒX‚É‘—o
+		// ä¾‹å¤–ã¯ã™ã¹ã¦ãƒ©ãƒƒãƒ—ã—ã¦ä¸Šä½ã‚¯ãƒ©ã‚¹ã«é€å‡º
 		}catch (FileNotFoundException e) {
 			throw new LogicException(e.getMessage(), e);
 		}catch (IOException e) {

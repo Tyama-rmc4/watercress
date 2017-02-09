@@ -4,43 +4,43 @@ package logic;
  *@className ResponseContext
  *@author Fumihiro Miyazaki
  *@date 2017/01/26
- *@description ƒŒƒXƒ|ƒ“ƒX‚ÉŠÖ‚·‚éƒNƒ‰ƒX‚Ìƒ‰ƒbƒp[ƒNƒ‰ƒX
+ *@description ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã«é–¢ã™ã‚‹ã‚¯ãƒ©ã‚¹ã®ãƒ©ãƒƒãƒ‘ãƒ¼ã‚¯ãƒ©ã‚¹
  */
 public interface ResponseContext {
-	
+
 	/**
 	 *@see ResponseContext#getResult
-	 *@return ƒRƒ}ƒ“ƒh‚ÌÀsŒ‹‰Ê
+	 *@return ã‚³ãƒãƒ³ãƒ‰ã®å®Ÿè¡Œçµæœ
 	 */
 	public Object getResult();
-	
+
 	/**
 	 *@see ResponseContext#getTarget
-	 *@return “]‘—æ‚ÌURLî•ñ
+	 *@return è»¢é€å…ˆã®URLæƒ…å ±
 	 */
 	public String getTarget();
-	
+
 	/**
 	 *@see ResponseContext#setResult
-	 *@param bean ƒRƒ}ƒ“ƒh‚ÌÀsŒ‹‰Ê‚ğ•Ô‚·‚½‚ß‚Ìbean
+	 *@param bean ã‚³ãƒãƒ³ãƒ‰ã®å®Ÿè¡Œçµæœã‚’è¿”ã™ãŸã‚ã®bean
 	 */
 	public void setResult(Object bean);
-	
+
 	/**
 	 *@see ResponseContext#setTarget
-	 *@param transferinfo “]‘—æ‚Ìjspƒtƒ@ƒCƒ‹‚ÌŠg’£q‚ğœ‚¢‚½ƒtƒ@ƒCƒ‹–¼
+	 *@param transferinfo è»¢é€å…ˆã®jspãƒ•ã‚¡ã‚¤ãƒ«ã®æ‹¡å¼µå­ã‚’é™¤ã„ãŸãƒ•ã‚¡ã‚¤ãƒ«å
 	 */
 	public void setTarget(String transferInfo);
-	
+
 	/**
 	 *@see ResponseContext#setResponse
-	 *@param object ƒŒƒXƒ|ƒ“ƒX‚ÌÛ‚É•K—v‚Èî•ñ
+	 *@param object ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã®éš›ã«å¿…è¦ãªæƒ…å ±
 	 */
 	public void setResponse(Object object);
-	
+
 	/**
 	 *@see ResponseContext#getResponse
-	 *@return ƒŒƒXƒ|ƒ“ƒXî•ñ
+	 *@return ãƒ¬ã‚¹ãƒãƒ³ã‚¹æƒ…å ±
 	 */
 	public Object getResponse();
 }

@@ -1,5 +1,6 @@
+
 /*
-  @ author ‰F’Ã–ìŒõ
+@ author å®‡æ´¥é‡Žå…‰
 */
 
 package bean;
@@ -7,7 +8,7 @@ package bean;
 import java.io.Serializable;
 
 public class MemberBean implements Serializable{
-	
+
 	private int memberId;
 	private String memberName;
 	private String memberKana;
@@ -18,7 +19,7 @@ public class MemberBean implements Serializable{
 	private String memberEmail;
 	private String memberPassword;
 	private int memberStatusId;
-	
+
 	public int getMemberId() {
 		return memberId;
 	}
@@ -79,6 +80,6 @@ public class MemberBean implements Serializable{
 	public void setMemberStatusId(int memberStatusId) {
 		this.memberStatusId = memberStatusId;
 	}
-	
-	
+
+
 }
