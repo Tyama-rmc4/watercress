@@ -365,7 +365,8 @@ public class ShowProductsListCommand extends AbstractCommand{
 		List<String> productColors = new ArrayList<String>();
 		
 		/*プロパティファイルへのパス */
-		String FILE_PATH = "c:/watercress/ProductColors.properties";
+		String FILE_PATH
+		= "c:/watercress/WEB-INF/data/properties/ProductColors.properties";
 		
 		/*色毎の画像パスを保存しているプロパティファイルを読み込む*/
 		Properties properties = new Properties();
