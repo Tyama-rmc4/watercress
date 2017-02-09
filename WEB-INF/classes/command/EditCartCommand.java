@@ -33,9 +33,10 @@ public class EditCartCommand extends AbstractCommand{
 		String productId = req.getParameter("productid")[0];
 		String itemCount =req.getParameter("itemcount")[0];
 		Map<String,String> cart = (Map<String,String>)req.getSessionAttribute("cart");
-		
-		if(cart.containsKey(productId) == true){
-			cart.put(productId,itemCount);
+		if(productId != null || itemCount != null){
+			if(cart.containsKey(productId) == true){
+				cart.put(productId,itemCount);
+			}
 		}
 		
 		

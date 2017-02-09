@@ -45,7 +45,9 @@ public class AddProductsToCartCommand extends AbstractCommand{
 		‚Ü‚Á‚½‚­“¯‚¶¤•i‚ğ’Ç‰Á‚µ‚½ê‡‚Æ‚è‚ ‚¦‚¸—áŠO‚Ö
 		¡Œã‚ÉŠú‘Ò
 		*/
-		cart.put(productId,itemCount);
+		if(productId != null || itemCount != null){
+			cart.put(productId,itemCount);
+		}
 		
 		/*map‚Ì•Ï”cart‚ğcart‚Á‚Ä–¼‘O‚Åcart.jsp‚É”ò‚Î‚·*/
 		req.setSessionAttribute("cart", cart);

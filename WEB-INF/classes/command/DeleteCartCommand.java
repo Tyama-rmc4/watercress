@@ -52,9 +52,7 @@ public class DeleteCartCommand extends AbstractCommand{
 			*/
 			if(0 <= checkNumber){
 				if(cart.containsKey(productId) == true){
-					cart.get(productId+"•\Ž¦");
 					cart.remove(productId);
-					cart.get(productId+"‚½‚Ô‚ñnull");
 					req.setSessionAttribute("cart",cart);
 				}
 			}else{
