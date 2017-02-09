@@ -58,17 +58,25 @@ public class ShowProductsListCommand extends AbstractCommand{
 		RequestContext requestContext = getRequestContext();
 		
 		/*送信されてきた各パラメータの取得*/
-		/*ページの番号*/
-		int pageNumber
-		= Integer.parseInt(requestContext.getParameter("pageNumber")[0]);
+		/*ページの番号。パラメータが無い場合は1ページ目を表示する*/
+		int pageNumber = 1;
+		String[] pageNumberParam
+		= requestContext.getParameter("pageNumber");
+		if(pageNumberParam != null){
+			pageNumber = Integer.parseInt(pageNumberParam[0]);
+		}
 		/*選択されたサブカテゴリの名前*/
-		String selectedSubCategory
-		= requestContext.getParameter("subCategory")[0];
+		String selectedSubCategory = null;
+		String[] selectedSubCategoryParam
+		= requestContext.getParameter("subCategory");
+		if(selectedSubCategoryParam != null){
+			selectedSubCategory = selectedSubCategoryParam[0];
+		}
 		/*検索する名前  全角スペースを半角スペースに変換した後、
 		  半角スペースで分割して配列にする*/
+		String[] searchTexts = null;
 		String searchTextParam
 		= requestContext.getParameter("searchText")[0];
-		String[] searchTexts = null;
 		if(searchTextParam != null){
 			searchTextParam = searchTextParam.replaceAll("　"," ");
 			searchTexts = searchTextParam.split(" ");
@@ -272,33 +280,35 @@ public class ShowProductsListCommand extends AbstractCommand{
 		/*返却するソート方法指定用配列を宣言*/
 		int[] sortArray = new int[3];
 		
-		/*sortParamsの内容に従って、定数を配列に格納する*/
-		for(int i = 0;i<=sortParams.length;i++){
-			/*
-			  priceAsc = 値段の安い順
-			  priceDesc = 値段の高い順
-			  purchaseAsc = 購入数が少ない順
-			  purchaseDesc = 購入数が多い順
-			  nameAsc = 50音順
-			  nameDesc = 50音順の逆順 
-			*/
-			if(sortParams[i].equals("priceAsc")){
-				sortArray[0] = ProductCatalogDao.SORT_BY_PRICE_ASC;
-			}
-			else if(sortParams[i].equals("priceDesc")){
-				sortArray[0] = ProductCatalogDao.SORT_BY_PRICE_DESC;
-			}
-			else if(sortParams[i].equals("purchaseAsc")){
-				sortArray[1] = ProductCatalogDao.SORT_BY_PURCHASE_COUNT_ASC;
-			}
-			else if(sortParams[i].equals("purchaseDesc")){
-				sortArray[1] = ProductCatalogDao.SORT_BY_PURCHASE_COUNT_DESC;
-			}
-			else if(sortParams[i].equals("nameAsc")){
-				sortArray[2] = ProductCatalogDao.SORT_BY_NAME_ASC;
-			}
-			else if(sortParams[i].equals("nameDesc")){
-				sortArray[2] = ProductCatalogDao.SORT_BY_NAME_DESC;
+		if(sortParams != null){
+			/*sortParamsの内容に従って、定数を配列に格納する*/
+			for(int i = 0;i<=sortParams.length;i++){
+				/*
+				  priceAsc = 値段の安い順
+				  priceDesc = 値段の高い順
+				  purchaseAsc = 購入数が少ない順
+				  purchaseDesc = 購入数が多い順
+				  nameAsc = 50音順
+				  nameDesc = 50音順の逆順 
+				*/
+				if(sortParams[i].equals("priceAsc")){
+					sortArray[0] = ProductCatalogDao.SORT_BY_PRICE_ASC;
+				}
+				else if(sortParams[i].equals("priceDesc")){
+					sortArray[0] = ProductCatalogDao.SORT_BY_PRICE_DESC;
+				}
+				else if(sortParams[i].equals("purchaseAsc")){
+					sortArray[1] = ProductCatalogDao.SORT_BY_PURCHASE_COUNT_ASC;
+				}
+				else if(sortParams[i].equals("purchaseDesc")){
+					sortArray[1] = ProductCatalogDao.SORT_BY_PURCHASE_COUNT_DESC;
+				}
+				else if(sortParams[i].equals("nameAsc")){
+					sortArray[2] = ProductCatalogDao.SORT_BY_NAME_ASC;
+				}
+				else if(sortParams[i].equals("nameDesc")){
+					sortArray[2] = ProductCatalogDao.SORT_BY_NAME_DESC;
+				}
 			}
 		}
 		/*作成した配列を返す*/
