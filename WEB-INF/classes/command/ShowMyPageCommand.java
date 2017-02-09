@@ -7,11 +7,13 @@ import java.util.Iterator;
 import bean.MemberBean;
 import bean.ProductBean;
 import bean.FavoriteBean;
+import bean.TagBean;
 
 import dao.AbstractDaoFactory;
 import dao.MemberDao;
 import dao.ProductDao;
 import dao.FavoriteDao;
+import dao.TagDao;
 
 
 import logic.ResponseContext;
@@ -24,7 +26,7 @@ import ex.LogicException;
  *@className UserStatusCommand
  *@author 河野,宇津野
  *@date 2017/01/31
- *@description 
+ *@description アカウント情報、お気に入り商品、おすすめ商品
  */
 
 public class ShowMyPageCommand extends AbstractCommand{
@@ -51,8 +53,15 @@ public class ShowMyPageCommand extends AbstractCommand{
 		/*入力されたパラメータを受け取る*/
 		int memberId = Integer.parseInt(requestContext.getSessionAttribute("login").toString()) ;
 		
+		/*タグのリストを全件取得するための変数*/
+		List tags = null;
+		
+		/*オススメ商品のみ格納したリスト*/
+		List tagsName = null;
+		
 		/*メンバーリストを全件取得のためのリスト*/
 		List allMemberList = null;
+		
 		/*returnで返すためのリスト*/
 		List myPageList = null;
 		
@@ -117,6 +126,39 @@ public class ShowMyPageCommand extends AbstractCommand{
 			
 			myPageList.add(memberProductList);
 			
+			/*おすすめ商品の表示－－－－－－－－－－－－－－－－－*/
+			
+			TagDao tagDao = factory.getTagDao();
+			/*Tag表を全件取得*/
+			tags = tagDao.getTags();
+			
+			Iterator tagIterator = tags.iterator();
+			Iterator productsIterator = productList.iterator();
+			
+			while(tagIterator.hasNext()){
+				TagBean tagBean = (TagBean)tagIterator.next();
+				String tagName = tagBean.getTagName();
+				
+				if(tagName == "オススメ"){
+					tagsName.add(tagBean);
+				}
+			}
+			Iterator tagNameIterator = tagsName.iterator();
+			while(tagNameIterator.hasNext()){
+				TagBean tagNameBean 
+				= (TagBean)tagNameIterator.next();
+				/*オススメ商品のProductIdを格納*/
+				String tagProductId = tagNameBean.getProductId();
+				while(productsIterator.hasNext()){
+					ProductBean productBean 
+					= (ProductBean)productsIterator.next();
+				/*商品のProductIdを格納*/
+					String productId = productBean.getProductId();
+					if(productId == tagProductId){
+						myPageList.add(productBean);
+					}
+				}
+			}
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
