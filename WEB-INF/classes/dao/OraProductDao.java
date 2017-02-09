@@ -41,7 +41,7 @@ public class OraProductDao implements ProductDao {
 			
 			/*SQLï∂ÇãLèq*/
 			String sql = "SELECT product_id, product_name, product_price,"+
-							"product_description, category_id, sub_category_id"+
+							"product_description, category_id, sub_category_id, "+
 							"product_size, product_color, product_release_date "+
 							"FROM product";
 			
