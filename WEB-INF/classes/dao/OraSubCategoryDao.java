@@ -40,7 +40,7 @@ public class OraSubCategoryDao implements SubCategoryDao {
 			statement = connection.createStatement();
 			
 			/*SQL文を記述*/
-			String sql = "SELECT sub_category_id, sub_category_name"+
+			String sql = "SELECT sub_category_id, sub_category_name "+
 						"category_id FROM Sub_Category";
 			
 			/*SQL文を実行し、ResultSetオブジェクトを生成*/
