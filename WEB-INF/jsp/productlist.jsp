@@ -1,11 +1,13 @@
 <!--
 式言語で取得できるデータ
-data : List<Map> 【${data}】
+ data : List<Map> 【jspで${data}で取り出される部分】
  ┃
- ┗Map<String, Object>
+ ┗productData : Map<String, Object>
    ┃
    ┗"productCatalog",ProductCatalogBean
-   ┗"tagNames",List<String>
+   ┗"productTagNames",List<String> その商品に付加されているタグの名前のList
+   ┗"productColors",List<String> その商品の色の画像パスのList
+   ┗"isFavorite",Boolean その商品はログイン中の会員のお気に入りであるか
 -->
 
 
@@ -102,9 +104,11 @@ data : List<Map> 【${data}】
 
 <%
 	int pageNumber = 1;
+	/*
 	if(session.getAttribute("pageNumber") != null){
 		pageNumber = Integer.parseInt(session.getAttribute("pageNumber"));
 	}
+	*/
 	pageContext.setAttribute("pageNumber",pageNumber);
 %>
 
@@ -126,7 +130,7 @@ data : List<Map> 【${data}】
 </c:forEach>
 
 <c:if test="${pageScope.pageNumber < pageScope.pageCount}" >
-	<a href ="productlist?pageNumber=${pageScope.pageNumber-1}">前のページへ</a>
+	<a href ="productlist?pageNumber=${pageScope.pageNumber+1}">次のページへ</a>
 </c:if>
 
 <footer>
