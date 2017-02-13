@@ -72,14 +72,14 @@
 </ul>
 </nav>
 <h1>商品一覧</h1>
-
+${param.subCategory}
 <c:forEach var="product" items="${data}">
 
 	<section class="list">
 		<a href="item.html">
 			<figure>
 				<a href ="productdetail?productName=${product.productCatalog.productName}">
-					<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productCatalog.productImagePath}" alt="商品名">
+					<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productCatalog.productImagePath}" alt="商品の画像">
 				</a>
 				
 				<!-- 各タグの表示 -->
@@ -91,12 +91,12 @@
 				
 				<!-- 売り切れの表示 -->
 				<c:if test="${product.productCatalog.productStockCount == 0}">
-					<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
+					<img class="売り切れ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="売り切れ">
 				</c:if>
 				
 			</figure>
-			<h4>${product.productName}《${product.productPrice}》</h4>
-			<p>${product.productDescription}</p>
+			<h4>${product.productCatalog.productName}《${product.productCatalog.productPrice}》</h4>
+			<!-- <p>product.productCatalog.productDescription</p> -->
 			<!-- <p>説明文は短めに入力して下さい。沢山詰め込むと表示が途中で切れます。</p> -->
 		</a>
 	</section>
@@ -104,11 +104,11 @@
 
 <%
 	int pageNumber = 1;
-	/*
+	
 	if(session.getAttribute("pageNumber") != null){
-		pageNumber = Integer.parseInt(session.getAttribute("pageNumber"));
+		pageNumber = (Integer)session.getAttribute("pageNumber");
 	}
-	*/
+	
 	pageContext.setAttribute("pageNumber",pageNumber);
 %>
 

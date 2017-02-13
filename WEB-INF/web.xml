@@ -5,7 +5,7 @@
 	</servlet>
 	<servlet-mapping>
 		<servlet-name>frontservlet</servlet-name>
-		<url-pattern>/</url-pattern>
+		<url-pattern>/front/*</url-pattern>
 	</servlet-mapping>
 
 	

@@ -32,7 +32,7 @@ public class WebRequestContext implements RequestContext {
 	 *@return 実行するコマンドのパス情報を返す
 	 */
 	public String getCommandPath() {
-		String servletPath = request.getServletPath();
+		String servletPath = request.getPathInfo();
 
 		String commandPath = servletPath.substring(REMOVE_SLASH);
 
