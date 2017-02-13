@@ -1,13 +1,18 @@
 <!--
 式言語で取得できるデータ
- data : List<Map> 【jspで${data}で取り出される部分】
+ resultData : Map<String, Object> 【式言語で${data}で取り出される部分】
  ┃
- ┗productData : Map<String, Object>
-   ┃
-   ┗"productCatalog",ProductCatalogBean
-   ┗"productTagNames",List<String> その商品に付加されているタグの名前のList
-   ┗"productColors",List<String> その商品の色の画像パスのList
-   ┗"isFavorite",Boolean その商品はログイン中の会員のお気に入りであるか
+ ┗"productCount",Integer 検索条件に該当する商品の数
+ ┃
+ ┗"pageNumber",Integer 表示するページ番号
+ ┃
+ ┗"productData" : List<Map>
+   ┗productData : Map<String, Object> 商品一件ずつのデータ
+     ┃
+     ┗"catalog",ProductCatalogBean このBeanの内容通りの、名前などのデータ
+     ┗"tagNames",List<String> その商品に付加されているタグの名前のList
+     ┗"colors",List<String> その商品の色の画像パスのList
+     ┗"isFavorite",Boolean その商品はログイン中の会員のお気に入りであるか
 -->
 
 
@@ -15,6 +20,7 @@
    contentType="text/html;charset=UTF-8"
    %>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <!doctype html>
 <html lang="ja">
 <head>
@@ -52,11 +58,12 @@
 <li class="arrow"><a>CATEGORY</a>
     <ul class="ddmenu">
     <li><a href="list.html">TOPS</a></li>
+    <li><a href="productlist?subCategory=outer">サブカテゴリのリンクテスト：outer</a></li>
     <li><a href="list2.html">BOTTOMS</a></li>
     <li><a href="list3.html">UNDER</a></li>
     <li><a href="list4.html">SHOES</a></li>
     <li><a href="list5.html">ACCESSORIES</a></li>
-	</ul>
+    </ul>
 </li>
 <li class="arrow"><a href="productlist.html">SALE</a>
 </li>
@@ -72,65 +79,54 @@
 </ul>
 </nav>
 <h1>商品一覧</h1>
-${param.subCategory}
-<c:forEach var="product" items="${data}">
-
+選択サブカテゴリ：${param.subCategory}
+<c:forEach var="product" items="${data.productsData}">
+	
 	<section class="list">
 		<a href="item.html">
 			<figure>
-				<a href ="productdetail?productName=${product.productCatalog.productName}">
-					<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productCatalog.productImagePath}" alt="商品の画像">
+				<a href ="productdetail?productName=${product.catalog.productName}">
+					<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.catalog.productImagePath}" alt="商品の画像">
 				</a>
 				
 				<!-- 各タグの表示 -->
 				<c:forEach var="tagName" items="${product.tagNames}">
 					<c:if test="${tagName == 'タグ名'}">
-						<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="商品名">
+						<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.catalog.productImagePath}" alt="商品名">
 					</c:if>
 				</c:forEach>
 				
 				<!-- 売り切れの表示 -->
-				<c:if test="${product.productCatalog.productStockCount == 0}">
-					<img class="売り切れ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.productImagePath}" alt="売り切れ">
+				<c:if test="${product.catalog.productStockCount == 0}">
+					<img class="売り切れ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.catalog.productImagePath}" alt="売り切れ">
 				</c:if>
 				
 			</figure>
-			<h4>${product.productCatalog.productName}《${product.productCatalog.productPrice}》</h4>
-			<!-- <p>product.productCatalog.productDescription</p> -->
-			<!-- <p>説明文は短めに入力して下さい。沢山詰め込むと表示が途中で切れます。</p> -->
+			<h4>${product.catalog.productName} ￥${product.catalog.productPrice} </h4>
 		</a>
 	</section>
 </c:forEach>
 
-<%
-	int pageNumber = 1;
-	
-	if(session.getAttribute("pageNumber") != null){
-		pageNumber = (Integer)session.getAttribute("pageNumber");
-	}
-	
-	pageContext.setAttribute("pageNumber",pageNumber);
-%>
-
-<c:if test="${pageScope.pageNumber > 1}" >
-	<a href ="productlist?pageNumber=${pageScope.pageNumber-1}">前のページへ</a>
+<!-- 現在のページが1ページ目でなければ、前のページへ移動するリンクを表示 -->
+<c:if test="${data.pageNumber > 1}" >
+	<a href ="productlist?subCategory=${param.subCategory}&pageNumber=${data.pageNumber-1}">前のページへ</a>
 </c:if>
 
-
-<!-- 商品数１５毎に１個ページ移動ボタンを増やす -->
+<!-- 商品数１５毎に１個、ページ移動ボタンを増やす -->
 <%
 	int pageCount = 0;
 %>
-<c:forEach items="${data}" step="15">
+<c:forEach items="${data.productCount}" step="15">
 		<%
 			pageCount += 1;
 			pageContext.setAttribute("pageCount",pageCount);
 		%>
-	<a href ="productlist?pageNumber=${pageScope.pageCount}">${pageScope.pageCount}</a>
+	<a href ="productlist?subCategory=${param.subCategory}&pageNumber=${pageScope.pageCount}">${pageScope.pageCount}</a>
 </c:forEach>
 
-<c:if test="${pageScope.pageNumber < pageScope.pageCount}" >
-	<a href ="productlist?pageNumber=${pageScope.pageNumber+1}">次のページへ</a>
+<!-- 現在のページが最後のページでなければ、次のページへ移動するリンクを表示 -->
+<c:if test="${data.pageNumber < pageScope.pageCount}" >
+	<a href ="productlist?subCategory=${param.subCategory}&pageNumber=${data.pageNumber+1}">次のページへ</a>
 </c:if>
 
 <footer>

@@ -1,37 +1,31 @@
 package command;
 
-import java.util.List;
-import java.util.Iterator;
-
-import java.io.IOException;
-import javax.servlet.http.HttpSession;
-
-import bean.ProductCatalogBean;
-import bean.SubCategoryBean;
-import dao.ProductCatalogDao;
-import dao.OraProductCatalogDao;
-import dao.SubCategoryDao;
-import dao.AbstractDaoFactory;
-
-import logic.ResponseContext;
-import logic.RequestContext;
-import logic.WebRequestContext;
-import ex.IntegrationException;
-import ex.LogicException;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Properties;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import bean.TagBean;
-import dao.TagDao;
-import bean.ProductBean;
-import dao.ProductDao;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+
 import bean.FavoriteBean;
+import bean.ProductBean;
+import bean.ProductCatalogBean;
+import bean.SubCategoryBean;
+import bean.TagBean;
+import dao.AbstractDaoFactory;
 import dao.FavoriteDao;
+import dao.ProductCatalogDao;
+import dao.ProductDao;
+import dao.SubCategoryDao;
+import dao.TagDao;
+import ex.IntegrationException;
+import ex.LogicException;
+import logic.RequestContext;
+import logic.ResponseContext;
 
 /**
  *@className ShowProductsListCommand
@@ -44,38 +38,48 @@ import dao.FavoriteDao;
                    "productColors"を追加しました。
                    結果のproductDataに、その商品はログイン中の会員のお気に入り
                    であるかを表すBooleanである"isFavoirte"を追加しました。
- *@description 
- data : List<Map> 【jspで${data}で取り出される部分】
+ *@date 2017/02/13 格納する結果の仕様を、検索条件に該当する商品の数を含むものに
+                    変更しました。
+ *@description
+ resultData : Map<String, Object> 【jspで${data}で取り出される部分】
  ┃
- ┗productData : Map<String, Object>
-   ┃
-   ┗"productCatalog",ProductCatalogBean
-   ┗"productTagNames",List<String> その商品に付加されているタグの名前のList
-   ┗"productColors",List<String> その商品の色の画像パスのList
-   ┗"isFavorite",Boolean その商品はログイン中の会員のお気に入りであるか
+ ┗"productCount",Integer 検索条件に該当する商品の数
+ ┃
+ ┗"pageNumber",Integer 表示するページ番号
+ ┃
+ ┗"productData" : List<Map>
+   ┗productData : Map<String, Object> 商品一件ずつのデータ
+     ┃
+     ┗"catalog",ProductCatalogBean このBeanの内容通りの、名前などのデータ
+     ┗"tagNames",List<String> その商品に付加されているタグの名前のList
+     ┗"colors",List<String> その商品の色の画像パスのList
+     ┗"isFavorite",Boolean その商品はログイン中の会員のお気に入りであるか
  */
 
 public class ShowProductsListCommand extends AbstractCommand{
-	
+
+	/*Daoを取得するためのDaoFactoryを格納する*/
+	AbstractDaoFactory factory;
+
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException{
 		/*RequestContextのインスタンスを取得*/
 		RequestContext requestContext = getRequestContext();
-		
+
 		/*送信されてきた各パラメータの取得*/
 		/*ページの番号。パラメータが無い場合は1ページ目を表示する*/
-		int pageNumber = 1;
+		Integer pageNumber = 1;
 		String[] pageNumberParam
 		= requestContext.getParameter("pageNumber");
 		if(pageNumberParam != null){
 			pageNumber = Integer.parseInt(pageNumberParam[0]);
 		}
 		/*選択されたサブカテゴリの名前*/
-		String selectedSubCategory = null;
+		String selectedSubCategoryName = null;
 		String[] selectedSubCategoryParam
 		= requestContext.getParameter("subCategory");
 		if(selectedSubCategoryParam != null){
-			selectedSubCategory = selectedSubCategoryParam[0];
+			selectedSubCategoryName = selectedSubCategoryParam[0];
 		}
 		/*検索する名前  全角スペースを半角スペースに変換した後、
 		  半角スペースで分割して配列にする*/
@@ -103,7 +107,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 		/*sortParamsの文字列を、createSortArrayメソッドのルールに
 		  従ってint配列に変換する。これを商品検索の際に引数にする*/
 		int[] sortArray = createSortArray(sortParams);
-		
+
 		/*ログイン中の会員のIDを取得する。*/
 		/*ログインしていない場合は-1を格納する。*/
 		int loginMemberId = -1;
@@ -112,91 +116,59 @@ public class ShowProductsListCommand extends AbstractCommand{
 			= (String)requestContext.getSessionAttribute("login");
 			loginMemberId = Integer.parseInt(idAttribute);
 		}
-		
-		/*全サブカテゴリの情報のリスト*/
-		List allSubCategoryList = null; 
+
+
+		/*このコマンドのresultとなる、各商品の情報と該当する商品の数*/
+		Map resultData = new HashMap();
+
+		/*上記のMapに含まれる、
+		  選択されたサブカテゴリの商品が見つかった個数の変数*/
+		Integer foundProductCount = 0;
+
+		/*上記のMapに含まれる、商品情報とそのタグ名のリスト*/
+		List<Map> productsDataList = new ArrayList<Map>();
+
 		/*全商品の情報のリスト*/
-		List allCatalogList = null; 
+		List allCatalogList = null;
 		/*全タグの情報のリスト*/
 		List allTagList = null;
-		/*全お気に入りの情報のリスト*/
-		List allFavoriteList = null;
-		
-		/*このコマンドのResultとなる、商品情報とそのタグ名のリスト*/
-		List<Map> returnProductsDataList = new ArrayList<Map>();
-		
-		/*選択されたサブカテゴリのIDを格納する変数を宣言*/
-		int selectedSubCategoryId = 0;
+
 		try{
-			/*Daoを取得するためのDaoFactoryを取得*/
-			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
-			
-			/*Daoからサブカテゴリの情報を取得する*/
-			SubCategoryDao subCategoryDao = factory.getSubCategoryDao();
-			allSubCategoryList = subCategoryDao.getSubCategories();
-			
-			/*Iteratorを使い、各サブカテゴリの情報を確認*/
-			Iterator subCategoryIterator = allSubCategoryList.iterator();
-			while(subCategoryIterator.hasNext()){
-				/*サブカテゴリのBeanを取得*/
-				SubCategoryBean subCategory
-				= (SubCategoryBean)subCategoryIterator.next();
-				/*Beanの中のサブカテゴリの名前と、クライアントが選択した
-				  サブカテゴリの名前が同じなら、そのサブカテゴリのIDを
-				  変数に格納する*/
-				if(subCategory.getSubCategoryName()
-					.equals(selectedSubCategory)){
-						selectedSubCategoryId
-						= subCategory.getSubCategoryId();
-					break;
-				}
-			}
-			
+			/*Daoを取得するためのDaoFactoryを取得する*/
+			factory = AbstractDaoFactory.getFactory();
+
+			/*選択されたサブカテゴリのIDを分割したメソッドで取得する*/
+			int selectedSubCategoryId
+			= getSubCategoryId(selectedSubCategoryName);
+
+			/*現在ログイン中の会員の、
+			  お気に入りの商品のIDのリストを分割したメソッドで取得する*/
+			List memberFavoriteList = getMemberFavoriteList(loginMemberId);
+
 			/*商品の情報を取得するためのDaoを取得する*/
 			ProductCatalogDao pcd = factory.getProductCatalogDao();
 			/*Daoから商品の情報を取得する。sortArrayによってソート条件を設定*/
 			allCatalogList = pcd.getProductCatalogs(sortArray);
-			
+
 			/*タグの情報を取得するためのDaoを取得する*/
 			TagDao tagDao = factory.getTagDao();
 			/*Daoからタグの情報を取得する*/
 			allTagList = tagDao.getTags();
-			
-			/*現在ログイン中の会員の、お気に入りの商品のIDのリストを宣言*/
-			List memberFavoriteList = new ArrayList();
-			/*会員がログインしているなら、お気に入りの商品のIDを取得する*/
-			if(loginMemberId != -1){
-				/*お気に入りの情報を取得するためのDaoを取得する*/
-				FavoriteDao favoriteDao = factory.getFavoriteDao();
-				/*Daoからお気に入りの情報を取得する*/
-				allFavoriteList = favoriteDao.getFavorites();
-				
-				Iterator favoriteIterator = allFavoriteList.iterator();
-				while(favoriteIterator.hasNext()){
-					FavoriteBean favorite
-					= (FavoriteBean)favoriteIterator.next();
-					if(loginMemberId == favorite.getMemberId()){
-						memberFavoriteList.add(favorite.getProductId());
-					}
-				}
-			}
-			
-			/*選択されたサブカテゴリの商品が見つかった個数の変数を宣言*/
-			int foundProductCount = 0;
-			
+
 			Iterator catalogIterator = allCatalogList.iterator();
 			while(catalogIterator.hasNext()){
+
 				/*Iteratorを使ってList内の商品情報のBeanを取り出す*/
 				ProductCatalogBean product
 					= (ProductCatalogBean)catalogIterator.next();
-				
+
 				/*選択したサブカテゴリの商品なら、次の検索合致判定に進む*/
 				if(product.getSubCategoryId() == selectedSubCategoryId){
-					
+
 					/*その商品に付加されているタグをこの時点で取得しておく*/
 					/*現在の商品情報のタグの名前を格納するListの宣言*/
 					List<String> productTagNames = new ArrayList<String>();
-						
+
 					Iterator tagIterator = allTagList.iterator();
 					while(tagIterator.hasNext()){
 						TagBean tagRelation = (TagBean)tagIterator.next();
@@ -208,12 +180,12 @@ public class ShowProductsListCommand extends AbstractCommand{
 							productTagNames.add(tagRelation.getTagName());
 						}
 					}
-					
+
 					/*検索条件の文字列に合致するかを持つ変数の宣言*/
 					boolean isMatchText = false;
 					/*検索条件のタグに合致するかを持つ変数の宣言*/
 					boolean isMatchTag = false;
-					
+
 					/*検索条件の文字列が存在しないなら常に条件合致とする*/
 					if(searchTexts == null){
 						isMatchText = true;
@@ -265,28 +237,28 @@ public class ShowProductsListCommand extends AbstractCommand{
 					if(isMatchText && isMatchTag){
 						/*発見商品数を１増やす*/
 						foundProductCount++;
-						
+
 						/*現在のページでその商品を表示すべきかを判定する*/
 						/*現在のページ番号で表示すべき商品なら、その情報と
 						  それに付加されているタグの名前と
 						  その商品の色を表す画像のパスと
 						  ログイン中の会員のお気に入りであるかを
 						  Mapに格納し、それをListに格納する*/
-						if((pageNumber - 1) * 15 < foundProductCount 
+						if((pageNumber - 1) * 15 < foundProductCount
 						&& foundProductCount <= pageNumber * 15){
-							
+
 							/*商品の情報と、付加されているタグの名前と
 							  商品の色を表す画像のパスと
 							  ログイン中の会員のお気に入りであるかを
 							  Mapに格納する。*/
 							Map productData = new HashMap();
-							productData.put("productCatalog",product);
-							productData.put("productTagNames",productTagNames);
+							productData.put("catalog",product);
+							productData.put("tagNames",productTagNames);
 							/*商品の色を表す画像のパスは
 							  分割したメソッドから取得する*/
 							List<String> productColors
 							= getProductColors(product.getProductName());
-							productData.put("productColors",productColors);
+							productData.put("colors",productColors);
 							/*この商品はログイン中の会員のお気に入り
 							  であるかを確認する*/
 							Boolean isFavorite = new Boolean(false);
@@ -296,33 +268,38 @@ public class ShowProductsListCommand extends AbstractCommand{
 							}
 							productData.put("isFavorite",isFavorite);
 							/*格納したMapをListに追加する*/
-							returnProductsDataList.add(productData);
+							productsDataList.add(productData);
 						}/*if(現在のページで表示すべきか) の終端*/
 					}/*if(検索文字列、検索タグに合致するか)*/
 				}/*if(選択したサブカテゴリか) の終端*/
 			}/*while(catalogIterator.hasNext()) の終端*/
-			
+
 		}catch (IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
-		
-		/*セッションスコープに表示するページ番号を保存*/
-		requestContext.setSessionAttribute("pageNumber",pageNumber);
-		
+
+		/*resultであるMapにデータを格納する*/
+		/*商品の個数。forEachを用いるため内容の無い配列にする*/
+		resultData.put("productCount", new int[foundProductCount]);
+		/*ページ番号*/
+		resultData.put("pageNumber", pageNumber);
+		/*各商品のデータ*/
+		resultData.put("productsData", productsDataList);
+
 		/*responseで送る値をセット*/
-		responseContext.setResult(returnProductsDataList);
-		
+		responseContext.setResult(resultData);
+
 		/*転送先のビューを指定*/
 		responseContext.setTarget("productlist");
-		
+
 		/*returnで結果を返す*/
 		return responseContext;
 	}
-	
+
 	private int[] createSortArray(String[] sortParams){
 		/*返却するソート方法指定用配列を宣言*/
 		int[] sortArray = new int[3];
-		
+
 		if(sortParams != null){
 			/*sortParamsの内容に従って、定数を配列に格納する*/
 			for(int i = 0;i<=sortParams.length;i++){
@@ -332,7 +309,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 				  purchaseAsc = 購入数が少ない順
 				  purchaseDesc = 購入数が多い順
 				  nameAsc = 50音順
-				  nameDesc = 50音順の逆順 
+				  nameDesc = 50音順の逆順
 				*/
 				if(sortParams[i].equals("priceAsc")){
 					sortArray[0] = ProductCatalogDao.SORT_BY_PRICE_ASC;
@@ -357,37 +334,101 @@ public class ShowProductsListCommand extends AbstractCommand{
 		/*作成した配列を返す*/
 		return sortArray;
 	}
-	
+
+	/*選択されたサブカテゴリの名前に対応するIDを返すメソッド*/
+	private int getSubCategoryId(String subCategoryName)
+	throws LogicException{
+		/*全サブカテゴリの情報のリスト*/
+		List allSubCategoryList = null;
+		try{
+			/*サブカテゴリの情報を取得するためのDaoを取得する*/
+			SubCategoryDao subCategoryDao = factory.getSubCategoryDao();
+			/*Daoからサブカテゴリの情報を取得する*/
+			allSubCategoryList = subCategoryDao.getSubCategories();
+
+			/*Iteratorを使い、各サブカテゴリの情報を確認*/
+			Iterator subCategoryIterator = allSubCategoryList.iterator();
+			while(subCategoryIterator.hasNext()){
+				/*サブカテゴリのBeanを取得*/
+				SubCategoryBean subCategory
+				= (SubCategoryBean)subCategoryIterator.next();
+				/*Beanの中のサブカテゴリの名前と、クライアントが選択した
+				   サブカテゴリの名前が同じなら、そのサブカテゴリのIDを
+				  変数に格納する*/
+				if(subCategory.getSubCategoryName()
+						.equals(subCategoryName)){
+					return subCategory.getSubCategoryId();
+				}
+			}
+		}catch (IntegrationException e){
+			throw new LogicException(e.getMessage(), e);
+		}
+		return -1;
+	}
+
+	/*現在ログイン中の会員の、
+	  お気に入りの商品のIDのリストを分割したメソッドで取得するメソッド*/
+	private List getMemberFavoriteList(int loginMemberId)
+	throws LogicException{
+		/*全お気に入りの情報のリスト*/
+		List allFavoriteList = null;
+		/*このメソッドが返す、
+		  ログイン中の会員のお気に入り商品のIDのリスト*/
+		List memberFavoriteList = new ArrayList();
+		try{
+			/*会員がログインしているなら、お気に入りの商品のIDを取得する*/
+			if(loginMemberId != -1){
+				/*お気に入りの情報を取得するためのDaoを取得する*/
+				FavoriteDao favoriteDao = factory.getFavoriteDao();
+				/*Daoからお気に入りの情報を取得する*/
+				allFavoriteList = favoriteDao.getFavorites();
+
+				Iterator favoriteIterator = allFavoriteList.iterator();
+				while(favoriteIterator.hasNext()){
+					FavoriteBean favorite
+					= (FavoriteBean)favoriteIterator.next();
+					/*お気に入りの情報の会員IDとログイン中の会員のIDが
+					  同じならそのお気に入り情報の商品のIDをリストに追加*/
+					if(loginMemberId == favorite.getMemberId()){
+						memberFavoriteList.add(favorite.getProductId());
+					}
+				}
+			}
+		}catch (IntegrationException e){
+			throw new LogicException(e.getMessage(), e);
+		}
+		return memberFavoriteList;
+	}
+
+
 	/*引数の商品名と名前が一致する商品の、色の画像パスのリストを返すメソッド*/
 	private List<String> getProductColors(String productName)
 	throws LogicException{
 		/*このメソッドが返す、色の画像パスのリストの変数を宣言*/
 		List<String> productColors = new ArrayList<String>();
-		
+
 		/*プロパティファイルへのパス */
 		String FILE_PATH
 		= "c:/watercress/WEB-INF/data/properties/ProductColors.properties";
-		
+
 		/*色毎の画像パスを保存しているプロパティファイルを読み込む*/
 		Properties properties = new Properties();
-		
+
 		try{
 			properties.load(new FileInputStream(FILE_PATH));
-			
-			/*Daoを取得するためのDaoFactoryを取得*/
-			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
+
 			/*商品情報を取得するためのProductDaoを取得*/
 			ProductDao productDao = factory.getProductDao();
-			
+
 			/*全商品の情報を取得*/
 			List allProductList = productDao.getProducts();
-			
+
 			Iterator productIterator = allProductList.iterator();
 			while(productIterator.hasNext()){
-				
+
 				/*商品の情報１件のBeanを取得*/
 				ProductBean product = (ProductBean)productIterator.next();
-				
+
 				/*引数の商品名と現在の商品の名前と一致するなら*/
 				if(productName.equals(product.getProductName())){
 					/*現在の商品の色に対応する画像パスを取得する*/
