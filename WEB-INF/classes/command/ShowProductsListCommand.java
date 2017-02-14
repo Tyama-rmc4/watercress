@@ -16,12 +16,14 @@ import bean.ProductBean;
 import bean.ProductCatalogBean;
 import bean.SubCategoryBean;
 import bean.TagBean;
+import bean.CategoryBean;
 import dao.AbstractDaoFactory;
 import dao.FavoriteDao;
 import dao.ProductCatalogDao;
 import dao.ProductDao;
 import dao.SubCategoryDao;
 import dao.TagDao;
+import dao.CategoryDao;
 import ex.IntegrationException;
 import ex.LogicException;
 import logic.RequestContext;
@@ -29,87 +31,90 @@ import logic.ResponseContext;
 
 /**
  *@className ShowProductsListCommand
- *@author ‰Í–ì
- *@date 2017/01/31 ƒy[ƒW”Ô†‚ğƒZƒbƒVƒ‡ƒ“‚ÅŠÇ—‚·‚éC³‚ğ‚µ‚Ü‚µ‚½B
- *@author ’r“c
- *@date 2017/02/07 Ši”[‚·‚éŒ‹‰Ê‚Ìd—l‚ğAƒ^ƒO‚Ì–¼‘O‚ğŠÜ‚Ş‚à‚Ì‚É•ÏX‚µ‚Ü‚µ‚½B
- *@date 2017/02/08 ¤•i–¼Aƒ^ƒO–¼‚Å‚ÌŒŸõ‚ğs‚¤‚±‚Æ‚ª‚Å‚«‚é‚æ‚¤‚É‚µ‚Ü‚µ‚½B
- *@date 2017/02/09 Œ‹‰Ê‚ÌproductData‚ÉA¤•i‚ÌF‚ğ•\‚·‰æ‘œ‚ÌƒpƒX‚ÌList‚Å‚ ‚é
-                   "productColors"‚ğ’Ç‰Á‚µ‚Ü‚µ‚½B
-                   Œ‹‰Ê‚ÌproductData‚ÉA‚»‚Ì¤•i‚ÍƒƒOƒCƒ“’†‚Ì‰ïˆõ‚Ì‚¨‹C‚É“ü‚è
-                   ‚Å‚ ‚é‚©‚ğ•\‚·Boolean‚Å‚ ‚é"isFavoirte"‚ğ’Ç‰Á‚µ‚Ü‚µ‚½B
- *@date 2017/02/13 Ši”[‚·‚éŒ‹‰Ê‚Ìd—l‚ğAŒŸõğŒ‚ÉŠY“–‚·‚é¤•i‚Ì”‚ğŠÜ‚Ş‚à‚Ì‚É
-                    •ÏX‚µ‚Ü‚µ‚½B
+ *@author æ²³é‡
+ *@date 2017/01/31 ãƒšãƒ¼ã‚¸ç•ªå·ã‚’ã‚»ãƒƒã‚·ãƒ§ãƒ³ã§ç®¡ç†ã™ã‚‹ä¿®æ­£ã‚’ã—ã¾ã—ãŸã€‚
+ *@author æ± ç”°
+ *@date 2017/02/07 æ ¼ç´ã™ã‚‹çµæœã®ä»•æ§˜ã‚’ã€ã‚¿ã‚°ã®åå‰ã‚’å«ã‚€ã‚‚ã®ã«å¤‰æ›´ã—ã¾ã—ãŸã€‚
+ *@date 2017/02/08 å•†å“åã€ã‚¿ã‚°åã§ã®æ¤œç´¢ã‚’è¡Œã†ã“ã¨ãŒã§ãã‚‹ã‚ˆã†ã«ã—ã¾ã—ãŸã€‚
+ *@date 2017/02/09 çµæœã®productDataã«ã€å•†å“ã®è‰²ã‚’è¡¨ã™ç”»åƒã®ãƒ‘ã‚¹ã®Listã§ã‚ã‚‹
+                   "productColors"ã‚’è¿½åŠ ã—ã¾ã—ãŸã€‚
+                   çµæœã®productDataã«ã€ãã®å•†å“ã¯ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®ãŠæ°—ã«å…¥ã‚Š
+                   ã§ã‚ã‚‹ã‹ã‚’è¡¨ã™Booleanã§ã‚ã‚‹"isFavoirte"ã‚’è¿½åŠ ã—ã¾ã—ãŸã€‚
+ *@date 2017/02/13 æ ¼ç´ã™ã‚‹çµæœã®ä»•æ§˜ã‚’ã€æ¤œç´¢æ¡ä»¶ã«è©²å½“ã™ã‚‹å•†å“ã®æ•°ã‚’å«ã‚€ã‚‚ã®ã«
+                   å¤‰æ›´ã—ã¾ã—ãŸã€‚
+ *@date 2017/02/14 æ ¼ç´ã™ã‚‹çµæœã®ä»•æ§˜ã‚’ã€å•†å“ã®ã‚«ãƒ†ã‚´ãƒªåã‚’å«ã‚€ã‚‚ã®ã«
+                   å¤‰æ›´ã—ã¾ã—ãŸã€‚
  *@description
- resultData : Map<String, Object> yjsp‚Å${data}‚Åæ‚èo‚³‚ê‚é•”•ªz
- „«
- „¯"productCount",Integer ŒŸõğŒ‚ÉŠY“–‚·‚é¤•i‚Ì”
- „«
- „¯"pageNumber",Integer •\¦‚·‚éƒy[ƒW”Ô†
- „«
- „¯"productData" : List<Map>
-   „¯productData : Map<String, Object> ¤•iˆêŒ‚¸‚Â‚Ìƒf[ƒ^
-     „«
-     „¯"catalog",ProductCatalogBean ‚±‚ÌBean‚Ì“à—e’Ê‚è‚ÌA–¼‘O‚È‚Ç‚Ìƒf[ƒ^
-     „¯"tagNames",List<String> ‚»‚Ì¤•i‚É•t‰Á‚³‚ê‚Ä‚¢‚éƒ^ƒO‚Ì–¼‘O‚ÌList
-     „¯"colors",List<String> ‚»‚Ì¤•i‚ÌF‚Ì‰æ‘œƒpƒX‚ÌList
-     „¯"isFavorite",Boolean ‚»‚Ì¤•i‚ÍƒƒOƒCƒ“’†‚Ì‰ïˆõ‚Ì‚¨‹C‚É“ü‚è‚Å‚ ‚é‚©
+ resultData : Map<String, Object> ã€jspã§${data}ã§å–ã‚Šå‡ºã•ã‚Œã‚‹éƒ¨åˆ†ã€‘
+ â”ƒ
+ â”—"productCount",Integer æ¤œç´¢æ¡ä»¶ã«è©²å½“ã™ã‚‹å•†å“ã®æ•°
+ â”ƒ
+ â”—"pageNumber",Integer è¡¨ç¤ºã™ã‚‹ãƒšãƒ¼ã‚¸ç•ªå·
+ â”ƒ
+ â”—"productData" : List<Map>
+   â”—productData : Map<String, Object> å•†å“ä¸€ä»¶ãšã¤ã®ãƒ‡ãƒ¼ã‚¿
+     â”ƒ
+     â”—"catalog",ProductCatalogBean ã“ã®Beanã®å†…å®¹é€šã‚Šã®ã€åå‰ãªã©ã®ãƒ‡ãƒ¼ã‚¿
+     â”—"tagNames",List<String> ãã®å•†å“ã«ä»˜åŠ ã•ã‚Œã¦ã„ã‚‹ã‚¿ã‚°ã®åå‰ã®List
+     â”—"colors",List<String> ãã®å•†å“ã®è‰²ã®ç”»åƒãƒ‘ã‚¹ã®List
+     â”—"isFavorite",Boolean ãã®å•†å“ã¯ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®ãŠæ°—ã«å…¥ã‚Šã§ã‚ã‚‹ã‹
+     â”—"categoryName",String ãã®å•†å“ã®ã‚«ãƒ†ã‚´ãƒªå
  */
 
 public class ShowProductsListCommand extends AbstractCommand{
 
-	/*Dao‚ğæ“¾‚·‚é‚½‚ß‚ÌDaoFactory‚ğŠi”[‚·‚é*/
+	/*Daoã‚’å–å¾—ã™ã‚‹ãŸã‚ã®DaoFactoryã‚’æ ¼ç´ã™ã‚‹*/
 	AbstractDaoFactory factory;
 
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException{
-		/*RequestContext‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğæ“¾*/
+		/*RequestContextã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å–å¾—*/
 		RequestContext requestContext = getRequestContext();
 
-		/*‘—M‚³‚ê‚Ä‚«‚½Šeƒpƒ‰ƒ[ƒ^‚Ìæ“¾*/
-		/*ƒy[ƒW‚Ì”Ô†Bƒpƒ‰ƒ[ƒ^‚ª–³‚¢ê‡‚Í1ƒy[ƒW–Ú‚ğ•\¦‚·‚é*/
+		/*é€ä¿¡ã•ã‚Œã¦ããŸå„ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã®å–å¾—*/
+		/*ãƒšãƒ¼ã‚¸ã®ç•ªå·ã€‚ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãŒç„¡ã„å ´åˆã¯1ãƒšãƒ¼ã‚¸ç›®ã‚’è¡¨ç¤ºã™ã‚‹*/
 		Integer pageNumber = 1;
 		String[] pageNumberParam
 		= requestContext.getParameter("pageNumber");
 		if(pageNumberParam != null){
 			pageNumber = Integer.parseInt(pageNumberParam[0]);
 		}
-		/*‘I‘ğ‚³‚ê‚½ƒTƒuƒJƒeƒSƒŠ‚Ì–¼‘O*/
+		/*é¸æŠã•ã‚ŒãŸã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®åå‰*/
 		String selectedSubCategoryName = null;
 		String[] selectedSubCategoryParam
 		= requestContext.getParameter("subCategory");
 		if(selectedSubCategoryParam != null){
 			selectedSubCategoryName = selectedSubCategoryParam[0];
 		}
-		/*ŒŸõ‚·‚é–¼‘O  ‘SŠpƒXƒy[ƒX‚ğ”¼ŠpƒXƒy[ƒX‚É•ÏŠ·‚µ‚½ŒãA
-		  ”¼ŠpƒXƒy[ƒX‚Å•ªŠ„‚µ‚Ä”z—ñ‚É‚·‚é*/
+		/*æ¤œç´¢ã™ã‚‹åå‰  å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã‚’åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã«å¤‰æ›ã—ãŸå¾Œã€
+		  åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã§åˆ†å‰²ã—ã¦é…åˆ—ã«ã™ã‚‹*/
 		String[] searchTexts = null;
 		String[] searchTextParam
 		= requestContext.getParameter("searchText");
 		if(searchTextParam != null){
 			String searchTextString
-			= searchTextParam[0].replaceAll("@"," ");
+			= searchTextParam[0].replaceAll("ã€€"," ");System.out.println(searchTextString);
 			searchTexts = searchTextString.split(" ");
 		}
-		/*ŒŸõ‚·‚éƒ^ƒO  ‘SŠpƒXƒy[ƒX‚ğ”¼ŠpƒXƒy[ƒX‚É•ÏŠ·‚µ‚½ŒãA
-		  ”¼ŠpƒXƒy[ƒX‚Å•ªŠ„‚µ‚Ä”z—ñ‚É‚µAList‚É‚·‚é*/
+		/*æ¤œç´¢ã™ã‚‹ã‚¿ã‚°  å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã‚’åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã«å¤‰æ›ã—ãŸå¾Œã€
+		  åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã§åˆ†å‰²ã—ã¦é…åˆ—ã«ã—ã€Listã«ã™ã‚‹*/
 		String[] searchTagParam = requestContext.getParameter("searchTag");
 		String[] searchTagArray = null;
 		List searchTags = null;
 		if(searchTagParam != null){
-			String searchTagString = searchTagParam[0].replaceAll("@"," ");
+			String searchTagString = searchTagParam[0].replaceAll("ã€€"," ");
 			searchTagArray = searchTagString.split(" ");
 			searchTags = new ArrayList(Arrays.asList(searchTagArray));
 		}
-		/*ƒ\[ƒgğŒ*/
+		/*ã‚½ãƒ¼ãƒˆæ¡ä»¶*/
 		String[] sortParams = requestContext.getParameter("sort");
-		/*getProductCatalogs‚É“n‚·Aƒ\[ƒgğŒ‚Ìˆø”‚ğì¬‚·‚é*/
-		/*sortParams‚Ì•¶š—ñ‚ğAcreateSortArrayƒƒ\ƒbƒh‚Ìƒ‹[ƒ‹‚É
-		  ]‚Á‚Äint”z—ñ‚É•ÏŠ·‚·‚éB‚±‚ê‚ğ¤•iŒŸõ‚ÌÛ‚Éˆø”‚É‚·‚é*/
+		/*getProductCatalogsã«æ¸¡ã™ã€ã‚½ãƒ¼ãƒˆæ¡ä»¶ã®å¼•æ•°ã‚’ä½œæˆã™ã‚‹*/
+		/*sortParamsã®æ–‡å­—åˆ—ã‚’ã€createSortArrayãƒ¡ã‚½ãƒƒãƒ‰ã®ãƒ«ãƒ¼ãƒ«ã«
+		  å¾“ã£ã¦inté…åˆ—ã«å¤‰æ›ã™ã‚‹ã€‚ã“ã‚Œã‚’å•†å“æ¤œç´¢ã®éš›ã«å¼•æ•°ã«ã™ã‚‹*/
 		int[] sortArray = createSortArray(sortParams);
 
-		/*ƒƒOƒCƒ“’†‚Ì‰ïˆõ‚ÌID‚ğæ“¾‚·‚éB*/
-		/*ƒƒOƒCƒ“‚µ‚Ä‚¢‚È‚¢ê‡‚Í-1‚ğŠi”[‚·‚éB*/
+		/*ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®IDã‚’å–å¾—ã™ã‚‹ã€‚*/
+		/*ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ã„ãªã„å ´åˆã¯-1ã‚’æ ¼ç´ã™ã‚‹ã€‚*/
 		int loginMemberId = -1;
 		if(requestContext.getSessionAttribute("login") != null){
 			String idAttribute
@@ -118,198 +123,203 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 
 
-		/*‚±‚ÌƒRƒ}ƒ“ƒh‚Ìresult‚Æ‚È‚éAŠe¤•i‚Ìî•ñ‚ÆŠY“–‚·‚é¤•i‚Ì”*/
+		/*ã“ã®ã‚³ãƒãƒ³ãƒ‰ã®resultã¨ãªã‚‹ã€å„å•†å“ã®æƒ…å ±ã¨è©²å½“ã™ã‚‹å•†å“ã®æ•°*/
 		Map resultData = new HashMap();
 
-		/*ã‹L‚ÌMap‚ÉŠÜ‚Ü‚ê‚éA
-		  ‘I‘ğ‚³‚ê‚½ƒTƒuƒJƒeƒSƒŠ‚Ì¤•i‚ªŒ©‚Â‚©‚Á‚½ŒÂ”‚Ì•Ï”*/
+		/*ä¸Šè¨˜ã®Mapã«å«ã¾ã‚Œã‚‹ã€
+		  é¸æŠã•ã‚ŒãŸã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®å•†å“ãŒè¦‹ã¤ã‹ã£ãŸå€‹æ•°ã®å¤‰æ•°*/
 		Integer foundProductCount = 0;
 
-		/*ã‹L‚ÌMap‚ÉŠÜ‚Ü‚ê‚éA¤•iî•ñ‚Æ‚»‚Ìƒ^ƒO–¼‚ÌƒŠƒXƒg*/
+		/*ä¸Šè¨˜ã®Mapã«å«ã¾ã‚Œã‚‹ã€å•†å“æƒ…å ±ã¨ãã®ã‚¿ã‚°åã®ãƒªã‚¹ãƒˆ*/
 		List<Map> productsDataList = new ArrayList<Map>();
 
-		/*‘S¤•i‚Ìî•ñ‚ÌƒŠƒXƒg*/
+		/*å…¨å•†å“ã®æƒ…å ±ã®ãƒªã‚¹ãƒˆ*/
 		List allCatalogList = null;
-		/*‘Sƒ^ƒO‚Ìî•ñ‚ÌƒŠƒXƒg*/
+		/*å…¨ã‚¿ã‚°ã®æƒ…å ±ã®ãƒªã‚¹ãƒˆ*/
 		List allTagList = null;
 
 		try{
-			/*Dao‚ğæ“¾‚·‚é‚½‚ß‚ÌDaoFactory‚ğæ“¾‚·‚é*/
+			/*Daoã‚’å–å¾—ã™ã‚‹ãŸã‚ã®DaoFactoryã‚’å–å¾—ã™ã‚‹*/
 			factory = AbstractDaoFactory.getFactory();
 
-			/*‘I‘ğ‚³‚ê‚½ƒTƒuƒJƒeƒSƒŠ‚ÌID‚ğ•ªŠ„‚µ‚½ƒƒ\ƒbƒh‚Åæ“¾‚·‚é*/
+			/*é¸æŠã•ã‚ŒãŸã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®IDã‚’åˆ†å‰²ã—ãŸãƒ¡ã‚½ãƒƒãƒ‰ã§å–å¾—ã™ã‚‹*/
 			int selectedSubCategoryId
 			= getSubCategoryId(selectedSubCategoryName);
 
-			/*Œ»İƒƒOƒCƒ“’†‚Ì‰ïˆõ‚ÌA
-			  ‚¨‹C‚É“ü‚è‚Ì¤•i‚ÌID‚ÌƒŠƒXƒg‚ğ•ªŠ„‚µ‚½ƒƒ\ƒbƒh‚Åæ“¾‚·‚é*/
+			/*ç¾åœ¨ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®ã€
+			  ãŠæ°—ã«å…¥ã‚Šã®å•†å“ã®IDã®ãƒªã‚¹ãƒˆã‚’åˆ†å‰²ã—ãŸãƒ¡ã‚½ãƒƒãƒ‰ã§å–å¾—ã™ã‚‹*/
 			List memberFavoriteList = getMemberFavoriteList(loginMemberId);
 
-			/*¤•i‚Ìî•ñ‚ğæ“¾‚·‚é‚½‚ß‚ÌDao‚ğæ“¾‚·‚é*/
+			/*å•†å“ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãŸã‚ã®Daoã‚’å–å¾—ã™ã‚‹*/
 			ProductCatalogDao pcd = factory.getProductCatalogDao();
-			/*Dao‚©‚ç¤•i‚Ìî•ñ‚ğæ“¾‚·‚éBsortArray‚É‚æ‚Á‚Äƒ\[ƒgğŒ‚ğİ’è*/
+			/*Daoã‹ã‚‰å•†å“ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ã€‚sortArrayã«ã‚ˆã£ã¦ã‚½ãƒ¼ãƒˆæ¡ä»¶ã‚’è¨­å®š*/
 			allCatalogList = pcd.getProductCatalogs(sortArray);
 
-			/*ƒ^ƒO‚Ìî•ñ‚ğæ“¾‚·‚é‚½‚ß‚ÌDao‚ğæ“¾‚·‚é*/
+			/*ã‚¿ã‚°ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãŸã‚ã®Daoã‚’å–å¾—ã™ã‚‹*/
 			TagDao tagDao = factory.getTagDao();
-			/*Dao‚©‚çƒ^ƒO‚Ìî•ñ‚ğæ“¾‚·‚é*/
+			/*Daoã‹ã‚‰ã‚¿ã‚°ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹*/
 			allTagList = tagDao.getTags();
 
 			Iterator catalogIterator = allCatalogList.iterator();
 			while(catalogIterator.hasNext()){
 
-				/*Iterator‚ğg‚Á‚ÄList“à‚Ì¤•iî•ñ‚ÌBean‚ğæ‚èo‚·*/
+				/*Iteratorã‚’ä½¿ã£ã¦Listå†…ã®å•†å“æƒ…å ±ã®Beanã‚’å–ã‚Šå‡ºã™*/
 				ProductCatalogBean product
 					= (ProductCatalogBean)catalogIterator.next();
 
-				/*‘I‘ğ‚µ‚½ƒTƒuƒJƒeƒSƒŠ‚Ì¤•i‚È‚çAŸ‚ÌŒŸõ‡’v”»’è‚Éi‚Ş*/
+				/*é¸æŠã—ãŸã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®å•†å“ãªã‚‰ã€æ¬¡ã®æ¤œç´¢åˆè‡´åˆ¤å®šã«é€²ã‚€*/
 				if(product.getSubCategoryId() == selectedSubCategoryId){
 
-					/*‚»‚Ì¤•i‚É•t‰Á‚³‚ê‚Ä‚¢‚éƒ^ƒO‚ğ‚±‚Ì“_‚Åæ“¾‚µ‚Ä‚¨‚­*/
-					/*Œ»İ‚Ì¤•iî•ñ‚Ìƒ^ƒO‚Ì–¼‘O‚ğŠi”[‚·‚éList‚ÌéŒ¾*/
+					/*ãã®å•†å“ã«ä»˜åŠ ã•ã‚Œã¦ã„ã‚‹ã‚¿ã‚°ã‚’ã“ã®æ™‚ç‚¹ã§å–å¾—ã—ã¦ãŠã*/
+					/*ç¾åœ¨ã®å•†å“æƒ…å ±ã®ã‚¿ã‚°ã®åå‰ã‚’æ ¼ç´ã™ã‚‹Listã®å®£è¨€*/
 					List<String> productTagNames = new ArrayList<String>();
 
 					Iterator tagIterator = allTagList.iterator();
 					while(tagIterator.hasNext()){
 						TagBean tagRelation = (TagBean)tagIterator.next();
-						/*Œ»İ‚Ì¤•iî•ñ‚ÌID‚ª
-						  ƒ^ƒO•\‚Ìs‚Ì¤•iID‚Æˆê’v‚·‚é‚È‚çA*/
+						/*ç¾åœ¨ã®å•†å“æƒ…å ±ã®IDãŒ
+						  ã‚¿ã‚°è¡¨ã®è¡Œã®å•†å“IDã¨ä¸€è‡´ã™ã‚‹ãªã‚‰ã€*/
 						if(product.getExampleProductId()
 						== tagRelation.getProductId()){
-							/*‚»‚Ìƒ^ƒO‚Ì–¼‘O‚ğArrayList‚É‰Á‚¦‚é*/
+							/*ãã®ã‚¿ã‚°ã®åå‰ã‚’ArrayListã«åŠ ãˆã‚‹*/
 							productTagNames.add(tagRelation.getTagName());
 						}
 					}
 
-					/*ŒŸõğŒ‚Ì•¶š—ñ‚É‡’v‚·‚é‚©‚ğ‚Â•Ï”‚ÌéŒ¾*/
+					/*æ¤œç´¢æ¡ä»¶ã®æ–‡å­—åˆ—ã«åˆè‡´ã™ã‚‹ã‹ã‚’æŒã¤å¤‰æ•°ã®å®£è¨€*/
 					boolean isMatchText = false;
-					/*ŒŸõğŒ‚Ìƒ^ƒO‚É‡’v‚·‚é‚©‚ğ‚Â•Ï”‚ÌéŒ¾*/
+					/*æ¤œç´¢æ¡ä»¶ã®ã‚¿ã‚°ã«åˆè‡´ã™ã‚‹ã‹ã‚’æŒã¤å¤‰æ•°ã®å®£è¨€*/
 					boolean isMatchTag = false;
 
-					/*ŒŸõğŒ‚Ì•¶š—ñ‚ª‘¶İ‚µ‚È‚¢‚È‚çí‚ÉğŒ‡’v‚Æ‚·‚é*/
+					/*æ¤œç´¢æ¡ä»¶ã®æ–‡å­—åˆ—ãŒå­˜åœ¨ã—ãªã„ãªã‚‰å¸¸ã«æ¡ä»¶åˆè‡´ã¨ã™ã‚‹*/
 					if(searchTexts == null){
 						isMatchText = true;
 					}else{
-						/*ŒŸõğŒ‚Ì•¶š—ñ‚ª‘¶İ‚·‚éê‡A
-						  ŒŸõ•¶š—ñ‘S‚Ä‚Æ‡’v‚·‚é‚©‚ğ”»’è‚·‚é*/
-						/*u‘S‚Ä‚ÌŒŸõ•¶š—ñ‚ğ‚Á‚Ä‚¢‚év‚ğ‚Â•Ï”‚ğéŒ¾*/
+						/*æ¤œç´¢æ¡ä»¶ã®æ–‡å­—åˆ—ãŒå­˜åœ¨ã™ã‚‹å ´åˆã€
+						  æ¤œç´¢æ–‡å­—åˆ—å…¨ã¦ã¨åˆè‡´ã™ã‚‹ã‹ã‚’åˆ¤å®šã™ã‚‹*/
+						/*ã€Œå…¨ã¦ã®æ¤œç´¢æ–‡å­—åˆ—ã‚’æŒã£ã¦ã„ã‚‹ã€ã‚’æŒã¤å¤‰æ•°ã‚’å®£è¨€*/
 						boolean isAllTextExist = true;
 						for(String searchText : searchTexts){
-							/*¤•i–¼‚ªŒŸõ•¶š—ñ‚ğŠÜ‚ñ‚Å‚¢‚È‚¢‚È‚ç*/
+							/*å•†å“åãŒæ¤œç´¢æ–‡å­—åˆ—ã‚’å«ã‚“ã§ã„ãªã„ãªã‚‰*/
 							if(product.getProductName().indexOf(searchText)
 								== -1){
-								/*u‘S‚Ä‚ÌŒŸõ•¶š—ñ‚ğ‚Á‚Ä‚¢‚év‚ğ‹U‚É‚·‚é*/
+								/*ã€Œå…¨ã¦ã®æ¤œç´¢æ–‡å­—åˆ—ã‚’æŒã£ã¦ã„ã‚‹ã€ã‚’å½ã«ã™ã‚‹*/
 								isAllTextExist = false;
 							}
 						}
-						/*u‘S‚Ä‚ÌŒŸõ•¶š—ñ‚ğ‚Á‚Ä‚¢‚év‚ª^‚È‚ç*/
+						/*ã€Œå…¨ã¦ã®æ¤œç´¢æ–‡å­—åˆ—ã‚’æŒã£ã¦ã„ã‚‹ã€ãŒçœŸãªã‚‰*/
 						if(isAllTextExist){
-							/*u•¶š—ñ‚ÌŒŸõğŒ‚É‡’v‚·‚év‚±‚Æ‚ğ•Ï”‚ÉŠi”[*/
+							/*ã€Œæ–‡å­—åˆ—ã®æ¤œç´¢æ¡ä»¶ã«åˆè‡´ã™ã‚‹ã€ã“ã¨ã‚’å¤‰æ•°ã«æ ¼ç´*/
 							isMatchText = true;
 						}
 					}
-					/*ŒŸõğŒ‚Ìƒ^ƒO‚ª‘¶İ‚µ‚È‚¢‚È‚çí‚ÉğŒ‡’v‚Æ‚·‚é*/
+					/*æ¤œç´¢æ¡ä»¶ã®ã‚¿ã‚°ãŒå­˜åœ¨ã—ãªã„ãªã‚‰å¸¸ã«æ¡ä»¶åˆè‡´ã¨ã™ã‚‹*/
 					if(searchTags == null){
 						isMatchTag = true;
 					}else{
-						/*ŒŸõğŒ‚Ìƒ^ƒO‚ª‘¶İ‚·‚éê‡A
-						  ŒŸõƒ^ƒO‘S‚Ä‚Æ‡’v‚·‚é‚©‚ğ”»’è‚·‚é*/
-						/*u‘S‚Ä‚ÌŒŸõƒ^ƒO‚ğ‚Á‚Ä‚¢‚év‚ğ‚Â•Ï”‚ğéŒ¾*/
+						/*æ¤œç´¢æ¡ä»¶ã®ã‚¿ã‚°ãŒå­˜åœ¨ã™ã‚‹å ´åˆã€
+						  æ¤œç´¢ã‚¿ã‚°å…¨ã¦ã¨åˆè‡´ã™ã‚‹ã‹ã‚’åˆ¤å®šã™ã‚‹*/
+						/*ã€Œå…¨ã¦ã®æ¤œç´¢ã‚¿ã‚°ã‚’æŒã£ã¦ã„ã‚‹ã€ã‚’æŒã¤å¤‰æ•°ã‚’å®£è¨€*/
 						boolean isAllTagExist = true;
 						Iterator searchTagIterator = searchTags.iterator();
 						while(searchTagIterator.hasNext()){
 							String searchTagName
 							= (String)searchTagIterator.next();
-							/*¤•i‚É•t‰Á‚³‚ê‚Ä‚¢‚éƒ^ƒO‚Ì’†‚É
-							  ŒŸõğŒ‚Ìƒ^ƒO‚ª–³‚¢‚È‚ç*/
+							/*å•†å“ã«ä»˜åŠ ã•ã‚Œã¦ã„ã‚‹ã‚¿ã‚°ã®ä¸­ã«
+							  æ¤œç´¢æ¡ä»¶ã®ã‚¿ã‚°ãŒç„¡ã„ãªã‚‰*/
 							if(!(productTagNames.contains(searchTagName)) ){
-								/*u‘S‚Ä‚ÌŒŸõƒ^ƒO‚ğ‚Á‚Ä‚¢‚év‚ğ‹U‚É‚·‚é*/
+								/*ã€Œå…¨ã¦ã®æ¤œç´¢ã‚¿ã‚°ã‚’æŒã£ã¦ã„ã‚‹ã€ã‚’å½ã«ã™ã‚‹*/
 								isMatchText = false;
 							}
 						}
-						/*u‘S‚Ä‚ÌŒŸõƒ^ƒO‚ğ‚Á‚Ä‚¢‚év‚ª^‚È‚ç*/
+						/*ã€Œå…¨ã¦ã®æ¤œç´¢ã‚¿ã‚°ã‚’æŒã£ã¦ã„ã‚‹ã€ãŒçœŸãªã‚‰*/
 						if(isAllTagExist){
-							/*u•¶š—ñ‚Ìƒ^ƒOğŒ‚É‡’v‚·‚év‚±‚Æ‚ğ•Ï”‚ÉŠi”[*/
+							/*ã€Œæ–‡å­—åˆ—ã®ã‚¿ã‚°æ¡ä»¶ã«åˆè‡´ã™ã‚‹ã€ã“ã¨ã‚’å¤‰æ•°ã«æ ¼ç´*/
 							isMatchTag = true;
 						}
 					}
-					/*ŒŸõğŒ‚Ì•¶š—ñ‚Æƒ^ƒO‚É‡’v‚·‚é‚È‚çA¤•i”­Œ©Œãˆ—‚Ö*/
+					/*æ¤œç´¢æ¡ä»¶ã®æ–‡å­—åˆ—ã¨ã‚¿ã‚°ã«åˆè‡´ã™ã‚‹ãªã‚‰ã€å•†å“ç™ºè¦‹å¾Œå‡¦ç†ã¸*/
 					if(isMatchText && isMatchTag){
-						/*”­Œ©¤•i”‚ğ‚P‘‚â‚·*/
+						/*ç™ºè¦‹å•†å“æ•°ã‚’ï¼‘å¢—ã‚„ã™*/
 						foundProductCount++;
 
-						/*Œ»İ‚Ìƒy[ƒW‚Å‚»‚Ì¤•i‚ğ•\¦‚·‚×‚«‚©‚ğ”»’è‚·‚é*/
-						/*Œ»İ‚Ìƒy[ƒW”Ô†‚Å•\¦‚·‚×‚«¤•i‚È‚çA‚»‚Ìî•ñ‚Æ
-						  ‚»‚ê‚É•t‰Á‚³‚ê‚Ä‚¢‚éƒ^ƒO‚Ì–¼‘O‚Æ
-						  ‚»‚Ì¤•i‚ÌF‚ğ•\‚·‰æ‘œ‚ÌƒpƒX‚Æ
-						  ƒƒOƒCƒ“’†‚Ì‰ïˆõ‚Ì‚¨‹C‚É“ü‚è‚Å‚ ‚é‚©‚ğ
-						  Map‚ÉŠi”[‚µA‚»‚ê‚ğList‚ÉŠi”[‚·‚é*/
+						/*ç¾åœ¨ã®ãƒšãƒ¼ã‚¸ã§ãã®å•†å“ã‚’è¡¨ç¤ºã™ã¹ãã‹ã‚’åˆ¤å®šã™ã‚‹*/
+						/*ç¾åœ¨ã®ãƒšãƒ¼ã‚¸ç•ªå·ã§è¡¨ç¤ºã™ã¹ãå•†å“ãªã‚‰ã€ãã®æƒ…å ±ã¨
+						  ãã‚Œã«ä»˜åŠ ã•ã‚Œã¦ã„ã‚‹ã‚¿ã‚°ã®åå‰ã¨
+						  ãã®å•†å“ã®è‰²ã‚’è¡¨ã™ç”»åƒã®ãƒ‘ã‚¹ã¨
+						  ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®ãŠæ°—ã«å…¥ã‚Šã§ã‚ã‚‹ã‹ã‚’
+						  Mapã«æ ¼ç´ã—ã€ãã‚Œã‚’Listã«æ ¼ç´ã™ã‚‹*/
 						if((pageNumber - 1) * 15 < foundProductCount
 						&& foundProductCount <= pageNumber * 15){
-
-							/*¤•i‚Ìî•ñ‚ÆA•t‰Á‚³‚ê‚Ä‚¢‚éƒ^ƒO‚Ì–¼‘O‚Æ
-							  ¤•i‚ÌF‚ğ•\‚·‰æ‘œ‚ÌƒpƒX‚Æ
-							  ƒƒOƒCƒ“’†‚Ì‰ïˆõ‚Ì‚¨‹C‚É“ü‚è‚Å‚ ‚é‚©‚ğ
-							  Map‚ÉŠi”[‚·‚éB*/
+							/*å•†å“ã®æƒ…å ±ã¨ã€ä»˜åŠ ã•ã‚Œã¦ã„ã‚‹ã‚¿ã‚°ã®åå‰ã¨
+							  å•†å“ã®è‰²ã‚’è¡¨ã™ç”»åƒã®ãƒ‘ã‚¹ã¨
+							  ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®ãŠæ°—ã«å…¥ã‚Šã§ã‚ã‚‹ã‹ã¨ã€
+							  å•†å“ã®ã‚«ãƒ†ã‚´ãƒªåã‚’Mapã«æ ¼ç´ã™ã‚‹ã€‚*/
 							Map productData = new HashMap();
 							productData.put("catalog",product);
 							productData.put("tagNames",productTagNames);
-							/*¤•i‚ÌF‚ğ•\‚·‰æ‘œ‚ÌƒpƒX‚Í
-							  •ªŠ„‚µ‚½ƒƒ\ƒbƒh‚©‚çæ“¾‚·‚é*/
+							/*å•†å“ã®è‰²ã‚’è¡¨ã™ç”»åƒã®ãƒ‘ã‚¹ã‚’
+							  åˆ†å‰²ã—ãŸãƒ¡ã‚½ãƒƒãƒ‰ã‹ã‚‰å–å¾—ã™ã‚‹*/
 							List<String> productColors
 							= getProductColors(product.getProductName());
 							productData.put("colors",productColors);
-							/*‚±‚Ì¤•i‚ÍƒƒOƒCƒ“’†‚Ì‰ïˆõ‚Ì‚¨‹C‚É“ü‚è
-							  ‚Å‚ ‚é‚©‚ğŠm”F‚·‚é*/
+							/*ã“ã®å•†å“ã¯ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®ãŠæ°—ã«å…¥ã‚Š
+							  ã§ã‚ã‚‹ã‹ã‚’ç¢ºèªã™ã‚‹*/
 							Boolean isFavorite = new Boolean(false);
 							if(memberFavoriteList.contains(
 								product.getExampleProductId())){
 								isFavorite = true;
 							}
 							productData.put("isFavorite",isFavorite);
-							/*Ši”[‚µ‚½Map‚ğList‚É’Ç‰Á‚·‚é*/
+							/*ã‚«ãƒ†ã‚´ãƒªåã‚’åˆ†å‰²ã—ãŸãƒ¡ã‚½ãƒƒãƒ‰ã‹ã‚‰å–å¾—ã™ã‚‹*/
+							String categoryName 
+							= getProductCategoryName(product.getCategoryId());
+							productData.put("categoryName",categoryName);
+							
+							/*æ ¼ç´ã—ãŸMapã‚’Listã«è¿½åŠ ã™ã‚‹*/
 							productsDataList.add(productData);
-						}/*if(Œ»İ‚Ìƒy[ƒW‚Å•\¦‚·‚×‚«‚©) ‚ÌI’[*/
-					}/*if(ŒŸõ•¶š—ñAŒŸõƒ^ƒO‚É‡’v‚·‚é‚©)*/
-				}/*if(‘I‘ğ‚µ‚½ƒTƒuƒJƒeƒSƒŠ‚©) ‚ÌI’[*/
-			}/*while(catalogIterator.hasNext()) ‚ÌI’[*/
+							
+						}/*if(ç¾åœ¨ã®ãƒšãƒ¼ã‚¸ã§è¡¨ç¤ºã™ã¹ãã‹) ã®çµ‚ç«¯*/
+					}/*if(æ¤œç´¢æ–‡å­—åˆ—ã€æ¤œç´¢ã‚¿ã‚°ã«åˆè‡´ã™ã‚‹ã‹) ã®çµ‚ç«¯*/
+				}/*if(é¸æŠã—ãŸã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã‹) ã®çµ‚ç«¯*/
+			}/*while(catalogIterator.hasNext()) ã®çµ‚ç«¯*/
 
 		}catch (IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
 
-		/*result‚Å‚ ‚éMap‚Éƒf[ƒ^‚ğŠi”[‚·‚é*/
-		/*¤•i‚ÌŒÂ”BforEach‚ğ—p‚¢‚é‚½‚ß“à—e‚Ì–³‚¢”z—ñ‚É‚·‚é*/
+		/*resultã§ã‚ã‚‹Mapã«ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´ã™ã‚‹*/
+		/*å•†å“ã®å€‹æ•°ã€‚forEachã‚’ç”¨ã„ã‚‹ãŸã‚å†…å®¹ã®ç„¡ã„é…åˆ—ã«ã™ã‚‹*/
 		resultData.put("productCount", new int[foundProductCount]);
-		/*ƒy[ƒW”Ô†*/
+		/*ãƒšãƒ¼ã‚¸ç•ªå·*/
 		resultData.put("pageNumber", pageNumber);
-		/*Še¤•i‚Ìƒf[ƒ^*/
+		/*å„å•†å“ã®ãƒ‡ãƒ¼ã‚¿*/
 		resultData.put("productsData", productsDataList);
 
-		/*response‚Å‘—‚é’l‚ğƒZƒbƒg*/
+		/*responseã§é€ã‚‹å€¤ã‚’ã‚»ãƒƒãƒˆ*/
 		responseContext.setResult(resultData);
 
-		/*“]‘—æ‚Ìƒrƒ…[‚ğw’è*/
+		/*è»¢é€å…ˆã®ãƒ“ãƒ¥ãƒ¼ã‚’æŒ‡å®š*/
 		responseContext.setTarget("productlist");
 
-		/*return‚ÅŒ‹‰Ê‚ğ•Ô‚·*/
+		/*returnã§çµæœã‚’è¿”ã™*/
 		return responseContext;
 	}
 
 	private int[] createSortArray(String[] sortParams){
-		/*•Ô‹p‚·‚éƒ\[ƒg•û–@w’è—p”z—ñ‚ğéŒ¾*/
+		/*è¿”å´ã™ã‚‹ã‚½ãƒ¼ãƒˆæ–¹æ³•æŒ‡å®šç”¨é…åˆ—ã‚’å®£è¨€*/
 		int[] sortArray = new int[3];
 
 		if(sortParams != null){
-			/*sortParams‚Ì“à—e‚É]‚Á‚ÄA’è”‚ğ”z—ñ‚ÉŠi”[‚·‚é*/
+			/*sortParamsã®å†…å®¹ã«å¾“ã£ã¦ã€å®šæ•°ã‚’é…åˆ—ã«æ ¼ç´ã™ã‚‹*/
 			for(int i = 0;i<=sortParams.length;i++){
 				/*
-				  priceAsc = ’l’i‚ÌˆÀ‚¢‡
-				  priceDesc = ’l’i‚Ì‚‚¢‡
-				  purchaseAsc = w“ü”‚ª­‚È‚¢‡
-				  purchaseDesc = w“ü”‚ª‘½‚¢‡
-				  nameAsc = 50‰¹‡
-				  nameDesc = 50‰¹‡‚Ì‹t‡
+				  priceAsc = å€¤æ®µã®å®‰ã„é †
+				  priceDesc = å€¤æ®µã®é«˜ã„é †
+				  purchaseAsc = è³¼å…¥æ•°ãŒå°‘ãªã„é †
+				  purchaseDesc = è³¼å…¥æ•°ãŒå¤šã„é †
+				  nameAsc = 50éŸ³é †
+				  nameDesc = 50éŸ³é †ã®é€†é †
 				*/
 				if(sortParams[i].equals("priceAsc")){
 					sortArray[0] = ProductCatalogDao.SORT_BY_PRICE_ASC;
@@ -331,30 +341,30 @@ public class ShowProductsListCommand extends AbstractCommand{
 				}
 			}
 		}
-		/*ì¬‚µ‚½”z—ñ‚ğ•Ô‚·*/
+		/*ä½œæˆã—ãŸé…åˆ—ã‚’è¿”ã™*/
 		return sortArray;
 	}
 
-	/*‘I‘ğ‚³‚ê‚½ƒTƒuƒJƒeƒSƒŠ‚Ì–¼‘O‚É‘Î‰‚·‚éID‚ğ•Ô‚·ƒƒ\ƒbƒh*/
+	/*é¸æŠã•ã‚ŒãŸã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®åå‰ã«å¯¾å¿œã™ã‚‹IDã‚’è¿”ã™ãƒ¡ã‚½ãƒƒãƒ‰*/
 	private int getSubCategoryId(String subCategoryName)
 	throws LogicException{
-		/*‘SƒTƒuƒJƒeƒSƒŠ‚Ìî•ñ‚ÌƒŠƒXƒg*/
+		/*å…¨ã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®æƒ…å ±ã®ãƒªã‚¹ãƒˆ*/
 		List allSubCategoryList = null;
 		try{
-			/*ƒTƒuƒJƒeƒSƒŠ‚Ìî•ñ‚ğæ“¾‚·‚é‚½‚ß‚ÌDao‚ğæ“¾‚·‚é*/
+			/*ã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãŸã‚ã®Daoã‚’å–å¾—ã™ã‚‹*/
 			SubCategoryDao subCategoryDao = factory.getSubCategoryDao();
-			/*Dao‚©‚çƒTƒuƒJƒeƒSƒŠ‚Ìî•ñ‚ğæ“¾‚·‚é*/
+			/*Daoã‹ã‚‰ã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹*/
 			allSubCategoryList = subCategoryDao.getSubCategories();
 
-			/*Iterator‚ğg‚¢AŠeƒTƒuƒJƒeƒSƒŠ‚Ìî•ñ‚ğŠm”F*/
+			/*Iteratorã‚’ä½¿ã„ã€å„ã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®æƒ…å ±ã‚’ç¢ºèª*/
 			Iterator subCategoryIterator = allSubCategoryList.iterator();
 			while(subCategoryIterator.hasNext()){
-				/*ƒTƒuƒJƒeƒSƒŠ‚ÌBean‚ğæ“¾*/
+				/*ã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®Beanã‚’å–å¾—*/
 				SubCategoryBean subCategory
 				= (SubCategoryBean)subCategoryIterator.next();
-				/*Bean‚Ì’†‚ÌƒTƒuƒJƒeƒSƒŠ‚Ì–¼‘O‚ÆAƒNƒ‰ƒCƒAƒ“ƒg‚ª‘I‘ğ‚µ‚½
-				   ƒTƒuƒJƒeƒSƒŠ‚Ì–¼‘O‚ª“¯‚¶‚È‚çA‚»‚ÌƒTƒuƒJƒeƒSƒŠ‚ÌID‚ğ
-				  •Ï”‚ÉŠi”[‚·‚é*/
+				/*Beanã®ä¸­ã®ã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®åå‰ã¨ã€ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆãŒé¸æŠã—ãŸ
+				   ã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®åå‰ãŒåŒã˜ãªã‚‰ã€ãã®ã‚µãƒ–ã‚«ãƒ†ã‚´ãƒªã®IDã‚’
+				  å¤‰æ•°ã«æ ¼ç´ã™ã‚‹*/
 				if(subCategory.getSubCategoryName()
 						.equals(subCategoryName)){
 					return subCategory.getSubCategoryId();
@@ -366,29 +376,29 @@ public class ShowProductsListCommand extends AbstractCommand{
 		return -1;
 	}
 
-	/*Œ»İƒƒOƒCƒ“’†‚Ì‰ïˆõ‚ÌA
-	  ‚¨‹C‚É“ü‚è‚Ì¤•i‚ÌID‚ÌƒŠƒXƒg‚ğ•ªŠ„‚µ‚½ƒƒ\ƒbƒh‚Åæ“¾‚·‚éƒƒ\ƒbƒh*/
+	/*ç¾åœ¨ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®ã€
+	  ãŠæ°—ã«å…¥ã‚Šã®å•†å“ã®IDã®ãƒªã‚¹ãƒˆã‚’åˆ†å‰²ã—ãŸãƒ¡ã‚½ãƒƒãƒ‰ã§å–å¾—ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
 	private List getMemberFavoriteList(int loginMemberId)
 	throws LogicException{
-		/*‘S‚¨‹C‚É“ü‚è‚Ìî•ñ‚ÌƒŠƒXƒg*/
+		/*å…¨ãŠæ°—ã«å…¥ã‚Šã®æƒ…å ±ã®ãƒªã‚¹ãƒˆ*/
 		List allFavoriteList = null;
-		/*‚±‚Ìƒƒ\ƒbƒh‚ª•Ô‚·A
-		  ƒƒOƒCƒ“’†‚Ì‰ïˆõ‚Ì‚¨‹C‚É“ü‚è¤•i‚ÌID‚ÌƒŠƒXƒg*/
+		/*ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ãŒè¿”ã™ã€
+		  ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®ãŠæ°—ã«å…¥ã‚Šå•†å“ã®IDã®ãƒªã‚¹ãƒˆ*/
 		List memberFavoriteList = new ArrayList();
 		try{
-			/*‰ïˆõ‚ªƒƒOƒCƒ“‚µ‚Ä‚¢‚é‚È‚çA‚¨‹C‚É“ü‚è‚Ì¤•i‚ÌID‚ğæ“¾‚·‚é*/
+			/*ä¼šå“¡ãŒãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ã„ã‚‹ãªã‚‰ã€ãŠæ°—ã«å…¥ã‚Šã®å•†å“ã®IDã‚’å–å¾—ã™ã‚‹*/
 			if(loginMemberId != -1){
-				/*‚¨‹C‚É“ü‚è‚Ìî•ñ‚ğæ“¾‚·‚é‚½‚ß‚ÌDao‚ğæ“¾‚·‚é*/
+				/*ãŠæ°—ã«å…¥ã‚Šã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãŸã‚ã®Daoã‚’å–å¾—ã™ã‚‹*/
 				FavoriteDao favoriteDao = factory.getFavoriteDao();
-				/*Dao‚©‚ç‚¨‹C‚É“ü‚è‚Ìî•ñ‚ğæ“¾‚·‚é*/
+				/*Daoã‹ã‚‰ãŠæ°—ã«å…¥ã‚Šã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹*/
 				allFavoriteList = favoriteDao.getFavorites();
 
 				Iterator favoriteIterator = allFavoriteList.iterator();
 				while(favoriteIterator.hasNext()){
 					FavoriteBean favorite
 					= (FavoriteBean)favoriteIterator.next();
-					/*‚¨‹C‚É“ü‚è‚Ìî•ñ‚Ì‰ïˆõID‚ÆƒƒOƒCƒ“’†‚Ì‰ïˆõ‚ÌID‚ª
-					  “¯‚¶‚È‚ç‚»‚Ì‚¨‹C‚É“ü‚èî•ñ‚Ì¤•i‚ÌID‚ğƒŠƒXƒg‚É’Ç‰Á*/
+					/*ãŠæ°—ã«å…¥ã‚Šã®æƒ…å ±ã®ä¼šå“¡IDã¨ãƒ­ã‚°ã‚¤ãƒ³ä¸­ã®ä¼šå“¡ã®IDãŒ
+					  åŒã˜ãªã‚‰ãã®ãŠæ°—ã«å…¥ã‚Šæƒ…å ±ã®å•†å“ã®IDã‚’ãƒªã‚¹ãƒˆã«è¿½åŠ */
 					if(loginMemberId == favorite.getMemberId()){
 						memberFavoriteList.add(favorite.getProductId());
 					}
@@ -401,37 +411,37 @@ public class ShowProductsListCommand extends AbstractCommand{
 	}
 
 
-	/*ˆø”‚Ì¤•i–¼‚Æ–¼‘O‚ªˆê’v‚·‚é¤•i‚ÌAF‚Ì‰æ‘œƒpƒX‚ÌƒŠƒXƒg‚ğ•Ô‚·ƒƒ\ƒbƒh*/
+	/*å¼•æ•°ã®å•†å“åã¨åå‰ãŒä¸€è‡´ã™ã‚‹å•†å“ã®ã€è‰²ã®ç”»åƒãƒ‘ã‚¹ã®ãƒªã‚¹ãƒˆã‚’è¿”ã™ãƒ¡ã‚½ãƒƒãƒ‰*/
 	private List<String> getProductColors(String productName)
 	throws LogicException{
-		/*‚±‚Ìƒƒ\ƒbƒh‚ª•Ô‚·AF‚Ì‰æ‘œƒpƒX‚ÌƒŠƒXƒg‚Ì•Ï”‚ğéŒ¾*/
+		/*ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ãŒè¿”ã™ã€è‰²ã®ç”»åƒãƒ‘ã‚¹ã®ãƒªã‚¹ãƒˆã®å¤‰æ•°ã‚’å®£è¨€*/
 		List<String> productColors = new ArrayList<String>();
 
-		/*ƒvƒƒpƒeƒBƒtƒ@ƒCƒ‹‚Ö‚ÌƒpƒX */
+		/*ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ•ã‚¡ã‚¤ãƒ«ã¸ã®ãƒ‘ã‚¹ */
 		String FILE_PATH
 		= "c:/watercress/WEB-INF/data/properties/ProductColors.properties";
 
-		/*F–ˆ‚Ì‰æ‘œƒpƒX‚ğ•Û‘¶‚µ‚Ä‚¢‚éƒvƒƒpƒeƒBƒtƒ@ƒCƒ‹‚ğ“Ç‚İ‚Ş*/
+		/*è‰²æ¯ã®ç”»åƒãƒ‘ã‚¹ã‚’ä¿å­˜ã—ã¦ã„ã‚‹ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ãƒ•ã‚¡ã‚¤ãƒ«ã‚’èª­ã¿è¾¼ã‚€*/
 		Properties properties = new Properties();
 
 		try{
 			properties.load(new FileInputStream(FILE_PATH));
 
-			/*¤•iî•ñ‚ğæ“¾‚·‚é‚½‚ß‚ÌProductDao‚ğæ“¾*/
+			/*å•†å“æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãŸã‚ã®ProductDaoã‚’å–å¾—*/
 			ProductDao productDao = factory.getProductDao();
 
-			/*‘S¤•i‚Ìî•ñ‚ğæ“¾*/
+			/*å…¨å•†å“ã®æƒ…å ±ã‚’å–å¾—*/
 			List allProductList = productDao.getProducts();
 
 			Iterator productIterator = allProductList.iterator();
 			while(productIterator.hasNext()){
 
-				/*¤•i‚Ìî•ñ‚PŒ‚ÌBean‚ğæ“¾*/
+				/*å•†å“ã®æƒ…å ±ï¼‘ä»¶ã®Beanã‚’å–å¾—*/
 				ProductBean product = (ProductBean)productIterator.next();
 
-				/*ˆø”‚Ì¤•i–¼‚ÆŒ»İ‚Ì¤•i‚Ì–¼‘O‚Æˆê’v‚·‚é‚È‚ç*/
+				/*å¼•æ•°ã®å•†å“åã¨ç¾åœ¨ã®å•†å“ã®åå‰ãŒåŒã˜ãªã‚‰*/
 				if(productName.equals(product.getProductName())){
-					/*Œ»İ‚Ì¤•i‚ÌF‚É‘Î‰‚·‚é‰æ‘œƒpƒX‚ğæ“¾‚·‚é*/
+					/*ç¾åœ¨ã®å•†å“ã®è‰²ã«å¯¾å¿œã™ã‚‹ç”»åƒãƒ‘ã‚¹ã‚’å–å¾—ã™ã‚‹*/
 					String productColor
 					= properties.getProperty(product.getProductColor());
 					productColors.add(productColor);
@@ -447,5 +457,37 @@ public class ShowProductsListCommand extends AbstractCommand{
 			throw new LogicException(e.getMessage(), e);
 		}
 		return productColors;
+	}
+	
+	/*å¼•æ•°ã®ã‚«ãƒ†ã‚´ãƒªIDã®ã€ã‚«ãƒ†ã‚´ãƒªåã‚’è¿”ã™ãƒ¡ã‚½ãƒƒãƒ‰*/
+	private String getProductCategoryName(int categoryId)
+	throws LogicException{
+		/*ã“ã®ãƒ¡ã‚½ãƒƒãƒ‰ãŒè¿”ã™ã€ã‚«ãƒ†ã‚´ãƒªåã®å¤‰æ•°ã‚’å®£è¨€*/
+		String categoryName = "";
+		try{
+			/*ã‚«ãƒ†ã‚´ãƒªã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãŸã‚ã®ProductDaoã‚’å–å¾—*/
+			CategoryDao categoryDao = factory.getCategoryDao();
+			
+			/*å…¨ã‚«ãƒ†ã‚´ãƒªã®æƒ…å ±ã‚’å–å¾—*/
+			List allCategoryList = categoryDao.getCategories();
+			
+			Iterator categoryIterator = allCategoryList.iterator();
+			while(categoryIterator.hasNext()){
+				
+				/*ã‚«ãƒ†ã‚´ãƒªï¼‘ä»¶ã®æƒ…å ±ã‚’å–å¾—*/
+				CategoryBean category
+				= (CategoryBean)categoryIterator.next();
+				
+				/*å¼•æ•°ã®ã‚«ãƒ†ã‚´ãƒªIDã¨ç¾åœ¨ã®ã‚«ãƒ†ã‚´ãƒªã®IDãŒåŒã˜ãªã‚‰*/
+				if(categoryId == category.getCategoryId()){
+					/*ç¾åœ¨ã®ã‚«ãƒ†ã‚´ãƒªã®åå‰ã‚’å¤‰æ•°ã«æ ¼ç´ã™ã‚‹*/
+					categoryName = category.getCategoryName();
+					break;
+				}
+			}
+		}catch (IntegrationException e){
+			throw new LogicException(e.getMessage(), e);
+		}
+		return categoryName;
 	}
 }

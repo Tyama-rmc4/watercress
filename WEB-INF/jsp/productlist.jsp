@@ -13,6 +13,7 @@
      ┗"tagNames",List<String> その商品に付加されているタグの名前のList
      ┗"colors",List<String> その商品の色の画像パスのList
      ┗"isFavorite",Boolean その商品はログイン中の会員のお気に入りであるか
+     ┗"categoryName",String その商品のカテゴリ名
 -->
 
 
@@ -78,6 +79,17 @@
 </li>
 </ul>
 </nav>
+
+<div>
+	検索
+	<form action="productlist" method="get">
+		<input type="hidden" name="subCategory" value="${param.subCategory}">
+		<input type="hidden" name="pageNumber" value="1">
+		<input type="text" name="searchText" size="40">
+		<input type="submit" value="検索">
+	</form>
+</div>
+
 <h1>商品一覧</h1>
 選択サブカテゴリ：${param.subCategory}
 <c:forEach var="product" items="${data.productsData}">
@@ -86,19 +98,19 @@
 		<a href="item.html">
 			<figure>
 				<a href ="productdetail?productName=${product.catalog.productName}">
-					<img src="${pageContext.request.contextPath}/WEB-INF/data/images${product.catalog.productImagePath}" alt="商品の画像">
+					<img src="${pageContext.request.contextPath}/images/${product.categoryName}/${product.catalog.productImagePath}" alt="商品の画像">
 				</a>
 				
 				<!-- 各タグの表示 -->
 				<c:forEach var="tagName" items="${product.tagNames}">
 					<c:if test="${tagName == 'タグ名'}">
-						<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.catalog.productImagePath}" alt="商品名">
+						<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/images/tag.hoge" alt="商品名">
 					</c:if>
 				</c:forEach>
 				
 				<!-- 売り切れの表示 -->
 				<c:if test="${product.catalog.productStockCount == 0}">
-					<img class="売り切れ画像のクラス" src="${pageContext.request.contextPath}/WEB-INF/data/images${product.catalog.productImagePath}" alt="売り切れ">
+					<img class="売り切れ画像のクラス" src="${pageContext.request.contextPath}/images/soldout.hoge" alt="売り切れ">
 				</c:if>
 				
 			</figure>
