@@ -42,7 +42,7 @@ public class LogInCommand extends AbstractCommand {
 				MemberBean member = (MemberBean)memberlist.get(i);
 				/* 入力されたメールアドレスと
 					一致するメールアドレスがあった場合、パスワードをチェック */
-				if(member.getMemberEmail().equals(reqc.getParameter("email"))) {
+				if(member.getMemberEmail().equals(reqc.getParameter("email")[0])) {
 					flag = false;
 					checkPassword(member, reqc);
 				}
@@ -64,9 +64,9 @@ public class LogInCommand extends AbstractCommand {
 				再度ログイン画面へ飛ばす */
 			if(login == null || "".equals(login) || "NG".equals(login)) {
 				responseContext.setTarget("login");
-			/* ログイン済の場合、トップページへ飛ばす */
+			/* ログイン成功の場合、トップページへ飛ばす */
 			}else {
-				responseContext.setTarget("top");
+				responseContext.setTarget("logincomp");
 			}
 			
 		}catch(IntegrationException e){
@@ -82,7 +82,7 @@ public class LogInCommand extends AbstractCommand {
 		/* 入力されたパスワードと、
 			メールアドレスに応じたパスワードが同じ場合(ログイン成功)、
 			セッションにmember_idを登録*/
-		if(member.getMemberPassword().equals(reqc.getParameter("pass"))) {
+		if(member.getMemberPassword().equals(reqc.getParameter("pass")[0])) {
 			System.out.println("ログイン成功");
 			reqc.setSessionAttribute("login", member.getMemberId());
 		/* パスワードが違う場合(ログイン失敗)、
