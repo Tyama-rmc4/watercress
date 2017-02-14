@@ -65,7 +65,14 @@ public class ShowProductsListCommand extends AbstractCommand{
 
 	/*Daoを取得するためのDaoFactoryを格納する*/
 	AbstractDaoFactory factory;
-
+	/*各種Daoを格納する*/
+	ProductCatalogDao productCategoryDao;
+	TagDao tagDao;
+	SubCategoryDao subCategoryDao;
+	FavoriteDao favoriteDao;
+	ProductDao productDao;
+	CategoryDao categoryDao;
+	
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException{
 		/*RequestContextのインスタンスを取得*/
@@ -78,6 +85,13 @@ public class ShowProductsListCommand extends AbstractCommand{
 		= requestContext.getParameter("pageNumber");
 		if(pageNumberParam != null){
 			pageNumber = Integer.parseInt(pageNumberParam[0]);
+		}
+		/*選択されたカテゴリの名前*/
+		String selectedCategoryName = null;
+		String[] selectedCategoryParam
+		= requestContext.getParameter("category");
+		if(selectedCategoryParam != null){
+			selectedCategoryName = selectedCategoryParam[0];
 		}
 		/*選択されたサブカテゴリの名前*/
 		String selectedSubCategoryName = null;
@@ -142,6 +156,10 @@ public class ShowProductsListCommand extends AbstractCommand{
 			/*Daoを取得するためのDaoFactoryを取得する*/
 			factory = AbstractDaoFactory.getFactory();
 
+			/*選択されたカテゴリのIDを分割したメソッドで取得する*/
+			int selectedCategoryId
+			= getCategoryId(selectedCategoryName);
+
 			/*選択されたサブカテゴリのIDを分割したメソッドで取得する*/
 			int selectedSubCategoryId
 			= getSubCategoryId(selectedSubCategoryName);
@@ -151,12 +169,12 @@ public class ShowProductsListCommand extends AbstractCommand{
 			List memberFavoriteList = getMemberFavoriteList(loginMemberId);
 
 			/*商品の情報を取得するためのDaoを取得する*/
-			ProductCatalogDao pcd = factory.getProductCatalogDao();
+			productCategoryDao = factory.getProductCatalogDao();
 			/*Daoから商品の情報を取得する。sortArrayによってソート条件を設定*/
-			allCatalogList = pcd.getProductCatalogs(sortArray);
+			allCatalogList = productCategoryDao.getProductCatalogs(sortArray);
 
 			/*タグの情報を取得するためのDaoを取得する*/
-			TagDao tagDao = factory.getTagDao();
+			tagDao = factory.getTagDao();
 			/*Daoからタグの情報を取得する*/
 			allTagList = tagDao.getTags();
 
@@ -167,8 +185,10 @@ public class ShowProductsListCommand extends AbstractCommand{
 				ProductCatalogBean product
 					= (ProductCatalogBean)catalogIterator.next();
 
-				/*選択したサブカテゴリの商品なら、次の検索合致判定に進む*/
-				if(product.getSubCategoryId() == selectedSubCategoryId){
+				/*選択したカテゴリの商品なら、次の検索合致判定に進む*/
+				/*判定は分割メソッドで行う*/
+				if(judgeCategoryMatch(
+				product,selectedCategoryId,selectedSubCategoryId)){
 
 					/*その商品に付加されているタグをこの時点で取得しておく*/
 					/*現在の商品情報のタグの名前を格納するListの宣言*/
@@ -281,7 +301,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 							
 						}/*if(現在のページで表示すべきか) の終端*/
 					}/*if(検索文字列、検索タグに合致するか) の終端*/
-				}/*if(選択したサブカテゴリか) の終端*/
+				}/*if(選択したカテゴリか) の終端*/
 			}/*while(catalogIterator.hasNext()) の終端*/
 
 		}catch (IntegrationException e){
@@ -348,13 +368,15 @@ public class ShowProductsListCommand extends AbstractCommand{
 	/*選択されたサブカテゴリの名前に対応するIDを返すメソッド*/
 	private int getSubCategoryId(String subCategoryName)
 	throws LogicException{
-		/*全サブカテゴリの情報のリスト*/
-		List allSubCategoryList = null;
+		/*引数がnullである(パラメータが存在しない)場合は-1を返す*/
+		if(subCategoryName == null){
+			return -1;
+		}
 		try{
 			/*サブカテゴリの情報を取得するためのDaoを取得する*/
-			SubCategoryDao subCategoryDao = factory.getSubCategoryDao();
+			subCategoryDao = factory.getSubCategoryDao();
 			/*Daoからサブカテゴリの情報を取得する*/
-			allSubCategoryList = subCategoryDao.getSubCategories();
+			List allSubCategoryList = subCategoryDao.getSubCategories();
 
 			/*Iteratorを使い、各サブカテゴリの情報を確認*/
 			Iterator subCategoryIterator = allSubCategoryList.iterator();
@@ -373,6 +395,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}catch (IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
+		/*一致する名前が無い（＝パラメータが存在しない）場合は-1を返す*/
 		return -1;
 	}
 
@@ -389,7 +412,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 			/*会員がログインしているなら、お気に入りの商品のIDを取得する*/
 			if(loginMemberId != -1){
 				/*お気に入りの情報を取得するためのDaoを取得する*/
-				FavoriteDao favoriteDao = factory.getFavoriteDao();
+				favoriteDao = factory.getFavoriteDao();
 				/*Daoからお気に入りの情報を取得する*/
 				allFavoriteList = favoriteDao.getFavorites();
 
@@ -428,7 +451,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 			properties.load(new FileInputStream(FILE_PATH));
 
 			/*商品情報を取得するためのProductDaoを取得*/
-			ProductDao productDao = factory.getProductDao();
+			productDao = factory.getProductDao();
 
 			/*全商品の情報を取得*/
 			List allProductList = productDao.getProducts();
@@ -462,11 +485,9 @@ public class ShowProductsListCommand extends AbstractCommand{
 	/*引数のカテゴリIDの、カテゴリ名を返すメソッド*/
 	private String getProductCategoryName(int categoryId)
 	throws LogicException{
-		/*このメソッドが返す、カテゴリ名の変数を宣言*/
-		String categoryName = "";
 		try{
-			/*カテゴリの情報を取得するためのProductDaoを取得*/
-			CategoryDao categoryDao = factory.getCategoryDao();
+			/*カテゴリの情報を取得するためのCategoryDaoを取得*/
+			categoryDao = factory.getCategoryDao();
 			
 			/*全カテゴリの情報を取得*/
 			List allCategoryList = categoryDao.getCategories();
@@ -480,14 +501,73 @@ public class ShowProductsListCommand extends AbstractCommand{
 				
 				/*引数のカテゴリIDと現在のカテゴリのIDが同じなら*/
 				if(categoryId == category.getCategoryId()){
-					/*現在のカテゴリの名前を変数に格納する*/
-					categoryName = category.getCategoryName();
-					break;
+					/*現在のカテゴリの名前を返す*/
+					return category.getCategoryName();
 				}
 			}
 		}catch (IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
-		return categoryName;
+		return "";
+	}
+	
+	
+	/*選択されたカテゴリの名前に対応するIDを返すメソッド*/
+	private int getCategoryId(String categoryName)
+	throws LogicException{
+		/*引数がnullである(パラメータが存在しない)場合は-1を返す*/
+		if(categoryName == null){
+			return -1;
+		}
+		try{
+			/*カテゴリの情報を取得するためのProductDaoを取得*/
+			categoryDao = factory.getCategoryDao();
+			/*全カテゴリの情報を取得*/
+			List allCategoryList = categoryDao.getCategories();
+			
+			Iterator categoryIterator = allCategoryList.iterator();
+			while(categoryIterator.hasNext()){
+				
+				/*カテゴリ１件の情報を取得*/
+				CategoryBean category
+				= (CategoryBean)categoryIterator.next();
+				
+				/*引数のカテゴリの名前と現在のカテゴリの名前が同じなら*/
+				if(categoryName.equals(category.getCategoryName())){
+					/*現在のカテゴリのIDを返す*/
+					return category.getCategoryId();
+				}
+			}
+		}catch (IntegrationException e){
+			throw new LogicException(e.getMessage(), e);
+		}
+		/*一致する名前が無い場合は-1を返す*/
+		return -1;
+	}
+	
+	/*この商品は選択されたカテゴリの商品であるかを判定するメソッド*/
+	private boolean judgeCategoryMatch(
+	ProductCatalogBean product,int selectedCategoryId,
+	int selectedSubCategoryId)
+	throws LogicException{
+		
+		/*先にサブカテゴリが一致しているかを確認する。*/
+		if(product.getSubCategoryId() == selectedSubCategoryId){
+			return true;
+		}
+		/*サブカテゴリが一致していない場合の判定を行う*/
+		/*カテゴリのパラメータとサブカテゴリのパラメータが
+		  同時に送信されてきた場合は、カテゴリのパラメータを無視する
+		 （サブカテゴリのパラメータのみで判定を行う）。
+		  パラメータが存在しない場合は、引数は-1となっているので、
+		  これで判別する。また、どちらのパラメータも存在しない(-1である)場合は
+		  trueを返し、全ての商品が該当するようにする*/
+		if(selectedSubCategoryId == -1){
+			if(product.getCategoryId() == selectedCategoryId
+			|| product.getCategoryId() == -1){
+				return true;
+			}
+		}
+		return false;
 	}
 }

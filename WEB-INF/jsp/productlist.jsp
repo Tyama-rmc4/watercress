@@ -91,6 +91,7 @@
 </div>
 
 <h1>商品一覧</h1>
+選択カテゴリ：${param.category}
 選択サブカテゴリ：${param.subCategory}
 <c:forEach var="product" items="${data.productsData}">
 	
