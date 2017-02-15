@@ -1,11 +1,12 @@
 /*
-  @author ’r“cç’ß
+  @author æ± ç”°åƒé¶´
   @date 2017/02/01
 */
 
 package filter;
 
 import java.io.IOException;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -13,41 +14,45 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-/* ƒƒOƒCƒ“‚ª•K—v‚È“Á’è‚Ìƒy[ƒW‚ÉˆÚ“®‚·‚éÛ‚ÌƒƒOƒCƒ“ƒ`ƒFƒbƒN‚ğs‚¤ƒtƒBƒ‹ƒ^[ */
-/* ƒtƒBƒ‹ƒ^[‚ª“®ì‚·‚éjsp:leave /mypage /userconfig /orderhistory /payinput */
+/* ãƒ­ã‚°ã‚¤ãƒ³ãŒå¿…è¦ãªç‰¹å®šã®ãƒšãƒ¼ã‚¸ã«ç§»å‹•ã™ã‚‹éš›ã®ãƒ­ã‚°ã‚¤ãƒ³ãƒã‚§ãƒƒã‚¯ã‚’è¡Œã†ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ */
+/* ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ãŒå‹•ä½œã™ã‚‹jsp:leave /mypage /userconfig /orderhistory /payinput */
 public class LogInCheckFilter implements Filter {
 	private FilterConfig config;
-	
-	/* ‰Šú‰» */
+
+	/* åˆæœŸåŒ– */
 	public void init(FilterConfig config)throws ServletException {
 		this.config = config;
 	}
-	/* €‚Ê‚â‚Â */
+	/* æ­»ã¬ã‚„ã¤ */
 	public void destroy() {}
-	
-	/* ÀÛ‚É“®‚­‚â‚Â */
+
+	/* å®Ÿéš›ã«å‹•ãã‚„ã¤ */
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
 	throws ServletException, IOException {
-		System.out.println("--LogInCheckFilter--");
-		
-		/* ƒZƒbƒVƒ‡ƒ“‚©‚çƒƒOƒCƒ“î•ñ‚ğæ“¾ */
+//		System.out.println("--LogInCheckFilter--");
+
+		/* ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‹ã‚‰ãƒ­ã‚°ã‚¤ãƒ³æƒ…å ±ã‚’å–å¾— */
 		HttpSession session = ((HttpServletRequest)req).getSession();
 		String login = (String)session.getAttribute("login");
-		System.out.println("login=" + login);
-		
-		/* –¢ƒƒOƒCƒ“EƒƒOƒCƒ“‚É¸”s‚µ‚½ê‡A
-			ƒZƒbƒVƒ‡ƒ“‚ÉˆÚ“®æî•ñ‚ğ“o˜^‚µÄ“xƒƒOƒCƒ“‰æ–Ê‚Ö”ò‚Î‚· */
+//		System.out.println("login=" + login);
+
+		/* æœªãƒ­ã‚°ã‚¤ãƒ³ãƒ»ãƒ­ã‚°ã‚¤ãƒ³ã«å¤±æ•—ã—ãŸå ´åˆã€
+			ã‚»ãƒƒã‚·ãƒ§ãƒ³ã«ç§»å‹•å…ˆæƒ…å ±ã‚’ç™»éŒ²ã—å†åº¦ãƒ­ã‚°ã‚¤ãƒ³ç”»é¢ã¸é£›ã°ã™ */
 		if(login == null || "".equals(login) || "NG".equals(login)) {
-			RequestDispatcher dis = req.getRequestDispatcher("/filterlogin.jsp");
-			session.setAttribute
-				("target", (((HttpServletRequest)req).getServletPath()));
-			System.out.println("target="+session.getAttribute("target"));
+			RequestDispatcher dis = req.getRequestDispatcher("/WEB-INF/jsp/filterlogin.jsp");
+
+			/* ã‚ã‚‹æ™‚ç‚¹ã§ã®ãƒ­ã‚°ã‚¤ãƒ³ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼ã§ã€ä¸€å›ä»¥ä¸Šãƒ­ã‚°ã‚¤ãƒ³ã«å¤±æ•—ã—ãŸå ´åˆ
+				PathInfoãŒnullã«ãªã‚‹ã®ã§ãã‚Œã‚’å›é¿ã™ã‚‹(nullã§ãªã„æ™‚ã®ã¿ã‚¿ãƒ¼ã‚²ãƒƒãƒˆç™»éŒ²) */
+			if(!((((HttpServletRequest)req).getPathInfo()) == null)) {
+				session.setAttribute
+					("target", (((HttpServletRequest)req).getPathInfo()));
+			}
+//			System.out.println("target="+session.getAttribute("target"));
 			dis.forward(req, res);
-		/* ƒƒOƒCƒ“Ï‚Ìê‡AŒ³‚ÌˆÚ“®æ‚Ö”ò‚Î‚· */
+		/* ãƒ­ã‚°ã‚¤ãƒ³æ¸ˆã®å ´åˆã€å…ƒã®ç§»å‹•å…ˆã¸é£›ã°ã™ */
 		}else {
 			chain.doFilter(req, res);
 		}

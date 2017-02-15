@@ -1,32 +1,31 @@
 /*
-  @author ’r“cç’ß
+  @author æ± ç”°åƒé¶´
   @date 2017/02/02
 */
 
 package command;
 
+import ex.LogicException;
 import logic.RequestContext;
 import logic.ResponseContext;
-import logic.WebRequestContext;
 
-import ex.LogicException;
-
-/* ƒƒOƒAƒEƒgƒRƒ}ƒ“ƒh */
+/* ãƒ­ã‚°ã‚¢ã‚¦ãƒˆã‚³ãƒãƒ³ãƒ‰ */
 public class LogOutCommand extends AbstractCommand {
-	/* ƒƒOƒAƒEƒgƒ{ƒ^ƒ“‚ª‰Ÿ‚³‚ê‚½‚çAƒZƒbƒVƒ‡ƒ“‚É“o˜^‚µ‚Ä‚ ‚é
-		ƒƒOƒCƒ“î•ñ‚ÆƒƒOƒCƒ“‚Ég—p‚µ‚½ˆÚ“®æî•ñ‚ğíœ */
+	/* ãƒ­ã‚°ã‚¢ã‚¦ãƒˆãƒœã‚¿ãƒ³ãŒæŠ¼ã•ã‚ŒãŸã‚‰ã€ã‚»ãƒƒã‚·ãƒ§ãƒ³ã«ç™»éŒ²ã—ã¦ã‚ã‚‹
+		ãƒ­ã‚°ã‚¤ãƒ³æƒ…å ±ã¨ãƒ­ã‚°ã‚¤ãƒ³æ™‚ã«ä½¿ç”¨ã—ãŸç§»å‹•å…ˆæƒ…å ±ã‚’å‰Šé™¤ */
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException{
 		System.out.println("--LogOutCommand--");
-		
+
 		RequestContext reqc = getRequestContext();
-		
+
 		reqc.removeSessionAttribute("login");
 		reqc.removeSessionAttribute("target");
-		
-		/* ƒgƒbƒv‚É–ß‚é */
-		responseContext.setTarget("top");
-		
+		reqc.removeSessionAttribute("cart");
+
+		/* å®Œäº†ç”»é¢ã¸ç§»å‹•ã™ã‚‹ */
+		responseContext.setTarget("logoutcomp");
+
 		return responseContext;
 	}
 }

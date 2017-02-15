@@ -1,94 +1,88 @@
 /*
-  @author ’r“cç’ß
+  @author æ± ç”°åƒé¶´
   @date 2017/02/09
 */
 
 package command;
 
+import java.util.List;
+
 import bean.MemberBean;
-
-import logic.ResponseContext;
-import logic.RequestContext;
-import logic.WebRequestContext;
-
 import dao.AbstractDaoFactory;
 import dao.MemberDao;
-import dao.OraMemberDao;
-
-import ex.LogicException;
 import ex.IntegrationException;
+import ex.LogicException;
+import logic.RequestContext;
+import logic.ResponseContext;
 
-import java.util.List;
-import javax.servlet.http.HttpServletRequest;
-
-/* ’Êí‚ÌƒƒOƒCƒ“ƒ`ƒFƒbƒNƒRƒ}ƒ“ƒh(top‚©‚çƒƒOƒCƒ“‰Ÿ‚µ‚½) */
+/* é€šå¸¸ã®ãƒ­ã‚°ã‚¤ãƒ³ãƒã‚§ãƒƒã‚¯ã‚³ãƒãƒ³ãƒ‰(topã‹ã‚‰ãƒ­ã‚°ã‚¤ãƒ³æŠ¼ã—ãŸæ™‚) */
 public class LogInCommand extends AbstractCommand {
-	/* ‰ïˆõ•\‚ğæ“¾‚µAƒ[ƒ‹ƒAƒhƒŒƒX‚ÆƒpƒXƒ[ƒh‚ªˆê’v‚·‚é‰ïˆõ‚ğŒŸõ‚·‚é */
+	/* ä¼šå“¡è¡¨ã‚’å–å¾—ã—ã€ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã¨ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒä¸€è‡´ã™ã‚‹ä¼šå“¡ã‚’æ¤œç´¢ã™ã‚‹ */
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException{
-		System.out.println("--LogInCommand--");
-		
+//		System.out.println("--LogInCommand--");
+
 		RequestContext reqc = getRequestContext();
 		boolean flag = true;
-		
+
 		try{
-			/* ‰ïˆõ•\‚ÌƒŠƒXƒg‚ğæ“¾ */
+			/* ä¼šå“¡è¡¨ã®ãƒªã‚¹ãƒˆã‚’å–å¾— */
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
 			MemberDao memberdao = factory.getMemberDao();
 			List memberlist = memberdao.getMembers();
-			
-			/* ˆês‚¸‚ÂŒŸõ(Œ©‚Ã‚ç‚¢‚Ì‚Åƒ`ƒFƒbƒN‚Í•Êƒƒ\ƒbƒh‚É•ª—£) */
+
+			/* ä¸€è¡Œãšã¤æ¤œç´¢(è¦‹ã¥ã‚‰ã„ã®ã§ãƒã‚§ãƒƒã‚¯ã¯åˆ¥ãƒ¡ã‚½ãƒƒãƒ‰ã«åˆ†é›¢) */
 			for(int i = 0; i < memberlist.size(); i++){
 				MemberBean member = (MemberBean)memberlist.get(i);
-				/* “ü—Í‚³‚ê‚½ƒ[ƒ‹ƒAƒhƒŒƒX‚Æ
-					ˆê’v‚·‚éƒ[ƒ‹ƒAƒhƒŒƒX‚ª‚ ‚Á‚½ê‡AƒpƒXƒ[ƒh‚ğƒ`ƒFƒbƒN */
+				/* å…¥åŠ›ã•ã‚ŒãŸãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã¨
+					ä¸€è‡´ã™ã‚‹ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ãŒã‚ã£ãŸå ´åˆã€ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã‚’ãƒã‚§ãƒƒã‚¯ */
 				if(member.getMemberEmail().equals(reqc.getParameter("email")[0])) {
 					flag = false;
 					checkPassword(member, reqc);
 				}
 			}
-			
-			/* “ü—Í‚³‚ê‚½ƒ[ƒ‹ƒAƒhƒŒƒX‚Éˆê’v‚·‚éƒ[ƒ‹ƒAƒhƒŒƒX‚ª
-				ƒf[ƒ^ƒx[ƒX“à‚É‘¶İ‚µ‚È‚©‚Á‚½ê‡ */
+
+			/* å…¥åŠ›ã•ã‚ŒãŸãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã«ä¸€è‡´ã™ã‚‹ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ãŒ
+				ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹å†…ã«å­˜åœ¨ã—ãªã‹ã£ãŸå ´åˆ */
 			if(flag){
-				System.out.println("ƒ[ƒ‹ƒAƒhƒŒƒX‚ªˆá‚¢‚Ü‚·");
+				System.out.println("ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ãŒé•ã„ã¾ã™");		//ã“ã“ã‚’æ›¸ãæ›ãˆã¦jspã«è¡¨ç¤ºã—ãŸã„(ä½™è£•ãŒã‚ã‚Œã°)
 				reqc.setSessionAttribute("login", "NG");
 			}
-			
-			/* ‚±‚±‚©‚çƒtƒBƒ‹ƒ^[‹@”\‚É‹ß‚¢“®ì */
-			/* ƒZƒbƒVƒ‡ƒ“‚©‚çƒƒOƒCƒ“î•ñ‚ğæ“¾ */
+
+			/* ã“ã“ã‹ã‚‰ãƒ•ã‚£ãƒ«ã‚¿ãƒ¼æ©Ÿèƒ½ã«è¿‘ã„å‹•ä½œ */
+			/* ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‹ã‚‰ãƒ­ã‚°ã‚¤ãƒ³æƒ…å ±ã‚’å–å¾— */
 			String login = (String)reqc.getSessionAttribute("login");
-			System.out.println("login=" + login);
-			
-			/* –¢ƒƒOƒCƒ“EƒƒOƒCƒ“‚É¸”s‚µ‚½ê‡A
-				Ä“xƒƒOƒCƒ“‰æ–Ê‚Ö”ò‚Î‚· */
+//			System.out.println("login=" + login);
+
+			/* æœªãƒ­ã‚°ã‚¤ãƒ³ãƒ»ãƒ­ã‚°ã‚¤ãƒ³ã«å¤±æ•—ã—ãŸå ´åˆã€
+				å†åº¦ãƒ­ã‚°ã‚¤ãƒ³ç”»é¢ã¸é£›ã°ã™ */
 			if(login == null || "".equals(login) || "NG".equals(login)) {
 				responseContext.setTarget("login");
-			/* ƒƒOƒCƒ“¬Œ÷‚Ìê‡Aƒgƒbƒvƒy[ƒW‚Ö”ò‚Î‚· */
+			/* ãƒ­ã‚°ã‚¤ãƒ³æˆåŠŸã®å ´åˆã€ãƒˆãƒƒãƒ—ãƒšãƒ¼ã‚¸ã¸é£›ã°ã™ */
 			}else {
 				responseContext.setTarget("logincomp");
 			}
-			
+
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
-		
+
 		return responseContext;
 	}
-	
-	/* ƒpƒXƒ[ƒh‚ª³‚µ‚¢‚©ƒ`ƒFƒbƒN */
+
+	/* ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒæ­£ã—ã„ã‹ãƒã‚§ãƒƒã‚¯ */
 	private static void checkPassword
 		(MemberBean member, RequestContext reqc) {
-		/* “ü—Í‚³‚ê‚½ƒpƒXƒ[ƒh‚ÆA
-			ƒ[ƒ‹ƒAƒhƒŒƒX‚É‰‚¶‚½ƒpƒXƒ[ƒh‚ª“¯‚¶ê‡(ƒƒOƒCƒ“¬Œ÷)A
-			ƒZƒbƒVƒ‡ƒ“‚Émember_id‚ğ“o˜^*/
+		/* å…¥åŠ›ã•ã‚ŒãŸãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ã¨ã€
+			ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹ã«å¿œã˜ãŸãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒåŒã˜å ´åˆ(ãƒ­ã‚°ã‚¤ãƒ³æˆåŠŸ)ã€
+			ã‚»ãƒƒã‚·ãƒ§ãƒ³ã«member_idã‚’ç™»éŒ²*/
 		if(member.getMemberPassword().equals(reqc.getParameter("pass")[0])) {
-			System.out.println("ƒƒOƒCƒ“¬Œ÷");
-			reqc.setSessionAttribute("login", member.getMemberId());
-		/* ƒpƒXƒ[ƒh‚ªˆá‚¤ê‡(ƒƒOƒCƒ“¸”s)A
-			ƒZƒbƒVƒ‡ƒ“‚ÉƒƒOƒCƒ“‚ª¸”s‚µ‚½‚±‚Æ‚ğ“o˜^*/
+//			System.out.println("ãƒ­ã‚°ã‚¤ãƒ³æˆåŠŸ");
+			reqc.setSessionAttribute("login", String.valueOf(member.getMemberId()));
+		/* ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒé•ã†å ´åˆ(ãƒ­ã‚°ã‚¤ãƒ³å¤±æ•—)ã€
+			ã‚»ãƒƒã‚·ãƒ§ãƒ³ã«ãƒ­ã‚°ã‚¤ãƒ³ãŒå¤±æ•—ã—ãŸã“ã¨ã‚’ç™»éŒ²*/
 		}else{
-			System.out.println("ƒpƒXƒ[ƒh‚ªˆá‚¢‚Ü‚·");
+			System.out.println("ãƒ‘ã‚¹ãƒ¯ãƒ¼ãƒ‰ãŒé•ã„ã¾ã™");				//ã“ã“ã‚’æ›¸ãæ›ãˆã¦jspã«è¡¨ç¤ºã—ãŸã„(ä½™è£•ãŒã‚ã‚Œã°)
 			reqc.setSessionAttribute("login", "NG");
 		}
 	}
