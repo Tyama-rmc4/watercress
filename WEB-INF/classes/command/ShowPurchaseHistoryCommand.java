@@ -33,7 +33,7 @@ public class ShowPurchaseHistoryCommand extends AbstractCommand{
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException{
 		/*RequestContextのインスタンスを取得*/
-		RequestContext requestContext = new WebRequestContext();
+		RequestContext requestContext = getRequestContext();
 		
 		/*getParameterでページ番号を取得*/
 		int pageNum = 0;

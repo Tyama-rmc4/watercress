@@ -48,7 +48,7 @@ public class ShowMyPageCommand extends AbstractCommand{
 	
 	public ResponseContext execute(ResponseContext responseContext) throws LogicException{
 		/*RequestContextのインスタンスを取得*/
-		RequestContext requestContext = new WebRequestContext();
+		RequestContext requestContext = getRequestContext();
 		
 		/*入力されたパラメータを受け取る*/
 		int memberId = Integer.parseInt(requestContext.getSessionAttribute("login").toString());
