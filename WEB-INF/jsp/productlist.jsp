@@ -58,12 +58,12 @@
 <ul>
 <li class="arrow"><a>CATEGORY</a>
     <ul class="ddmenu">
-    <li><a href="list.html">TOPS</a></li>
+    <li><a href="productlist?category=tops">TOPS</a></li>
     <li><a href="productlist?subCategory=outer">サブカテゴリのリンクテスト：outer</a></li>
-    <li><a href="list2.html">BOTTOMS</a></li>
-    <li><a href="list3.html">UNDER</a></li>
-    <li><a href="list4.html">SHOES</a></li>
-    <li><a href="list5.html">ACCESSORIES</a></li>
+    <li><a href="productlist?category=bottoms">BOTTOMS</a></li>
+    <li><a href="productlist?category=under">UNDER</a></li>
+    <li><a href="productlist?category=shoes">SHOES</a></li>
+    <li><a href="productlist?category=accessories">ACCESSORIES</a></li>
     </ul>
 </li>
 <li class="arrow"><a href="productlist.html">SALE</a>
@@ -83,9 +83,17 @@
 <div>
 	検索
 	<form action="productlist" method="get">
+		<input type="hidden" name="category" value="${param.category}">
 		<input type="hidden" name="subCategory" value="${param.subCategory}">
 		<input type="hidden" name="pageNumber" value="1">
+		名前
 		<input type="text" name="searchText" size="40">
+		タグ
+		<select name="searchTag">
+			<option value=""></option>
+			<option value="冬季限定">冬季限定</option>
+			<option value="セール">セール</option>
+		</select>
 		<input type="submit" value="検索">
 	</form>
 </div>
@@ -122,7 +130,7 @@
 
 <!-- 現在のページが1ページ目でなければ、前のページへ移動するリンクを表示 -->
 <c:if test="${data.pageNumber > 1}" >
-	<a href ="productlist?subCategory=${param.subCategory}&pageNumber=${data.pageNumber-1}">前のページへ</a>
+	<a href ="productlist?category=${param.category}&subCategory=${param.subCategory}&pageNumber=${data.pageNumber-1}">前のページへ</a>
 </c:if>
 
 <!-- 商品数１５毎に１個、ページ移動ボタンを増やす -->
@@ -134,12 +142,12 @@
 			pageCount += 1;
 			pageContext.setAttribute("pageCount",pageCount);
 		%>
-	<a href ="productlist?subCategory=${param.subCategory}&pageNumber=${pageScope.pageCount}">${pageScope.pageCount}</a>
+	<a href ="productlist?category=${param.category}&subCategory=${param.subCategory}&pageNumber=${pageScope.pageCount}">${pageScope.pageCount}</a>
 </c:forEach>
 
 <!-- 現在のページが最後のページでなければ、次のページへ移動するリンクを表示 -->
 <c:if test="${data.pageNumber < pageScope.pageCount}" >
-	<a href ="productlist?subCategory=${param.subCategory}&pageNumber=${data.pageNumber+1}">次のページへ</a>
+	<a href ="productlist?category=${param.category}&subCategory=${param.subCategory}&pageNumber=${data.pageNumber+1}">次のページへ</a>
 </c:if>
 
 <footer>
