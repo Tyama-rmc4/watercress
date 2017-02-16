@@ -1,4 +1,4 @@
-//Product•\‚Ìƒf[ƒ^æ“¾
+//Productè¡¨ã®ãƒ‡ãƒ¼ã‚¿å–å¾—
 package dao;
 
 import java.sql.ResultSet;
@@ -16,7 +16,7 @@ import ex.IllegalSQLException;
 import ex.IntegrationException;
 
 public class OraProductInformationDao implements ProductInformationDao {
-	/*‘S‚Ä‚Ì¤•i‚Ìî•ñ‚ğæ“¾‚·‚éƒƒ\ƒbƒh*/
+	/*å…¨ã¦ã®å•†å“ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
 	public List getProductInformations() throws IntegrationException{
 		
 		ArrayList<ProductInformationBean> infoList =
@@ -26,7 +26,7 @@ public class OraProductInformationDao implements ProductInformationDao {
 		ResultSet result = null;
 		
 		try{
-			/*ƒf[ƒ^ƒx[ƒX‚Ö‚ÌÚ‘±*/
+			/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã¸ã®æ¥ç¶š*/
 			connection 
 			= new OracleConnector("shop_admin","admin").getConnection();
 		}catch(IntegrationException e){
@@ -34,25 +34,25 @@ public class OraProductInformationDao implements ProductInformationDao {
 		}
 		
 		try{
-			/*ƒI[ƒgƒRƒ~ƒbƒg‹@”\‚ğOFF‚É‚·‚é*/
+			/*ã‚ªãƒ¼ãƒˆã‚³ãƒŸãƒƒãƒˆæ©Ÿèƒ½ã‚’OFFã«ã™ã‚‹*/
 			connection.setAutoCommit(false);
 			
-			/*SQL•¶‚ğDB‚É‘—‚é‚½‚ß‚ÌStatementƒIƒuƒWƒFƒNƒg‚ğ¶¬*/
+			/*SQLæ–‡ã‚’DBã«é€ã‚‹ãŸã‚ã®Statementã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ*/
 			statement = connection.createStatement();
 			
-			/*SQL•¶‚ğ‹Lq*/
-			String sql = "product_id, product_name, product_price, "+
+			/*SQLæ–‡ã‚’è¨˜è¿°*/
+			String sql = "select product_id, product_name, product_price, "+
 							"product_description, category_id,"+
 							"sub_category_id, product_size, product_color,"+
        						"product_release_date, product_stock_count "+
 							"FROM product_information_view " + 
 							"ORDER BY product_release_date DESC";
 			
-			/*SQL•¶‚ğÀs‚µAResultSetƒIƒuƒWƒFƒNƒg‚ğ¶¬*/
+			/*SQLæ–‡ã‚’å®Ÿè¡Œã—ã€ResultSetã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ*/
 			result = statement.executeQuery(sql);
 			
 			while(result.next()){
-				/*SELECT‚ÌŒ‹‰Ê‚ğBean‚É“ü‚ê‚é*/
+				/*SELECTã®çµæœã‚’Beanã«å…¥ã‚Œã‚‹*/
 				ProductInformationBean info = new ProductInformationBean();
 				
 				info.setProductId(result.getString(1));
@@ -66,7 +66,7 @@ public class OraProductInformationDao implements ProductInformationDao {
 				info.setProductReleaseDate(result.getString(9));
 				info.setProductStockCount(Integer.parseInt(result.getString(10)));
 				
-				/*List‚ÉBean‚ğ“ü‚ê‚é*/
+				/*Listã«Beanã‚’å…¥ã‚Œã‚‹*/
 				infoList.add(info);
 			}
 			
@@ -94,7 +94,7 @@ public class OraProductInformationDao implements ProductInformationDao {
 			}
 		}
 			
-		//Product•\‘SŒ‚ğ•Ô‚·B
+		//Productè¡¨å…¨ä»¶ã‚’è¿”ã™ã€‚
 		return infoList;
 		
 	}
