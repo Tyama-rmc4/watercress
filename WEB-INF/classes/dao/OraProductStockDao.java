@@ -1,76 +1,75 @@
 /*
-  author ’r“c‘å˜a
+  author æ± ç”°å¤§å’Œ
 */
 package dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import bean.ProductStockBean;
-import ex.IntegrationException;
 import ex.ConnectorException;
 import ex.IllegalSQLException;
+import ex.IntegrationException;
 
-/*’•¶–¾×‚Ìî•ñ‚ğæ“¾‚·‚é‚½‚ß‚É—˜—p‚·‚éƒf[ƒ^ƒAƒNƒZƒXƒIƒuƒWƒFƒNƒg*/
+/*æ³¨æ–‡æ˜ç´°ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãŸã‚ã«åˆ©ç”¨ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ*/
 public class OraProductStockDao implements ProductStockDao {
-	/*‘S‚Ä‚Ì’•¶–¾×‚Ìî•ñ‚ğæ“¾‚·‚éƒƒ\ƒbƒh*/
+	/*å…¨ã¦ã®æ³¨æ–‡æ˜ç´°ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
 	public List getProductStocks() throws IntegrationException {
-		/*ƒf[ƒ^ƒx[ƒX‚ÌÚ‘±A•\ƒf[ƒ^‚Ìæ“¾‚Åg—p‚·‚é•Ï”‚ÌéŒ¾*/
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã®æ¥ç¶šã€è¡¨ãƒ‡ãƒ¼ã‚¿ã®å–å¾—ã§ä½¿ç”¨ã™ã‚‹å¤‰æ•°ã®å®£è¨€*/
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet result = null;
-		
-		/*–â‚¢‡‚í‚¹‚ÌŒ‹‰Ê‚ğŠi”[‚·‚éBean‚ğŠi”[‚·‚éƒŠƒXƒg•Ï”‚ÌéŒ¾*/
+
+		/*å•ã„åˆã‚ã›ã®çµæœã‚’æ ¼ç´ã™ã‚‹Beanã‚’æ ¼ç´ã™ã‚‹ãƒªã‚¹ãƒˆå¤‰æ•°ã®å®£è¨€*/
 		ArrayList<ProductStockBean> productStocks
 		= new ArrayList<ProductStockBean>();
-		
-		/*ƒf[ƒ^ƒx[ƒX‚Ö‚ÌÚ‘±*/
+
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã¸ã®æ¥ç¶š*/
 		try{
-			connection 
+			connection
 			= new OracleConnector("shop_admin","admin").getConnection();
 		}catch(IntegrationException e){
 			throw new ConnectorException(e.getMessage(), e);
 		}
-		
+
 		try{
-			/*ƒI[ƒgƒRƒ~ƒbƒg‚ğ–³Œø‚É‚·‚é*/
+			/*ã‚ªãƒ¼ãƒˆã‚³ãƒŸãƒƒãƒˆã‚’ç„¡åŠ¹ã«ã™ã‚‹*/
 			connection.setAutoCommit(false);
-			
-			/*ƒXƒe[ƒgƒƒ“ƒg‚ğ¶¬‚·‚é*/
+
+			/*ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã‚’ç”Ÿæˆã™ã‚‹*/
 			statement = connection.createStatement();
-			
-			/*SQL•¶‚ğ‚Â•Ï”‚ÌéŒ¾*/
+
+			/*SQLæ–‡ã‚’æŒã¤å¤‰æ•°ã®å®£è¨€*/
 			String sql = "select product_id, product_stock_count "
 			+ "from product_stock";
-			
-			/*SQL‚ğÀs‚µAŒ‹‰Ê‚ğResultSet‚ÉŠi”[‚·‚é*/
+
+			/*SQLã‚’å®Ÿè¡Œã—ã€çµæœã‚’ResultSetã«æ ¼ç´ã™ã‚‹*/
 			result = statement.executeQuery(sql);
-			
+
 			while(result.next()){
-				/*•\‚É‘Î‰‚·‚éBean‚ğƒCƒ“ƒXƒ^ƒ“ƒX‰»‚·‚é*/
+				/*è¡¨ã«å¯¾å¿œã™ã‚‹Beanã‚’ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ã™ã‚‹*/
 				ProductStockBean productStock = new ProductStockBean();
-				/*Bean‚ÉSQL‚ÌŒ‹‰Ê‚ğŠi”[‚·‚é*/
+				/*Beanã«SQLã®çµæœã‚’æ ¼ç´ã™ã‚‹*/
 				productStock.setProductId(result.getString(1));
 				productStock.setProductStockCount(result.getInt(2));
-				/*ƒŠƒXƒg‚ÉBean‚ğŠi”[‚·‚é*/
+				/*ãƒªã‚¹ãƒˆã«Beanã‚’æ ¼ç´ã™ã‚‹*/
 				productStocks.add(productStock);
 			}
-			/*ƒRƒ~ƒbƒg‚ğs‚¤*/
+			/*ã‚³ãƒŸãƒƒãƒˆã‚’è¡Œã†*/
 			connection.commit();
-			/*ResultSetAStatementAConnection‚ğƒNƒ[ƒY‚·‚é*/
+			/*ResultSetã€Statementã€Connectionã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹*/
 			result.close();
 			statement.close();
 			connection.close();
-			/*—áŠO‚ª”­¶‚µ‚½‚çAfinally‹å‚ÅƒNƒ[ƒY‚ğs‚¤*/
+			/*ä¾‹å¤–ãŒç™ºç”Ÿã—ãŸã‚‰ã€finallyå¥ã§ã‚¯ãƒ­ãƒ¼ã‚ºã‚’è¡Œã†*/
 		}catch(SQLException e){
 			try{
-				/*ƒ[ƒ‹ƒoƒbƒN‚ğs‚¤*/
+				/*ãƒ­ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¡Œã†*/
 				connection.rollback();
 			}catch(SQLException e2){
 				throw new IllegalSQLException(e2.getMessage(),e2);
@@ -101,54 +100,52 @@ public class OraProductStockDao implements ProductStockDao {
 				}
 			}
 		}
-		/*–â‚¢‡‚í‚¹‚ÌŒ‹‰Ê‚ğŠi”[‚·‚éBean‚ğŠi”[‚·‚éƒŠƒXƒg‚ğ•Ô‚·*/
+		/*å•ã„åˆã‚ã›ã®çµæœã‚’æ ¼ç´ã™ã‚‹Beanã‚’æ ¼ç´ã™ã‚‹ãƒªã‚¹ãƒˆã‚’è¿”ã™*/
 		return productStocks;
 	}
-	/*ˆø”‚ÌBean“à‚Ì•Ï”productId‚Æˆê’v‚·‚é¤•i‚ÌİŒÉ”‚ğA
-	  ˆø”‚ÌBean“à‚Ì•Ï”productStockCount‚Æ“¯‚¶”‚É•ÏX‚·‚éƒƒ\ƒbƒh*/
-	/*¤•i‚ÌİŒÉ”‚ğ•ÏX‚·‚éƒƒ\ƒbƒh*/
+	/*å¼•æ•°ã®Beanå†…ã®å¤‰æ•°productIdã¨ä¸€è‡´ã™ã‚‹å•†å“ã®åœ¨åº«æ•°ã‚’ã€
+	  å¼•æ•°ã®Beanå†…ã®å¤‰æ•°productStockCountã¨åŒã˜æ•°ã«å¤‰æ›´ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
+	/*å•†å“ã®åœ¨åº«æ•°ã‚’å¤‰æ›´ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
 	public void setProductStock(ProductStockBean productStock)
 	throws IntegrationException {
-		/*ƒf[ƒ^ƒx[ƒX‚ÌÚ‘±A•\ƒf[ƒ^‚Ìæ“¾‚Åg—p‚·‚é•Ï”‚ÌéŒ¾*/
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã®æ¥ç¶šã€è¡¨ãƒ‡ãƒ¼ã‚¿ã®å–å¾—ã§ä½¿ç”¨ã™ã‚‹å¤‰æ•°ã®å®£è¨€*/
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
-		ResultSet result = null;
-		
-		/*ƒf[ƒ^ƒx[ƒX‚Ö‚ÌÚ‘±*/
+
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã¸ã®æ¥ç¶š*/
 		try{
-			connection 
+			connection
 			= new OracleConnector("shop_admin","admin").getConnection();
 		}catch(IntegrationException e){
 			throw new ConnectorException(e.getMessage(), e);
 		}
-		
+
 		try{
-			/*ƒI[ƒgƒRƒ~ƒbƒg‚ğ–³Œø‚É‚·‚é*/
+			/*ã‚ªãƒ¼ãƒˆã‚³ãƒŸãƒƒãƒˆã‚’ç„¡åŠ¹ã«ã™ã‚‹*/
 			connection.setAutoCommit(false);
-			
-			/*SQL•¶‚ğ‚Â•Ï”‚ÌéŒ¾*/
+
+			/*SQLæ–‡ã‚’æŒã¤å¤‰æ•°ã®å®£è¨€*/
 			String sql = "update product_stock set product_stock_count = ? "
 			+ "where product_id = ?";
-			
-			/*SQL‚ÌÀs€”õ‚ğs‚¤*/
+
+			/*SQLã®å®Ÿè¡Œæº–å‚™ã‚’è¡Œã†*/
 			preparedStatement = connection.prepareStatement(sql);
-			
-			/*Bean‚©‚ç’l‚ğæ‚èo‚µASQL•¶‚Ì?‚É‚»‚Ì’l‚ğ‘ã“ü‚·‚é*/
+
+			/*Beanã‹ã‚‰å€¤ã‚’å–ã‚Šå‡ºã—ã€SQLæ–‡ã®?ã«ãã®å€¤ã‚’ä»£å…¥ã™ã‚‹*/
 			preparedStatement.setInt(1, productStock.getProductStockCount());
 			preparedStatement.setString(2, productStock.getProductId());
-			
-			/*SQL‚ğÀs‚·‚é*/
+
+			/*SQLã‚’å®Ÿè¡Œã™ã‚‹*/
 			preparedStatement.executeUpdate();
-			
-			/*ResultSetAPreparedStatementAConnection‚ğƒNƒ[ƒY‚·‚é*/
-			result.close();
+
+			/*PreparedStatementã€Connectionã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹*/
 			preparedStatement.close();
 			connection.close();
-			
-			/*—áŠO‚ª”­¶‚µ‚½‚çAfinally‹å‚ÅƒNƒ[ƒY‚ğs‚¤*/
+
+			/*ä¾‹å¤–ãŒç™ºç”Ÿã—ãŸã‚‰ã€finallyå¥ã§ã‚¯ãƒ­ãƒ¼ã‚ºã‚’è¡Œã†*/
 		}catch(SQLException e){
 			try{
-				/*ƒ[ƒ‹ƒoƒbƒN‚ğs‚¤*/
+				/*ãƒ­ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¡Œã†*/
 				connection.rollback();
 			}catch(SQLException e2){
 				throw new IllegalSQLException(e2.getMessage(),e2);
@@ -156,26 +153,18 @@ public class OraProductStockDao implements ProductStockDao {
 			throw new IllegalSQLException(e.getMessage(),e);
 		}finally{
 			try{
-				if(result != null){
-					result.close();
+				if(preparedStatement != null){
+					preparedStatement.close();
 				}
-			}catch(SQLException e2){
-				throw new IllegalSQLException(e2.getMessage(), e2);
+			}catch(SQLException e3){
+				throw new IllegalSQLException(e3.getMessage(), e3);
 			}finally{
 				try{
-					if(preparedStatement != null){
-						preparedStatement.close();
+					if(connection != null){
+						connection.close();
 					}
-				}catch(SQLException e3){
-					throw new IllegalSQLException(e3.getMessage(), e3);
-				}finally{
-					try{
-						if(connection != null){
-							connection.close();
-						}
-					}catch(SQLException e4){
-						throw new IllegalSQLException(e4.getMessage(), e4);
-					}
+				}catch(SQLException e4){
+					throw new IllegalSQLException(e4.getMessage(), e4);
 				}
 			}
 		}
