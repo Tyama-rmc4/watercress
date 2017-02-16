@@ -1,63 +1,62 @@
 /*
-  author ’r“c‘å˜a
+  author æ± ç”°å¤§å’Œ
 */
 package dao;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
 import bean.MemberBean;
-import ex.IntegrationException;
 import ex.ConnectorException;
 import ex.IllegalSQLException;
+import ex.IntegrationException;
 
-/*‰ïˆõ‚Ìî•ñ‚ğæ“¾‚·‚é‚½‚ß‚É—˜—p‚·‚éƒf[ƒ^ƒAƒNƒZƒXƒIƒuƒWƒFƒNƒg*/
+/*ä¼šå“¡ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãŸã‚ã«åˆ©ç”¨ã™ã‚‹ãƒ‡ãƒ¼ã‚¿ã‚¢ã‚¯ã‚»ã‚¹ã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆ*/
 public class OraMemberDao implements MemberDao {
-	/*‘S‚Ä‚Ì‰ïˆõ‚Ìî•ñ‚ğæ“¾‚·‚éƒƒ\ƒbƒh*/
+	/*å…¨ã¦ã®ä¼šå“¡ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
 	public List getMembers() throws IntegrationException {
-		/*ƒf[ƒ^ƒx[ƒX‚ÌÚ‘±A•\ƒf[ƒ^‚Ìæ“¾‚Åg—p‚·‚é•Ï”‚ÌéŒ¾*/
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã®æ¥ç¶šã€è¡¨ãƒ‡ãƒ¼ã‚¿ã®å–å¾—ã§ä½¿ç”¨ã™ã‚‹å¤‰æ•°ã®å®£è¨€*/
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet result = null;
-		
-		/*–â‚¢‡‚í‚¹‚ÌŒ‹‰Ê‚ğŠi”[‚·‚éBean‚ğŠi”[‚·‚éƒŠƒXƒg•Ï”‚ÌéŒ¾*/
+
+		/*å•ã„åˆã‚ã›ã®çµæœã‚’æ ¼ç´ã™ã‚‹Beanã‚’æ ¼ç´ã™ã‚‹ãƒªã‚¹ãƒˆå¤‰æ•°ã®å®£è¨€*/
 		ArrayList<MemberBean> members = new ArrayList<MemberBean>();
-		
-		/*ƒf[ƒ^ƒx[ƒX‚Ö‚ÌÚ‘±*/
+
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã¸ã®æ¥ç¶š*/
 		try{
-			connection 
+			connection
 			= new OracleConnector("shop_admin","admin").getConnection();
 		}catch(IntegrationException e){
 			throw new ConnectorException(e.getMessage(), e);
 		}
-		
+
 		try{
-			/*ƒI[ƒgƒRƒ~ƒbƒg‚ğ–³Œø‚É‚·‚é*/
+			/*ã‚ªãƒ¼ãƒˆã‚³ãƒŸãƒƒãƒˆã‚’ç„¡åŠ¹ã«ã™ã‚‹*/
 			connection.setAutoCommit(false);
-			
-			/*ƒXƒe[ƒgƒƒ“ƒg‚ğ¶¬‚·‚é*/
+
+			/*ã‚¹ãƒ†ãƒ¼ãƒˆãƒ¡ãƒ³ãƒˆã‚’ç”Ÿæˆã™ã‚‹*/
 			statement = connection.createStatement();
-			
-			/*SQL•¶‚ğ‚Â•Ï”‚ÌéŒ¾*/
+
+			/*SQLæ–‡ã‚’æŒã¤å¤‰æ•°ã®å®£è¨€*/
 			String sql = "select member_id, member_name, member_kana, "
 			+" member_zip_code, member_address, member_phone_number, "
 			+ "to_char(member_birthday, 'YYYY/mm/dd'), "
-			+ "member_email, member_password, member_status_id "
-			+ "from member";
-			
-			/*SQL‚ğÀs‚µAŒ‹‰Ê‚ğResultSet‚ÉŠi”[‚·‚é*/
+			+ "member_email, member_password, member_status_id, "
+			+ "member_entry_code from member";
+
+			/*SQLã‚’å®Ÿè¡Œã—ã€çµæœã‚’ResultSetã«æ ¼ç´ã™ã‚‹*/
 			result = statement.executeQuery(sql);
-			
+
 			while(result.next()){
-				/*•\‚É‘Î‰‚·‚éBean‚ğƒCƒ“ƒXƒ^ƒ“ƒX‰»‚·‚é*/
+				/*è¡¨ã«å¯¾å¿œã™ã‚‹Beanã‚’ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ã™ã‚‹*/
 				MemberBean member = new MemberBean();
-				/*Bean‚ÉSQL‚ÌŒ‹‰Ê‚ğŠi”[‚·‚é*/
+				/*Beanã«SQLã®çµæœã‚’æ ¼ç´ã™ã‚‹*/
 				member.setMemberId(result.getInt(1));
 				member.setMemberName(result.getString(2));
 				member.setMemberKana(result.getString(3));
@@ -68,18 +67,19 @@ public class OraMemberDao implements MemberDao {
 				member.setMemberEmail(result.getString(8));
 				member.setMemberPassword(result.getString(9));
 				member.setMemberStatusId(result.getInt(10));
-				/*ƒŠƒXƒg‚ÉBean‚ğŠi”[‚·‚é*/
+				member.setMemberEntryCode(result.getString(11));
+				/*ãƒªã‚¹ãƒˆã«Beanã‚’æ ¼ç´ã™ã‚‹*/
 				members.add(member);
 			}
-			/*ƒRƒ~ƒbƒg‚ğs‚¤*/
+			/*ã‚³ãƒŸãƒƒãƒˆã‚’è¡Œã†*/
 			connection.commit();
-			/*ResultSetAStatementAConnection‚ğƒNƒ[ƒY‚·‚é*/
+			/*ResultSetã€Statementã€Connectionã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹*/
 			result.close();
 			statement.close();
-			/*—áŠO‚ª”­¶‚µ‚½‚çAfinally‹å‚ÅƒNƒ[ƒY‚ğs‚¤*/
+			/*ä¾‹å¤–ãŒç™ºç”Ÿã—ãŸã‚‰ã€finallyå¥ã§ã‚¯ãƒ­ãƒ¼ã‚ºã‚’è¡Œã†*/
 		}catch(SQLException e){
 			try{
-				/*ƒ[ƒ‹ƒoƒbƒN‚ğs‚¤*/
+				/*ãƒ­ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¡Œã†*/
 				connection.rollback();
 			}catch(SQLException e2){
 				throw new IllegalSQLException(e2.getMessage(),e2);
@@ -110,38 +110,38 @@ public class OraMemberDao implements MemberDao {
 				}
 			}
 		}
-		/*–â‚¢‡‚í‚¹‚ÌŒ‹‰Ê‚ğŠi”[‚·‚éBean‚ğŠi”[‚·‚éƒŠƒXƒg‚ğ•Ô‚·*/
+		/*å•ã„åˆã‚ã›ã®çµæœã‚’æ ¼ç´ã™ã‚‹Beanã‚’æ ¼ç´ã™ã‚‹ãƒªã‚¹ãƒˆã‚’è¿”ã™*/
 		return members;
 	}
-	
-	/*V‚µ‚¢‰ïˆõ‚Ì“o˜^‚ğs‚¤ƒƒ\ƒbƒh*/
+
+	/*æ–°ã—ã„ä¼šå“¡ã®ç™»éŒ²ã‚’è¡Œã†ãƒ¡ã‚½ãƒƒãƒ‰*/
 	public void registMember(MemberBean member) throws IntegrationException {
-		/*ƒf[ƒ^ƒx[ƒX‚ÌÚ‘±A•\ƒf[ƒ^‚Ìæ“¾‚Åg—p‚·‚é•Ï”‚ÌéŒ¾*/
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã®æ¥ç¶šã€è¡¨ãƒ‡ãƒ¼ã‚¿ã®å–å¾—ã§ä½¿ç”¨ã™ã‚‹å¤‰æ•°ã®å®£è¨€*/
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet result = null;
-		
-		/*ƒf[ƒ^ƒx[ƒX‚Ö‚ÌÚ‘±*/
+
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã¸ã®æ¥ç¶š*/
 		try{
-			connection 
+			connection
 			= new OracleConnector("shop_admin","admin").getConnection();
 		}catch(IntegrationException e){
 			throw new ConnectorException(e.getMessage(), e);
 		}
-		
+
 		try{
-			/*ƒI[ƒgƒRƒ~ƒbƒg‚ğ–³Œø‚É‚·‚é*/
+			/*ã‚ªãƒ¼ãƒˆã‚³ãƒŸãƒƒãƒˆã‚’ç„¡åŠ¹ã«ã™ã‚‹*/
 			connection.setAutoCommit(false);
-			
-			/*SQL•¶‚ğ‚Â•Ï”‚ÌéŒ¾*/
-			String sql = 
+
+			/*SQLæ–‡ã‚’æŒã¤å¤‰æ•°ã®å®£è¨€*/
+			String sql =
 			"insert into member values(member_id_seq.NEXTVAL, ?, ?, ?, " +
-			"?, ?, to_date(?,'YYYY/mm/dd'), ?, ? ,?)";
-			
-			/*SQL‚ÌÀs€”õ‚ğs‚¤*/
+			"?, ?, to_date(?,'YYYY/mm/dd'), ?, ? ,?, ?)";
+
+			/*SQLã®å®Ÿè¡Œæº–å‚™ã‚’è¡Œã†*/
 			preparedStatement = connection.prepareStatement(sql);
-			
-			/*Bean‚©‚ç’l‚ğæ‚èo‚µASQL•¶‚Ì?‚É‚»‚Ì’l‚ğ‘ã“ü‚·‚é*/
+
+			/*Beanã‹ã‚‰å€¤ã‚’å–ã‚Šå‡ºã—ã€SQLæ–‡ã®?ã«ãã®å€¤ã‚’ä»£å…¥ã™ã‚‹*/
 			preparedStatement.setString(1, member.getMemberName());
 			preparedStatement.setString(2, member.getMemberKana());
 			preparedStatement.setString(3, member.getMemberZipCode());
@@ -151,19 +151,20 @@ public class OraMemberDao implements MemberDao {
 			preparedStatement.setString(7, member.getMemberEmail());
 			preparedStatement.setString(8, member.getMemberPassword());
 			preparedStatement.setInt(9, member.getMemberStatusId());
-			
-			/*SQL‚ğÀs‚µAŒ‹‰Ê‚ğResultSet‚ÉŠi”[‚·‚é*/
+			preparedStatement.setString(10, member.getMemberEntryCode());
+
+			/*SQLã‚’å®Ÿè¡Œã—ã€çµæœã‚’ResultSetã«æ ¼ç´ã™ã‚‹*/
 			preparedStatement.executeUpdate();
-			
-			/*ƒRƒ~ƒbƒg‚ğs‚¤*/
+
+			/*ã‚³ãƒŸãƒƒãƒˆã‚’è¡Œã†*/
 			connection.commit();
-			/*ResultSetAStatementAConnection‚ğƒNƒ[ƒY‚·‚é*/
+			/*ResultSetã€Statementã€Connectionã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹*/
 			preparedStatement.close();
 			connection.close();
-			/*—áŠO‚ª”­¶‚µ‚½‚çAfinally‹å‚ÅƒNƒ[ƒY‚ğs‚¤*/
+			/*ä¾‹å¤–ãŒç™ºç”Ÿã—ãŸã‚‰ã€finallyå¥ã§ã‚¯ãƒ­ãƒ¼ã‚ºã‚’è¡Œã†*/
 		}catch(SQLException e){
 			try{
-				/*ƒ[ƒ‹ƒoƒbƒN‚ğs‚¤*/
+				/*ãƒ­ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¡Œã†*/
 				connection.rollback();
 			}catch(SQLException e2){
 				throw new IllegalSQLException(e2.getMessage(),e2);
@@ -195,38 +196,39 @@ public class OraMemberDao implements MemberDao {
 			}
 		}
 	}
-	
-	/*ˆø”‚ÌBean‚ÌmemberId‚Éˆê’v‚·‚éID‚ğ‚Â‰ïˆõ‚Ìî•ñ‚Ì•ÏX‚·‚éƒƒ\ƒbƒh*/
+
+	/*å¼•æ•°ã®Beanã®memberIdã«ä¸€è‡´ã™ã‚‹IDã‚’æŒã¤ä¼šå“¡ã®æƒ…å ±ã®å¤‰æ›´ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
 	public void editMember(MemberBean member) throws IntegrationException {
-		/*ƒf[ƒ^ƒx[ƒX‚ÌÚ‘±A•\ƒf[ƒ^‚Ìæ“¾‚Åg—p‚·‚é•Ï”‚ÌéŒ¾*/
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã®æ¥ç¶šã€è¡¨ãƒ‡ãƒ¼ã‚¿ã®å–å¾—ã§ä½¿ç”¨ã™ã‚‹å¤‰æ•°ã®å®£è¨€*/
 		Connection connection = null;
 		PreparedStatement preparedStatement = null;
 		ResultSet result = null;
-		
-		/*ƒf[ƒ^ƒx[ƒX‚Ö‚ÌÚ‘±*/
+
+		/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã¸ã®æ¥ç¶š*/
 		try{
-			connection 
+			connection
 			= new OracleConnector("shop_admin","admin").getConnection();
 		}catch(IntegrationException e){
 			throw new ConnectorException(e.getMessage(), e);
 		}
-		
+
 		try{
-			/*ƒI[ƒgƒRƒ~ƒbƒg‚ğ–³Œø‚É‚·‚é*/
+			/*ã‚ªãƒ¼ãƒˆã‚³ãƒŸãƒƒãƒˆã‚’ç„¡åŠ¹ã«ã™ã‚‹*/
 			connection.setAutoCommit(false);
-			
-			/*SQL•¶‚ğ‚Â•Ï”‚ÌéŒ¾*/
+
+			/*SQLæ–‡ã‚’æŒã¤å¤‰æ•°ã®å®£è¨€*/
 			String sql = "update member set member_name = ?, "
 			+ "member_kana = ?, member_zip_code = ?,"
 			+ "member_address = ?, member_phone_number = ?, "
 			+ "member_birthday = to_date(?,'YYYY/mm/dd'), "
 			+ "member_email = ?, member_password = ?, "
-			+ "member_status_id = ? where member_id = ?";
-			
-			/*SQL‚ÌÀs€”õ‚ğs‚¤*/
+			+ "member_status_id = ?, member_entry_code = ? "
+			+ "where member_id = ?";
+
+			/*SQLã®å®Ÿè¡Œæº–å‚™ã‚’è¡Œã†*/
 			preparedStatement = connection.prepareStatement(sql);
-			
-			/*Bean‚©‚ç’l‚ğæ‚èo‚µASQL•¶‚Ì?‚É‚»‚Ì’l‚ğ‘ã“ü‚·‚é*/
+
+			/*Beanã‹ã‚‰å€¤ã‚’å–ã‚Šå‡ºã—ã€SQLæ–‡ã®?ã«ãã®å€¤ã‚’ä»£å…¥ã™ã‚‹*/
 			preparedStatement.setString(1, member.getMemberName());
 			preparedStatement.setString(2, member.getMemberKana());
 			preparedStatement.setString(3, member.getMemberZipCode());
@@ -236,20 +238,21 @@ public class OraMemberDao implements MemberDao {
 			preparedStatement.setString(7, member.getMemberEmail());
 			preparedStatement.setString(8, member.getMemberPassword());
 			preparedStatement.setInt(9, member.getMemberStatusId());
-			preparedStatement.setInt(10, member.getMemberId());
-			
-			/*SQL‚ğÀs‚µAŒ‹‰Ê‚ğResultSet‚ÉŠi”[‚·‚é*/
+			preparedStatement.setString(10, member.getMemberEntryCode());
+			preparedStatement.setInt(11, member.getMemberId());
+
+			/*SQLã‚’å®Ÿè¡Œã—ã€çµæœã‚’ResultSetã«æ ¼ç´ã™ã‚‹*/
 			preparedStatement.executeUpdate();
-			
-			/*ƒRƒ~ƒbƒg‚ğs‚¤*/
+
+			/*ã‚³ãƒŸãƒƒãƒˆã‚’è¡Œã†*/
 			connection.commit();
-			/*ResultSetAStatementAConnection‚ğƒNƒ[ƒY‚·‚é*/
+			/*ResultSetã€Statementã€Connectionã‚’ã‚¯ãƒ­ãƒ¼ã‚ºã™ã‚‹*/
 			preparedStatement.close();
 			connection.close();
-			/*—áŠO‚ª”­¶‚µ‚½‚çAfinally‹å‚ÅƒNƒ[ƒY‚ğs‚¤*/
+			/*ä¾‹å¤–ãŒç™ºç”Ÿã—ãŸã‚‰ã€finallyå¥ã§ã‚¯ãƒ­ãƒ¼ã‚ºã‚’è¡Œã†*/
 		}catch(SQLException e){
 			try{
-				/*ƒ[ƒ‹ƒoƒbƒN‚ğs‚¤*/
+				/*ãƒ­ãƒ¼ãƒ«ãƒãƒƒã‚¯ã‚’è¡Œã†*/
 				connection.rollback();
 			}catch(SQLException e2){
 				throw new IllegalSQLException(e2.getMessage(),e2);

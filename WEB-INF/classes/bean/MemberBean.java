@@ -19,6 +19,7 @@ public class MemberBean implements Serializable{
 	private String memberEmail;
 	private String memberPassword;
 	private int memberStatusId;
+	private String memberEntryCode;
 
 	public int getMemberId() {
 		return memberId;
@@ -79,6 +80,12 @@ public class MemberBean implements Serializable{
 	}
 	public void setMemberStatusId(int memberStatusId) {
 		this.memberStatusId = memberStatusId;
+	}
+	public String getMemberEntryCode() {
+		return memberEntryCode;
+	}
+	public void setMemberEntryCode(String memberEntryCode) {
+		this.memberEntryCode = memberEntryCode;
 	}
 
 
