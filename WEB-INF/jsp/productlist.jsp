@@ -94,32 +94,64 @@
 			<option value="冬季限定">冬季限定</option>
 			<option value="セール">セール</option>
 		</select>
+		<br/>
+		並び替え
+		<br/>
+		名前
+		<select name="sort">
+			<option value=""></option>
+			<option value="nameAsc">五十音順</option>
+			<option value="nameDesc">五十音の逆順</option>
+		</select>
+		値段
+		<select name="sort">
+			<option value=""></option>
+			<option value="priceAsc">値段の安い順</option>
+			<option value="priceDesc">値段の高い順</option>
+		</select>
+		購入数
+		<select name="sort">
+			<option value=""></option>
+			<option value="purchaseDesc">購入数が多い順</option>
+			<option value="purchaseAsc">購入数が少ない順</option>
+		</select>
 		<input type="submit" value="検索">
 	</form>
 </div>
 
 <h1>商品一覧</h1>
+
+<!-- テスト用パラメータ取得 -->
 選択カテゴリ：${param.category}
 選択サブカテゴリ：${param.subCategory}
+並べ替え：${paramValues.sort[0]} ${paramValues.sort[1]} ${paramValues.sort[2]}-->
+
 <c:forEach var="product" items="${data.productsData}">
 	
 	<section class="list">
 		<a href="item.html">
 			<figure>
 				<a href ="productdetail?productName=${product.catalog.productName}">
-					<img src="${pageContext.request.contextPath}/images/${product.categoryName}/${product.catalog.productImagePath}" alt="商品の画像">
+					<img src="${pageContext.request.contextPath}/images/${product.categoryName}/
+					${product.catalog.productImagePath}" alt="商品の画像">
 				</a>
 				
 				<!-- 各タグの表示 -->
 				<c:forEach var="tagName" items="${product.tagNames}">
-					<c:if test="${tagName == 'タグ名'}">
-						<img class="タグ画像のクラス" src="${pageContext.request.contextPath}/images/tag.hoge" alt="商品名">
+					<c:if test="${tagName == '冬季限定'}">
+						<img class="冬季限定タグ画像のクラス" 
+						src="${pageContext.request.contextPath}/images/tag.hoge" alt="冬季限定">
+					</c:if>
+					<c:if test="${tagName == 'セール'}">
+						<img class="セールタグ画像のクラス" 
+						src="${pageContext.request.contextPath}/images/tag.hoge" alt="セール">
 					</c:if>
 				</c:forEach>
 				
 				<!-- 売り切れの表示 -->
 				<c:if test="${product.catalog.productStockCount == 0}">
-					<img class="売り切れ画像のクラス" src="${pageContext.request.contextPath}/images/soldout.hoge" alt="売り切れ">
+					<img class="売り切れ画像のクラス" 
+					src="${pageContext.request.contextPath}/images/soldout.hoge" alt="売り切れ">
 				</c:if>
 				
 			</figure>
@@ -130,7 +162,10 @@
 
 <!-- 現在のページが1ページ目でなければ、前のページへ移動するリンクを表示 -->
 <c:if test="${data.pageNumber > 1}" >
-	<a href ="productlist?category=${param.category}&subCategory=${param.subCategory}&pageNumber=${data.pageNumber-1}">前のページへ</a>
+	<a href ="productlist?category=${param.category}
+	&subCategory=${param.subCategory}&pageNumber=${data.pageNumber-1}
+	&sort=${paramValues.sort[0]}&sort=${paramValues.sort[1]}&sort=${paramValues.sort[2]}">
+	前のページへ</a>
 </c:if>
 
 <!-- 商品数１５毎に１個、ページ移動ボタンを増やす -->
@@ -142,12 +177,18 @@
 			pageCount += 1;
 			pageContext.setAttribute("pageCount",pageCount);
 		%>
-	<a href ="productlist?category=${param.category}&subCategory=${param.subCategory}&pageNumber=${pageScope.pageCount}">${pageScope.pageCount}</a>
+	<a href ="productlist?category=${param.category}
+	&subCategory=${param.subCategory}&pageNumber=${pageScope.pageCount}
+	&sort=${paramValues.sort[0]}&sort=${paramValues.sort[1]}&sort=${paramValues.sort[2]}">
+	${pageScope.pageCount}</a>
 </c:forEach>
 
 <!-- 現在のページが最後のページでなければ、次のページへ移動するリンクを表示 -->
 <c:if test="${data.pageNumber < pageScope.pageCount}" >
-	<a href ="productlist?category=${param.category}&subCategory=${param.subCategory}&pageNumber=${data.pageNumber+1}">次のページへ</a>
+	<a href ="productlist?category=${param.category}
+	&subCategory=${param.subCategory}&pageNumber=${data.pageNumber+1}
+	&sort=${paramValues.sort[0]}&sort=${paramValues.sort[1]}&sort=${paramValues.sort[2]}">
+	次のページへ</a>
 </c:if>
 
 <footer>
