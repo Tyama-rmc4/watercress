@@ -31,7 +31,7 @@
 <meta name="copyright" content="Template Party">
 <meta name="description" content="ここにサイト説明を入れます">
 <meta name="keywords" content="キーワード１,キーワード２,キーワード３,キーワード４,キーワード５">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
 <!--[if lt IE 9]>
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <style>.ddmenu {display: none;}</style>
@@ -79,13 +79,15 @@
 </li>
 </ul>
 </nav>
-
+<br/>
+<br/>
+<br/>
 <div>
-	検索
 	<form action="productlist" method="get">
 		<input type="hidden" name="category" value="${param.category}">
 		<input type="hidden" name="subCategory" value="${param.subCategory}">
 		<input type="hidden" name="pageNumber" value="1">
+		<h3>検索</h3>
 		名前
 		<input type="text" name="searchText" size="40">
 		タグ
@@ -97,19 +99,19 @@
 		<br/>
 		並び替え
 		<br/>
-		名前
+		名前順
 		<select name="sort">
 			<option value=""></option>
 			<option value="nameAsc">五十音順</option>
 			<option value="nameDesc">五十音の逆順</option>
 		</select>
-		値段
+		値段順
 		<select name="sort">
 			<option value=""></option>
 			<option value="priceAsc">値段の安い順</option>
 			<option value="priceDesc">値段の高い順</option>
 		</select>
-		購入数
+		購入数順
 		<select name="sort">
 			<option value=""></option>
 			<option value="purchaseDesc">購入数が多い順</option>
@@ -126,39 +128,57 @@
 選択サブカテゴリ：${param.subCategory}
 並べ替え：${paramValues.sort[0]} ${paramValues.sort[1]} ${paramValues.sort[2]}-->
 
+<%
+	int productCount = 0;
+%>
+<table style="table-layout: fixed;">
+<tr>
 <c:forEach var="product" items="${data.productsData}">
+	<%
+		productCount += 1;
+		pageContext.setAttribute("productCount",productCount);
+	%>
 	
-	<section class="list">
-		<a href="item.html">
-			<figure>
-				<a href ="productdetail?productName=${product.catalog.productName}">
-					<img src="${pageContext.request.contextPath}/images/${product.categoryName}/
-					${product.catalog.productImagePath}" alt="商品の画像">
-				</a>
-				
-				<!-- 各タグの表示 -->
-				<c:forEach var="tagName" items="${product.tagNames}">
-					<c:if test="${tagName == '冬季限定'}">
-						<img class="冬季限定タグ画像のクラス" 
-						src="${pageContext.request.contextPath}/images/tag.hoge" alt="冬季限定">
+	<td width="15%" height="320">
+		<section class="list" style="position:relative; height:100%;">
+			<a href="item.html">
+				<figure>
+					<a href ="productdetail?productName=${product.catalog.productName}">
+						<img src="${pageContext.request.contextPath}/images/${product.categoryName}/
+						${product.catalog.productImagePath}" alt="商品の画像">
+					</a>
+					
+					<!-- 各タグの表示 -->
+					<c:forEach var="tagName" items="${product.tagNames}">
+						<c:if test="${tagName == '冬季限定'}">
+							<img class="冬季限定タグ画像のクラス" 
+							src="${pageContext.request.contextPath}/images/tag.hoge" alt="冬季限定">
+						</c:if>
+						<c:if test="${tagName == 'セール'}">
+							<img class="セールタグ画像のクラス" 
+							src="${pageContext.request.contextPath}/images/tag.hoge" alt="セール">
+						</c:if>
+					</c:forEach>
+					
+					<!-- 売り切れの表示 -->
+					<c:if test="${product.catalog.productStockCount == 0}">
+						<img class="売り切れ画像のクラス" 
+						src="${pageContext.request.contextPath}/images/soldout.hoge" alt="売り切れ">
 					</c:if>
-					<c:if test="${tagName == 'セール'}">
-						<img class="セールタグ画像のクラス" 
-						src="${pageContext.request.contextPath}/images/tag.hoge" alt="セール">
-					</c:if>
-				</c:forEach>
-				
-				<!-- 売り切れの表示 -->
-				<c:if test="${product.catalog.productStockCount == 0}">
-					<img class="売り切れ画像のクラス" 
-					src="${pageContext.request.contextPath}/images/soldout.hoge" alt="売り切れ">
-				</c:if>
-				
-			</figure>
-			<h4>${product.catalog.productName} ￥${product.catalog.productPrice} </h4>
-		</a>
-	</section>
+					
+				</figure>
+				<h4 style="position: absolute; bottom: 0;">${product.catalog.productName}
+				<br/> ￥${product.catalog.productPrice}<br/></h4>
+			</a>
+		</section>
+	</td>
+	<c:if test="${pageScope.productCount % 5 == 0}" >
+	</tr>
+	<tr>
+	</c:if>
 </c:forEach>
+</tr>
+</table>
 
 <!-- 現在のページが1ページ目でなければ、前のページへ移動するリンクを表示 -->
 <c:if test="${data.pageNumber > 1}" >
