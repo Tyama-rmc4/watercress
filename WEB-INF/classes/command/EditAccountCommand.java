@@ -7,12 +7,12 @@ import logic.*;
 import dao.OraMemberDao;
 
 /**
- *@className AbstractCommand
+ *@className EditAccountCommand
  *@author Kohichi Tujihashi
  *@date 2017/01/26
  *@description 
  */
-public class EditAcountInfomationCommand extends AbstractCommand{
+public class EditAccountCommand extends AbstractCommand{
 	/**クライアントからのリクエスト*/
 	private RequestContext requestContext;
 
