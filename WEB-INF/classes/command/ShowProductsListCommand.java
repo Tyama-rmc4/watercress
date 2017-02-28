@@ -11,19 +11,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import bean.CategoryBean;
 import bean.FavoriteBean;
 import bean.ProductBean;
 import bean.ProductCatalogBean;
 import bean.SubCategoryBean;
 import bean.TagBean;
-import bean.CategoryBean;
 import dao.AbstractDaoFactory;
+import dao.CategoryDao;
 import dao.FavoriteDao;
 import dao.ProductCatalogDao;
 import dao.ProductDao;
 import dao.SubCategoryDao;
 import dao.TagDao;
-import dao.CategoryDao;
 import ex.IntegrationException;
 import ex.LogicException;
 import logic.RequestContext;
@@ -47,7 +47,7 @@ import logic.ResponseContext;
  *@date 2017/02/15 商品に付与されているタグの取得処理を、
                    １つの商品名に複数のタグが付与されている場合でも
                    正しく取得できるように変更しました。
-                   
+
  *@description
  resultData : Map<String, Object> 【jspで${data}で取り出される部分】
  ┃
@@ -89,7 +89,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 	List allProductList;
 	/*全カテゴリの情報のリスト*/
 	List allCategoryList;
-		
+
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException{
 		/*RequestContextのインスタンスを取得*/
@@ -146,7 +146,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 		/*sortParamsの文字列を、createSortArrayメソッドのルールに
 		  従ってint配列に変換する。これを商品検索の際に引数にする*/
 		int[] sortArray = createSortArray(sortParams);
-		
+
 		/*ログイン中の会員のIDを取得する。*/
 		/*ログインしていない場合は-1を格納する。*/
 		int loginMemberId = -1;
@@ -155,14 +155,14 @@ public class ShowProductsListCommand extends AbstractCommand{
 			= (String)requestContext.getSessionAttribute("login");
 			loginMemberId = Integer.parseInt(idAttribute);
 		}
-		
+
 		/*このコマンドのresultとなる、各商品の情報と該当する商品の数*/
 		Map resultData = new HashMap();
-		
+
 		/*上記のMapに含まれる、
 		  選択されたサブカテゴリの商品が見つかった個数の変数*/
 		Integer foundProductCount = 0;
-		
+
 		/*上記のMapに含まれる、商品情報とそのタグ名のリスト*/
 		List<Map> productsDataList = new ArrayList<Map>();
 		try{
@@ -189,17 +189,17 @@ public class ShowProductsListCommand extends AbstractCommand{
 			/*選択したカテゴリの商品なら、次の検索合致判定に進む*/
 			if(judgeCategoryMatch(
 			product,selectedCategoryId,selectedSubCategoryId)){
-				
+
 				/*その商品に付加されているタグをこの時点で取得しておく*/
 				/*現在の商品情報のタグの名前を格納するListの宣言*/
 				List<String> productTagNames
 				= getProductTagNames(product.getProductName());
-				
+
 				/*検索条件の文字列に合致するかを、分割メソッドで判定*/
 				boolean isMatchText = judgeTextMatch(product,searchTexts);
 				/*検索条件のタグに合致するかを、分割メソッドで判定*/
 				boolean isMatchTag = judgeTagMatch(productTagNames,searchTags);
-				
+
 				/*検索条件の文字列とタグに合致するなら、商品発見後処理へ*/
 				if(isMatchText && isMatchTag){
 					/*発見商品数を１増やす*/
@@ -233,18 +233,18 @@ public class ShowProductsListCommand extends AbstractCommand{
 						}
 						productData.put("isFavorite",isFavorite);
 						/*カテゴリ名を分割したメソッドから取得する*/
-						String categoryName 
+						String categoryName
 						= getProductCategoryName(product.getCategoryId());
 						productData.put("categoryName",categoryName);
-						
+
 						/*格納したMapをListに追加する*/
 						productsDataList.add(productData);
-						
+
 					}/*if(現在のページで表示すべきか) の終端*/
 				}/*if(検索文字列、検索タグに合致するか) の終端*/
 			}/*if(選択したカテゴリか) の終端*/
 		}/*while(catalogIterator.hasNext()) の終端*/
-			
+
 		/*resultであるMapにデータを格納する*/
 		/*商品の個数。forEachを用いるため内容の無い配列にする*/
 		resultData.put("productCount", new int[foundProductCount]);
@@ -269,7 +269,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 
 		if(sortParams != null){
 			/*sortParamsの内容に従って、定数を配列に格納する*/
-			for(int i = 0;i<=sortParams.length;i++){
+			for(int i = 0;i < sortParams.length;i++){
 				/*
 				  priceAsc = 値段の安い順
 				  priceDesc = 値段の高い順
@@ -386,17 +386,17 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 		return productColors;
 	}
-	
+
 	/*引数のカテゴリIDの、カテゴリ名を返すメソッド*/
 	private String getProductCategoryName(int categoryId)
 	throws LogicException{
 		Iterator categoryIterator = allCategoryList.iterator();
 		while(categoryIterator.hasNext()){
-			
+
 			/*カテゴリ１件の情報を取得*/
 			CategoryBean category
 			= (CategoryBean)categoryIterator.next();
-			
+
 			/*引数のカテゴリIDと現在のカテゴリのIDが同じなら*/
 			if(categoryId == category.getCategoryId()){
 				/*現在のカテゴリの名前を返す*/
@@ -405,7 +405,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 		return "";
 	}
-	
+
 	/*選択されたカテゴリの名前に対応するIDを返すメソッド*/
 	private int getCategoryId(String categoryName)
 	throws LogicException{
@@ -415,11 +415,11 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 		Iterator categoryIterator = allCategoryList.iterator();
 		while(categoryIterator.hasNext()){
-			
+
 			/*カテゴリ１件の情報を取得*/
 			CategoryBean category
 			= (CategoryBean)categoryIterator.next();
-			
+
 			/*引数のカテゴリの名前と現在のカテゴリの名前が同じなら*/
 			if(categoryName.equals(category.getCategoryName())){
 				/*現在のカテゴリのIDを返す*/
@@ -429,13 +429,13 @@ public class ShowProductsListCommand extends AbstractCommand{
 		/*一致する名前が無い場合は-1を返す*/
 		return -1;
 	}
-	
+
 	/*この商品は選択されたカテゴリの商品であるかを判定するメソッド*/
 	private boolean judgeCategoryMatch(
 	ProductCatalogBean product,int selectedCategoryId,
 	int selectedSubCategoryId)
 	throws LogicException{
-		
+
 		/*先にサブカテゴリが一致しているかを確認する。*/
 		if(product.getSubCategoryId() == selectedSubCategoryId){
 			return true;
@@ -455,7 +455,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 		return false;
 	}
-	
+
 	private boolean judgeTextMatch(
 	ProductCatalogBean product,String[] searchTexts)
 	throws LogicException{
@@ -482,12 +482,12 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 		return false;
 	}
-	
+
 	/*引数の商品の名前に一致する商品詳細のIDのListを返すメソッド*/
 	private List<String> getProductTagNames(String productName){
 		/*引数の商品の名前に一致する商品詳細のIDのListを宣言*/
 		List<String> productsId = new ArrayList();
-		
+
 		/*商品詳細のイテレータを取得*/
 		Iterator productIterator = allProductList.iterator();
 		while(productIterator.hasNext()){
@@ -500,7 +500,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 		/*引数の商品につけられているタグの名前のListを宣言*/
 		List<String> productTagNames = new ArrayList();
-		
+
 		/*引数の商品の名前に一致する商品詳細のIDのイテレータを取得*/
 		Iterator productsIdIterator = productsId.iterator();
 		while(productsIdIterator.hasNext()){
@@ -518,7 +518,7 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 		return productTagNames;
 	}
-	
+
 	private boolean judgeTagMatch(List productTagNames,List searchTags)
 	throws LogicException{
 		/*検索条件のタグが存在しないなら常に条件合致とする*/
@@ -548,39 +548,39 @@ public class ShowProductsListCommand extends AbstractCommand{
 		}
 		return false;
 	}
-	
+
 	/*全ての使用する表のListをインスタンス変数に格納するメソッド*/
 	private void getAllDataList(int[] sortArray)
 	throws LogicException{
 		try{
 			/*Daoを取得するためのDaoFactoryを取得する*/
 			factory = AbstractDaoFactory.getFactory();
-			
+
 			/*タグの情報を取得するためのDaoを取得*/
 			tagDao = factory.getTagDao();
 			/*全タグの情報を取得*/
 			allTagList = tagDao.getTags();
-			
+
 			/*サブカテゴリの情報を取得するためのDaoを取得する*/
 			subCategoryDao = factory.getSubCategoryDao();
 			/*Daoからサブカテゴリの情報を取得する*/
 			allSubCategoryList = subCategoryDao.getSubCategories();
-			
+
 			/*カテゴリの情報を取得するためのDaoを取得*/
 			categoryDao = factory.getCategoryDao();
 			/*全カテゴリの情報を取得*/
 			allCategoryList = categoryDao.getCategories();
-			
+
 			/*お気に入りの情報を取得するためのDaoを取得する*/
 			favoriteDao = factory.getFavoriteDao();
 			/*Daoからお気に入りの情報を取得する*/
 			allFavoriteList = favoriteDao.getFavorites();
-			
+
 			/*商品詳細情報を取得するためのDaoを取得*/
 			productDao = factory.getProductDao();
 			/*全商品詳細の情報を取得*/
 			allProductList = productDao.getProducts();
-			
+
 			/*商品カタログの情報を取得するためのDaoを取得する*/
 			productCategoryDao = factory.getProductCatalogDao();
 			/*全商品カタログの情報を取得。sortArrayによってソート条件を設定*/
