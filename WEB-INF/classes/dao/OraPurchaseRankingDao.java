@@ -1,4 +1,9 @@
 package dao;
+/*	
+ *@author 宇津野
+ *@date 2017/03/01
+*/
+
 
 import java.sql.Connection;
 import java.sql.ResultSet;
