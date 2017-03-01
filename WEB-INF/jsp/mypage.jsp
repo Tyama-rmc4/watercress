@@ -1,185 +1,189 @@
-<%@page pageEncoding="Windows-31J"
-   contentType="text/html;charset=Windows-31J"
+<%@page pageEncoding="UTF-8"
+   contentType="text/html;charset=UTF-8"
    import="java.util.List"
    import="java.util.Iterator"
    import="java.util.ArrayList"
+   import="bean.ProductImageBean"
    %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!doctype html>
 <html lang="ja">
-<head>
-<meta charset="utf-8">
-<title>MyPage</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="copyright" content="Template Party">
-<meta name="description" content="‚±‚±‚ÉƒTƒCƒgà–¾‚ğ“ü‚ê‚Ü‚·">
-<meta name="keywords" content="ƒL[ƒ[ƒh‚P,ƒL[ƒ[ƒh‚Q,ƒL[ƒ[ƒh‚R,ƒL[ƒ[ƒh‚S,ƒL[ƒ[ƒh‚T">
-<link rel="stylesheet" href="css/style.css">
-<!--[if lt IE 9]>
-<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-<style>.ddmenu {display: none;}</style>
-<![endif]-->
-<script type="text/javascript" src="js/openclose.js"></script>
-<script type="text/javascript" src="ddmenu_min.js"></script>
-</head>
+	<head>
+	<meta charset="utf-8">
+	<title>MyPage</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="copyright" content="Template Party">
+	<meta name="description" content="ã“ã“ã«ã‚µã‚¤ãƒˆèª¬æ˜ã‚’å…¥ã‚Œã¾ã™">
+	<meta name="keywords" content="ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼‘,ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼’,ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼“,ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼”,ã‚­ãƒ¼ãƒ¯ãƒ¼ãƒ‰ï¼•">
+	<link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+	<!--[if lt IE 9]>
+	<script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+	<style>.ddmenu {display: none;}</style>
+	<![endif]-->
+	<script type="text/javascript" src="${pageContext.request.contextPath}/js/openclose.js"></script>
+	<script type="text/javascript" src="${pageContext.request.contextPath}/ddmenu_min.js"></script>
+	</head>
 
-<body>
+	<body>
 
-<div id="container">
-<%
-	List data = request.getAttribute("data");
-	
-%>
-<header>
-<h1 id="logo"><a href="top.html"><img src="images/logo.png" width="370" height="60" alt="Sample Online Shop"></a></h1>
-<div class="headermenu">
-<ul>
-<a href="userentry.html">‰ïˆõ“o˜^</a>
-<a href="login.html">ƒƒOƒCƒ“</a>
-</ul>
-<div id="cart"><a href="#">CART</a></div>
-</header>
+	<div id="container">
 
-<nav id="menubar">
-<ul>
-<li class="arrow"><a>CATEGORY</a>
-    <ul class="ddmenu">
-    <li><a href="list.html">TOPS</a></li>
-    <li><a href="list.html">BOTTOMS</a></li>
-    <li><a href="list.html">UNDER</a></li>
-    <li><a href="list.html">SHOES</a></li>
-    <li><a href="list.html">ACCESSORIES</a></li>
+	<header>
+	<h1 id="logo"><a href="${pageContext.request.contextPath}/front/top"><img src="${pageContext.request.contextPath}/images/logo.png" width="370" height="60" alt="Sample Online Shop"></a></h1>
+	<div class="headermenu">
+	<ul>
+	<a href="${pageContext.request.contextPath}/front/userentry">ä¼šå“¡ç™»éŒ²</a>
+	<a href="${pageContext.request.contextPath}/front/login">ãƒ­ã‚°ã‚¤ãƒ³</a>
 	</ul>
-</li>
-<li class="arrow"><a href="menu_goods.html">SALE</a>
-</li>
-<li class="arrow"><a href="menu_others.html">RANKING</a>
-</li>
-<li class="arrow"><a href="menu_others.html">ALLITEM</a>
-</li>
-<li class="arrow"><a>HELP</a>
-    <ul class="ddmenu">
-    <li><a href="contact.html">‚¨–â‚¢‡‚í‚¹</a></li>
-    <li><a href="question.html">Q&A</a></li>
-</li>
-</ul>
-</nav>
+	<div id="cart"><a href="#">CART</a></div>
+	</header>
 
-<div id="contents">
+	<nav id="menubar">
+	<ul>
+	<li class="arrow"><a>CATEGORY</a>
+	    <ul class="ddmenu">
+	    <li><a href="${pageContext.request.contextPath}/front/list">TOPS</a></li>
+	    <li><a href="${pageContext.request.contextPath}/front/list">BOTTOMS</a></li>
+	    <li><a href="${pageContext.request.contextPath}/front/list">UNDER</a></li>
+	    <li><a href="${pageContext.request.contextPath}/front/list">SHOES</a></li>
+	    <li><a href="${pageContext.request.contextPath}/front/list">ACCESSORIES</a></li>
+		</ul>
+	</li>
+	<li class="arrow"><a href="${pageContext.request.contextPath}/front/menu_goods">SALE</a>
+	</li>
+	<li class="arrow"><a href="${pageContext.request.contextPath}/front/menu_others">RANKING</a>
+	</li>
+	<li class="arrow"><a href="${pageContext.request.contextPath}/front/menu_others">ALLITEM</a>
+	</li>
+	<li class="arrow"><a>HELP</a>
+	    <ul class="ddmenu">
+	    <li><a href="${pageContext.request.contextPath}/front/contact">ãŠå•ã„åˆã‚ã›</a></li>
+	    <li><a href="${pageContext.request.contextPath}/front/question">Q&A</a></li>
+	</li>
+	</ul>
+	</nav>
 
-
-<div id="main">
-
-<section>
-
-<h1><img src="images/icon.jpg" align="middle" width="50" height="50">
-ƒvƒƒtƒB[ƒ‹</h1>
-
-<section>
-<table class="ta1">
-<tr>
-<th>‚¨–¼‘O</th>
-<td>${data.memberName}</td>
-</tr>
-<tr>
-<th>ƒ[ƒ‹ƒAƒhƒŒƒX</th>
-<td>${data.memberEmail}</td>
-</tr>
-<tr>
-<th>¶”NŒ“ú</th>
-<td>${data.memberBirthday}</td>
-</tr>
-<tr>
-<th>ZŠ</th>
-<td>${data.memberAddress}</td>
-</tr>
-<tr>
-<th>“d˜b”Ô†</th>
-<td>${data.memberPhoneNumber}</td>
-</tr>
-</table>
-
-</section>
-
-<hr>
-
-<h1><img src="images/icon.jpg" align="middle" width="50" height="50">
-‚¨‹C‚É“ü‚èˆê——</h1>
-<br>
- <section class="list">
-    <a href="item.html">
-    <figure><img src="images/outer8.png" alt="¤•i–¼"></figure>
-    <h4>”çƒWƒƒƒPƒbƒg@@@ \6,500</h4>
-    </a>
- </section>
- <br><br>
-<br><br><br><br><br><br><br>
-<hr>
-
-<h1><img src="images/icon.jpg" align="middle" width="50" height="50">
-‰ïˆõŒÀ’èƒZ[ƒ‹</h1>
-<br>
-
-<section class="list">
-    <a href="item.html">
-    <figure><img src="images/boxer2.jpg" alt="¤•i–¼"></figure>
-    <h4>ƒ{ƒNƒT[ƒpƒ“ƒc<br> \1,000</h4>
-    <span class="osusume">SALE</span>
-    </a>
-    </section>
-
-</div>
-
-</section>
+	<div id="contents">
 
 
-</div>
-<!--/main-->
+	<div id="main">
 
-<div id="sub">
+	<section>
 
-<nav class="box1">
-<h2>MENU</h2>
-<ul class="submenu mb10">
-<li><a href="companyinfo.html">TOP</a></li>
-<li><a href="tos.html">ƒAƒJƒEƒ“ƒgİ’è</a></li>
-<li><a href="sitemap.html">w“ü—š—ğ</a></li>
-<li><a href="privacypolicy.html">‘Ş‰ïè‘±‚«</a></li>
-</ul>
-</nav>
+	<h1><img src="${pageContext.request.contextPath}/images/icon.jpg" align="middle" width="50" height="50">
+	ãƒ—ãƒ­ãƒ•ã‚£ãƒ¼ãƒ«</h1>
+
+	<section>
+		<table class="ta1">
+			<tr>
+				<th>ãŠåå‰</th>
+				<td>${requestScope.member.memberName}</td>
+			</tr>
+			<tr>
+				<th>ãƒ¡ãƒ¼ãƒ«ã‚¢ãƒ‰ãƒ¬ã‚¹</th>
+				<td>${requestScope.member.memberEmail}</td>
+			</tr>
+			<tr>
+				<th>ç”Ÿå¹´æœˆæ—¥</th>
+				<td>${requestScope.member.memberBirthday}</td>
+			</tr>
+			<tr>
+				<th>ä½æ‰€</th>
+				<td>${requestScope.member.memberAddress}</td>
+			</tr>
+			<tr>
+				<th>é›»è©±ç•ªå·</th>
+				<td>${requestScope.member.memberPhoneNumber}</td>
+			</tr>
+		</table>
+	</section>
+
+	<hr>
+						<!--ãŠæ°—ã«å…¥ã‚Šä¸€è¦§-->
+						
+						
+	<h1>
+		<img src="${pageContext.request.contextPath}/images/icon.jpg" align="middle" width="50" height="50">
+		ãŠæ°—ã«å…¥ã‚Šä¸€è¦§
+	</h1>
+	<br>
+	<div style="width:740px; height:350px; overflow-x:auto;">
+		<c:forEach var="favoriteMap" items="${favoriteInfoList}">
+			<section class="list">
+				<a href="${pageContext.request.contextPath}/front/item">
+		    	<figure><img src="${pageContext.request.contextPath}/images/${favoriteMap.productsImageBean.productImagePath}"></figure>
+				<h4>${favoriteMap.productBean.productName}<br>ï¿¥ ${favoriteMap.productBean.productPrice}</h4>
+				</a>
+			</section>
+		</c:forEach>
+	</div>
+	<br>
+	<hr>
+					<!-- ä¼šå“¡é™å®šã‚»ãƒ¼ãƒ« -->
+					
+	<h1><img src="${pageContext.request.contextPath}/images/icon.jpg" align="middle" width="50" height="50">
+	ä¼šå“¡é™å®šã‚»ãƒ¼ãƒ«</h1>
+	<br>
+	<div style="width:740px; height:350px; overflow-x:auto;">
+		<c:forEach var="adviceMap" items="${adviceInfoList}">
+			<section class="list">
+			    <a href="${pageContext.request.contextPath}/front/item">
+			    <figure><img src="${pageContext.request.contextPath}/images/${adviceMap.productsImageBean.productImagePath}"></figure>
+			    <h4>${adviceMap.productBean.productName}<br>ï¿¥ ${adviceMap.productBean.productPrice}</h4>
+			    <span class="osusume">SALE</span>
+			    </a>
+			</section>
+		</c:forEach>
+	</div>
+	</div>
+	</div>
+	<!--/main-->
+
+	<div id="sub">
+
+	<nav class="box1">
+	<h2>MENU</h2>
+	<ul class="submenu mb10">
+	<li><a href="${pageContext.request.contextPath}/front/top">TOP</a></li>
+	<li><a href="${pageContext.request.contextPath}/front/tos">ã‚¢ã‚«ã‚¦ãƒ³ãƒˆè¨­å®š</a></li>
+	<li><a href="${pageContext.request.contextPath}/front/purchasehistory">è³¼å…¥å±¥æ­´</a></li>
+	<li><a href="${pageContext.request.contextPath}/front/leavecomp">é€€ä¼šæ‰‹ç¶šã</a></li>
+	</ul>
+	</nav>
 
 
-</div>
-<!--/contents-->
+	</div>
+	<!--/contents-->
 
-</div>
-<!--/container-->
+	</div>
+	<!--/container-->
 
-<footer>
+	<footer>
 
-<div class="footermenu">
-<ul>
-<a href="companyinfo.html">‰ïĞŠT—v@@@</a>
-<a href="tos.html">@@@—˜—p‹K–ñ</a>
-<a href="sitemap.html">@@@ƒTƒCƒgƒ}ƒbƒv</a>
-<a href="privacypolicy.html">@@@ŒÂlî•ñ•ÛŒì•ûj</a>
-<a href="deal.html">@@@“Á’è¤æˆø–@</a>
-<a href="contact.html">@@@‚¨–â‚¢‡‚í‚¹</a>
-<a href="question.html">@@@Q&A</a>
-<br>
-<br>
-</ul>
+	<div class="footermenu">
+	<ul>
+	<a href="${pageContext.request.contextPath}/front/companyinfo">ä¼šç¤¾æ¦‚è¦ã€€ã€€ã€€</a>
+	<a href="${pageContext.request.contextPath}/front/tos">ã€€ã€€ã€€åˆ©ç”¨è¦ç´„</a>
+	<a href="${pageContext.request.contextPath}/front/sitemap">ã€€ã€€ã€€ã‚µã‚¤ãƒˆãƒãƒƒãƒ—</a>
+	<a href="${pageContext.request.contextPath}/front/privacypolicy">ã€€ã€€ã€€å€‹äººæƒ…å ±ä¿è­·æ–¹é‡</a>
+	<a href="${pageContext.request.contextPath}/front/deal">ã€€ã€€ã€€ç‰¹å®šå•†å–å¼•æ³•</a>
+	<a href="${pageContext.request.contextPath}/front/contact">ã€€ã€€ã€€ãŠå•ã„åˆã‚ã›</a>
+	<a href="${pageContext.request.contextPath}/front/question">ã€€ã€€ã€€Q&A</a>
+	<br>
+	<br>
+	</ul>
 
-<center><small>Copyright&copy; <a href="index.html">Sample Online Shop</a>@All Rights Reserved.</small>
-<span class="pr"><a href="http://template-party.com/" target="_blank">Web Design:Template-Party</a></span>
+	<center><small>Copyright&copy; <a href="${pageContext.request.contextPath}/front/index">Sample Online Shop</a>ã€€All Rights Reserved.</small>
+	<span class="pr"><a href="http://template-party.com/" target="_blank">Web Design:Template-Party</a></span>
 
-</footer>
-<!--ƒXƒ}ƒz—pƒƒjƒ…[ƒo[-->
-<img src="images/icon_bar.png" width="20" height="23" alt="" id="menubar_hdr" class="close">
-<script type="text/javascript">
-if (OCwindowWidth() < 480) {
-	open_close("menubar_hdr", "menubar");
-}
-</script>
+	</footer>
+	<!--ã‚¹ãƒãƒ›ç”¨ãƒ¡ãƒ‹ãƒ¥ãƒ¼ãƒãƒ¼-->
+	<img src="${pageContext.request.contextPath}/images/icon_bar.png" width="20" height="23" alt="" id="menubar_hdr" class="close">
+	<script type="text/javascript">
+	if (OCwindowWidth() < 480) {
+		open_close("menubar_hdr", "menubar");
+	}
+	</script>
 
-</body>
+	</body>
 </html>

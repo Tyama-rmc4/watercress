@@ -1,28 +1,26 @@
 package command;
 
-import java.util.List;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
 
+import bean.FavoriteBean;
 import bean.MemberBean;
 import bean.ProductBean;
-import bean.FavoriteBean;
-import bean.TagBean;
 import bean.ProductImageBean;
-
+import bean.TagBean;
 import dao.AbstractDaoFactory;
+import dao.FavoriteDao;
 import dao.MemberDao;
 import dao.ProductDao;
-import dao.FavoriteDao;
-import dao.TagDao;
 import dao.ProductImageDao;
-
-
-import logic.ResponseContext;
-import logic.RequestContext;
-import logic.WebRequestContext;
+import dao.TagDao;
 import ex.IntegrationException;
 import ex.LogicException;
+import logic.RequestContext;
+import logic.ResponseContext;
 
 /**
  *@className UserStatusCommand
@@ -32,219 +30,214 @@ import ex.LogicException;
  */
 
 public class ShowMyPageCommand extends AbstractCommand{
-	
-	/*クライアントからのリクエスト*/
-	private RequestContext requestContext;
-	/*Daoからお気に入り表全件入れるList*/
-	private List favoriteList;
-	/*会員のお気に入り商品IDのみ入れるList*/
-	private ArrayList<String> memberFavoriteList =
-		new ArrayList<String>();
-	/*商品全件を入れるList*/
-	private List productList;
-	/*会員のお気に入り商品を入れるList*/
-	private ArrayList<ProductBean> memberProductList =
-		new ArrayList<ProductBean>();
-	
+
 	public ResponseContext execute(ResponseContext responseContext) throws LogicException{
 		/*RequestContextのインスタンスを取得*/
 		RequestContext requestContext = getRequestContext();
-		
+
+		/*Daoからお気に入り表全件入れるList*/
+		List favoriteList = new ArrayList();
+		/*会員のお気に入り商品IDのみ入れるList*/
+		ArrayList<String> memberFavoriteList =
+		new ArrayList<String>();
+		/*商品全件を入れるList*/
+		List productList = new ArrayList();
+		/*会員のお気に入り商品を入れるList*/
+		ArrayList<ProductBean> memberProductList =
+		new ArrayList<ProductBean>();
+
 		/*入力されたパラメータを受け取る*/
 		int memberId = Integer.parseInt(requestContext.getSessionAttribute("login").toString());
-		
+
 		/*MemberBeanのインスタンス*/
 		MemberBean member = new MemberBean();
-		
+
 		/*ProductImageBeanの情報が格納してある変数*/
-		ProductImageBean productsImageBean = null;
-		
+		ProductImageBean productsImageBean = new ProductImageBean();
+
 		/*商品画像のIDを格納してある変数*/
 		String imageProductId = null;
-		
+
 		/*タグのリストを全件取得するための変数*/
-		List tags = null;
-		
+		List tags = new ArrayList();
+
 		/*オススメ商品のみ格納したリスト*/
-		List tagsName = null;
-		
+		List tagsName = new ArrayList();
+
 		/*メンバーリストを全件取得のためのリスト*/
-		List allMemberList = null;
-		
+		List allMemberList = new ArrayList();
+
 		/*商品画像を全件取得のためのリスト*/
-		List allProductsImage = null;
+		List allProductsImage = new ArrayList();
+
+		/*最終的に返すお気に入り商品リストを格納したMap*/
+		Map favoriteProductsInfo = new HashMap();
+
+		/*最終的に返すおすすめ商品リスト格納したMap*/
+		Map adviceProductsInfo = new HashMap();
+
+		/*forEachを入れ子にするためにListへ登録(お気に入り商品用)*/
+		List favoriteInfoList = new ArrayList();
+
+		/*forEachを入れ子にするためにListへ登録(会員限定セール用)*/
+		List adviceInfoList = new ArrayList();
 		
-		/*最終的に返すアカウント情報のリスト*/
-		List membersProfile = null;
-		
-		/*最終的に返すお気に入り商品のリスト*/
-		List favoriteProducts = null;
-		
-		/*最終的に返すおすすめ商品リスト*/
-		List adviceProducts = null;
-		
-		/*最終的に返すおすすめ商品画像リスト*/
-		List adviceProductImage = null;
-		
-		/*最終的に返すお気に入り商品画像リスト*/
-		List favoriteProductImage = null;
 		try{
 		/*プロフィールの取得処理ーーーーーーーーーーーーーーーーーーーー*/
-			
+
 			/*AbstractDaoFactoryのインスタンスを取得*/
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
-			
+
 			/*MemberDaoのインスタンスを取得*/
 			MemberDao memberDao = factory.getMemberDao();
-			
+
 			/*メンバーリストを全件取得*/
 			allMemberList = memberDao.getMembers();
-			
+
 			Iterator iterator = allMemberList.iterator();
-			
+
 			while(iterator.hasNext()){
-				
+
 				member = (MemberBean)iterator.next();
 				if(memberId == member.getMemberId()){
 					break;
 				}
 			}
-			/*プロフィール情報をListに格納*/
-			membersProfile.add(member);
+		/*--------------------------------------------------------------*/
 			
-		/*お気に入り一覧の取得処理ーーーーーーーーーーーーーーーーーーー*/
-			
+/*お気に入り一覧の取得処理ーーーーーーーーーーーーーーーーーーーーーーーー*/
+
 			/*FavoriteDao型の変数ににOraFavoriteDaoインスタンスを入れる*/
 			FavoriteDao favoriteDao = factory.getFavoriteDao();
 			/*ProductDao型の変数ににOraProductDaoインスタンスを入れる*/
 			ProductDao productDao = factory.getProductDao();
 			/*お気に入り表全件を取得*/
 			favoriteList = favoriteDao.getFavorites();
-			iterator = favoriteList.iterator();
 			
-			while(iterator.hasNext()){
+			Iterator favoIterator = favoriteList.iterator();
+			while(favoIterator.hasNext()){
 				/*お気に入り表の内容がループ毎に一件ずつ入る*/
-				FavoriteBean fb =  (FavoriteBean)iterator.next();
+				FavoriteBean favoriteBean =  (FavoriteBean)favoIterator.next();
 				/*お気に入りを表示したい会員のIDと
 				お気に入り表に登録されているIDを比べ、
 				等しい会員IDと結びついている商品IDを入れる*/
-				if(memberId == fb.getMemberId()){
-					memberFavoriteList.add(fb.getProductId());
+				if(memberId == favoriteBean.getMemberId()){
+					memberFavoriteList.add(favoriteBean.getProductId());
 				}
 			}
-			
-			/*Product表を全件取得*/
-			productList = productDao.getProducts();
-			iterator = productList.iterator();
-			
-			while(iterator.hasNext()){
-				/*商品情報がループ毎に一件ずつ入る*/
-				ProductBean pb =  (ProductBean)iterator.next();
-				/*memberFavoriteList内にある
-					複数の商品IDのどれかと合致する商品IDの商品を入れる*/
-				if(memberFavoriteList.contains(pb.getProductId())){
-					favoriteProducts.add(pb);
-				}
-			}
-			
-			/*おすすめ商品の表示－－－－－－－－－－－－－－－－－*/
-			
-			TagDao tagDao = factory.getTagDao();
-			/*Tag表を全件取得*/
-			tags = tagDao.getTags();
-			
-			Iterator tagIterator = tags.iterator();
-			Iterator productsIterator = productList.iterator();
-			
-			while(tagIterator.hasNext()){
-				TagBean tagBean = (TagBean)tagIterator.next();
-				String tagName = tagBean.getTagName();
-				
-				if(tagName == "オススメ"){
-					tagsName.add(tagBean);
-				}
-			}
-			Iterator tagNameIterator = tagsName.iterator();
-			while(tagNameIterator.hasNext()){
-				TagBean tagNameBean 
-				= (TagBean)tagNameIterator.next();
-				/*オススメ商品のProductIdを格納*/
-				String tagProductId = tagNameBean.getProductId();
-				while(productsIterator.hasNext()){
-					ProductBean productBean 
-					= (ProductBean)productsIterator.next();
-				/*商品のProductIdを格納*/
-					String productId = productBean.getProductId();
-					if(productId == tagProductId){
-						adviceProducts.add(productBean);
-					}
-				}
-			}
-			/*おすすめ商品の商品画像の処理－－－－－－－－－－－－－*/
+			/*---------------------------------------------------------*/
 			
 			/*ProductImageDaoのインスタンスを取得*/
 			ProductImageDao productImage = factory.getProductImageDao();
-			
+
 			/*ProductsImageリストを全件取得*/
 			allProductsImage = productImage.getProductImages();
 			
-			Iterator productsImageIterator = allProductsImage.iterator();
-			Iterator adviceProductsIterator = adviceProducts.iterator();
+			/*Product表を全件取得する処理------------------------*/
+			productList = productDao.getProducts();
 			
-			while(productsImageIterator.hasNext()){
-				productsImageBean 
-				= (ProductImageBean)productsImageIterator.next();
-				/*ProductImageBeanのproductIdを格納*/
-				imageProductId = productsImageBean.getProductId();
+			Iterator proIterator = productList.iterator();
+			while(proIterator.hasNext()){
+				/*商品情報がループ毎に一件ずつ入る*/
+				ProductBean productBean =  (ProductBean)proIterator.next();
 				
-				while(adviceProductsIterator.hasNext()){
-					String adviceProductId 
-					= ((ProductBean)adviceProductsIterator.next())
-					.getProductId();
-					if(imageProductId == adviceProductId){
-						adviceProductImage.add(productsImageBean);
+				/*商品画像のイテレータを回す*/
+				Iterator favoriteImageIterator = allProductsImage.iterator();
+				while(favoriteImageIterator.hasNext()){
+					productsImageBean
+					= (ProductImageBean)favoriteImageIterator.next();
+					/*ProductImageBeanの商品IDを格納*/
+					imageProductId = productsImageBean.getProductId();
+					
+					Iterator favoriteProductIdIterator 
+						= memberFavoriteList.iterator();
+					while(favoriteProductIdIterator.hasNext()){
+						/*お気に入り商品IDが一件ずつ格納される*/
+						String favoriteProductId 
+							= (String)favoriteProductIdIterator.next();
+					/*memberFavoriteList内にある
+						複数の商品IDのどれかと合致する商品IDの商品を入れる*/
+					if(favoriteProductId.equals(productBean.getProductId()) && favoriteProductId.equals(imageProductId)){
+						favoriteProductsInfo = new HashMap();
+						
+						favoriteProductsInfo.put("productBean",productBean);
+						favoriteProductsInfo.put("productsImageBean",productsImageBean);
+						/*ListにMapを格納*/
+						/*(お気に入りのproductBeanとproductImageBean)*/
+						favoriteInfoList.add(favoriteProductsInfo);
+						}
 					}
 				}
 			}
+			/*----------------------------------------------------*/
+
+/*会員限定セール用の処理ーーーーーーーーーーーーーーーーーーーーーーーーーー*/
+			/*-------タグのオススメ商品のみを抽出する処理---------*/
+
+			TagDao tagDao = factory.getTagDao();
+			/*Tag表を全件取得*/
+			tags = tagDao.getTags();
+
+			Iterator tagIterator = tags.iterator();
+			while(tagIterator.hasNext()){
+				TagBean tagBean = (TagBean)tagIterator.next();
+				String tagName = tagBean.getTagName();
+
+				if(tagName.equals("オススメ")){
+					tagsName.add(tagBean);
+				}
+			}
+			/*-------------------------------------------------------*/
 			
-			/*お気に入り商品の商品画像の処理*/
-			Iterator favoriteProductsIterator = favoriteProducts.iterator();
+			/*おすすめ商品とその商品画像を抽出する処理－－－－－－－*/
+			Iterator tagNameIterator = tagsName.iterator();
 			
-			while(productsImageIterator.hasNext()){
-				productsImageBean 
-				= (ProductImageBean)productsImageIterator.next();
-				/*ProductImageBeanのproductIdを格納*/
-				imageProductId = productsImageBean.getProductId();
-				
-				while(favoriteProductsIterator.hasNext()){
-					String favoriteProductId 
-					= ((ProductBean)favoriteProductsIterator.next())
-					.getProductId();
-					if(favoriteProductId == imageProductId){
-						favoriteProductImage.add(productsImageBean);
+			while(tagNameIterator.hasNext()){
+				TagBean tagNameBean
+				= (TagBean)tagNameIterator.next();
+				/*オススメ商品のProductIdを格納*/
+				String tagProductId = tagNameBean.getProductId();
+				/*オススメの商品のIDは出ている*/
+				Iterator productsIterator = productList.iterator();
+				while(productsIterator.hasNext()){
+					ProductBean productBean
+					= (ProductBean)productsIterator.next();
+				/*商品のProductIdを格納*/
+					String productId = productBean.getProductId();
+					
+					Iterator productsImageIterator 
+							= allProductsImage.iterator();
+					while(productsImageIterator.hasNext()){
+						productsImageBean 
+							= (ProductImageBean)productsImageIterator.next();
+						/*ProductImageBeanのproductIdを格納*/
+						imageProductId = productsImageBean.getProductId();
+						if(productId.equals(tagProductId) && productId.equals(imageProductId)){
+							adviceProductsInfo = new HashMap();
+							adviceProductsInfo.put("productBean",productBean);
+							adviceProductsInfo.put("productsImageBean",productsImageBean);
+							/*ListにMapを格納(会員限定セールのproductBeanとproductImageBean)*/
+							adviceInfoList.add(adviceProductsInfo);
+						}
 					}
 				}
 			}
+			/*-----------------------------------------------------*/
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
 		/*アカウント情報表示用のリスト*/
-		requestContext.setRequestAttribute("membersProfile",membersProfile);
-		
-		/*お気に入り商品表示用のリスト*/
-		requestContext.setRequestAttribute("favoriteProducts",favoriteProducts);
-		/*おすすめ商品表示用のリスト*/
-		requestContext.setRequestAttribute("adviceProducts",adviceProducts);
-		
-		/*おすすめ商品画像表示用のリスト*/
-		requestContext.setRequestAttribute("adviceProductImage",adviceProductImage);
-		
-		/*おすすめ商品表示用のリスト*/
-		requestContext.setRequestAttribute("favoriteProductImage",favoriteProductImage);
-		
+		requestContext.setRequestAttribute("member",member);
+
+		/*お気に入り商品と画像表示用のList*/
+		requestContext.setRequestAttribute("favoriteInfoList",favoriteInfoList);
+
+		/*会員限定セールの商品と画像表示用のList*/
+		requestContext.setRequestAttribute("adviceInfoList",adviceInfoList);
+
 		/*転送先のビューを指定*/
 		responseContext.setTarget("mypage");
-		
+
 		/*returnで結果を返す*/
 		return responseContext;
 	}
