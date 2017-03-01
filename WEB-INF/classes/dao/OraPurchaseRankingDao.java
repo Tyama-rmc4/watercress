@@ -41,7 +41,8 @@ public class OraPurchaseRankingDao implements PurchaseRankingDao {
 			
 			/*SQL文を記述*/
 			String sql = "SELECT product_name, product_price,"+
-						"purchase_count_sum FROM purchase_ranking_view";
+						"purchase_count_sum FROM purchase_ranking_view"+
+						"ORDER BY purchase_count_sum DESC";
 			
 			/*SQL文を実行し、ResultSetオブジェクトを生成*/
 			result = statement.executeQuery(sql);

@@ -1,84 +1,81 @@
+/**
+ *@className EditCartCommand
+ *@author å¡©æ¾¤
+ *@date 2017/01/31
+ *@description
+ */
 package command;
-
-import ex.LogicException;
-import ex.IntegrationException;
-
-import logic.RequestContext;
-import logic.WebRequestContext;
-import logic.ResponseContext;
-
-import dao.AbstractDaoFactory;
-import dao.MemberDao;
-import dao.OraMemberDao;
-
-import bean.MemberBean;
 
 import java.util.Iterator;
 import java.util.List;
 
-//import javax.servlet.http.HttpSession;
-
-
-/**
- *@className EditCartCommand
- *@author ‰–àV
- *@date 2017/01/31
- *@description 
- */
+import bean.MemberBean;
+import dao.AbstractDaoFactory;
+import dao.MemberDao;
+import ex.IntegrationException;
+import ex.LogicException;
+import logic.RequestContext;
+import logic.ResponseContext;
 /*
-“o˜^Ï‚İƒ†[ƒU[‚ª‘Ş‰ï‚·‚éCommand
+ç™»éŒ²æ¸ˆã¿ãƒ¦ãƒ¼ã‚¶ãƒ¼ãŒé€€ä¼šã™ã‚‹Command
 */
 public class LeaveCommand extends AbstractCommand{
-	
-	/*ƒƒ“ƒo[ƒXƒe[ƒ^ƒX‚Å‘Ş‰ï‚Í2*/
+
+	/*ãƒ¡ãƒ³ãƒãƒ¼ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã§é€€ä¼šã¯2*/
 	private final int leaveStatus = 2;
-	
+
 	public LeaveCommand(){}
-	
+
 	public ResponseContext execute( ResponseContext responseContext )
 	throws LogicException{
-		RequestContext req = new WebRequestContext();
+		RequestContext reqc = getRequestContext();
 		try{
-			
+
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
 			MemberDao memberDao = factory.getMemberDao();
-			//Bean‚ğƒCƒ“ƒXƒ^ƒ“ƒX‰»
+
+			//Beanã‚’ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–
 			MemberBean member = new MemberBean();
-			
-			
-			//session‚©‚çid‚ğæ‚èo‚·
-			int id = (int)req.getSessionAttribute("memberid");
-			
-			
-			//MemberBean‚ğ‘S•”æ‚Á‚Ä‚­‚é
+
+			//sessionã‹ã‚‰idã‚’å–ã‚Šå‡ºã™
+			String loginid = (String)reqc.getSessionAttribute("login");
+			int id = Integer.parseInt(loginid);
+
+
+			//MemberBeanã‚’å…¨éƒ¨å–ã£ã¦ãã‚‹
 			List members = memberDao.getMembers();
-			
-			Iterator i = members.iterator();
+
+			Iterator itr = members.iterator();
 			int getId = -1;
-			while(i.hasNext()){
-				member = (MemberBean)i.next();
-				
+			while(itr.hasNext()){
+				member = (MemberBean)itr.next();
+
 				/*
-				‚Æ‚è‚ ‚¦‚¸æ‚Á‚Ä‚«‚½member‚©‚çŒ»İƒƒOƒCƒ“‚µ‚Ä‚¢‚é
-				ƒ†[ƒU[‚Ìid‚ğŒ©‚Â‚¯‚é
+				å–ã£ã¦ããŸmemberã‹ã‚‰ç¾åœ¨ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ã„ã‚‹
+				ãƒ¦ãƒ¼ã‚¶ãƒ¼ã®idã‚’è¦‹ã¤ã‘ã‚‹
 				*/
 				getId = member.getMemberId();
 				if(id == getId){
-					//Œ©‚Â‚¯‚½‚çbreak‚ÅI‚í‚é
+					//è¦‹ã¤ã‘ãŸãƒ¦ãƒ¼ã‚¶ãƒ¼ã®ç™»éŒ²çŠ¶æ³ã‚’é€€ä¼šã«å¤‰æ›´
+					member.setMemberStatusId(leaveStatus);
+					//breakã§çµ‚ã‚ã‚‹
 					break;
 				}
 			}
-			//Œ©‚Â‚¯‚½ƒ†[ƒU[‚Ì“o˜^ó‹µ‚ğ‘Ş‰ï‚É•ÏX
-			member.setMemberStatusId(leaveStatus);
-			
+
 			memberDao.editMember(member);
+
+			/* ãƒ­ã‚°ã‚¢ã‚¦ãƒˆå‡¦ç†è¿½åŠ @åƒé¶´ */
+			reqc.removeSessionAttribute("login");
+			reqc.removeSessionAttribute("target");
+			reqc.removeSessionAttribute("cart");
+
 		}catch(IntegrationException e){
 			e.printStackTrace();
 		}
-		
-		
-		responseContext.setTarget("leave");
-		
+
+		responseContext.setTarget("leavecomp");
+
 		return responseContext;
 	}
 }
