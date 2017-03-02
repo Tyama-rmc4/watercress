@@ -141,13 +141,11 @@
 	
 	<td width="15%" height="320">
 		<section class="list" style="position:relative; height:100%;">
-			<a href="item.html">
-				<figure>
-					<a href ="productdetail?productName=${product.catalog.productName}">
-						<img src="${pageContext.request.contextPath}/images/${product.categoryName}/
-						${product.catalog.productImagePath}" alt="商品の画像">
-					</a>
-					
+			<figure>
+				<a href ="productdetail?productName=${product.catalog.productName}">
+					<img src="${pageContext.request.contextPath}/images/${product.categoryName}/
+					${product.catalog.productImagePath}" alt="商品の画像">
+				
 					<!-- 各タグの表示 -->
 					<c:forEach var="tagName" items="${product.tagNames}">
 						<c:if test="${tagName == '冬季限定'}">
@@ -156,7 +154,7 @@
 						</c:if>
 						<c:if test="${tagName == 'セール'}">
 							<img class="セールタグ画像のクラス" 
-							src="${pageContext.request.contextPath}/images/tag.hoge" alt="セール">
+						src="${pageContext.request.contextPath}/images/tag.hoge" alt="セール">
 						</c:if>
 					</c:forEach>
 					
@@ -166,10 +164,10 @@
 						src="${pageContext.request.contextPath}/images/soldout.hoge" alt="売り切れ">
 					</c:if>
 					
-				</figure>
-				<h4 style="position: absolute; bottom: 0;">${product.catalog.productName}
-				<br/> ￥${product.catalog.productPrice}<br/></h4>
-			</a>
+					</figure>
+					<h4 style="position: absolute; bottom: 0;">${product.catalog.productName}
+					<br/> ￥${product.catalog.productPrice}<br/></h4>
+				</a>
 		</section>
 	</td>
 	<c:if test="${pageScope.productCount % 5 == 0}" >
