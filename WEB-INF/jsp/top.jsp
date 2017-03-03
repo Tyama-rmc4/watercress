@@ -25,7 +25,7 @@
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 	<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
     <script type="text/javascript" src="${pageContext.request.contextPath}/js/openclose.js"></script>
-    <script type="text/javascript" src="${pageContext.request.contextPath}/ddmenu_min.js"></script>
+    <script type="text/javascript" src="${pageContext.request.contextPath}/js/ddmenu_min.js"></script>
 </head>
 
 <body id="top" class="c1">
