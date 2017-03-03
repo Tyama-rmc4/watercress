@@ -1,16 +1,13 @@
 package dao;
-/*	
- *@author å®‡æ´¥é‡
- *@date 2017/03/01
-*/
 
-
-import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Connection;
 import java.sql.Statement;
-import java.util.ArrayList;
+
 import java.util.List;
+import java.util.ArrayList;
 
 import bean.PurchaseRankingBean;
 import ex.ConnectorException;
@@ -19,51 +16,51 @@ import ex.IntegrationException;
 
 
 public class OraPurchaseRankingDao implements PurchaseRankingDao {
-	/*å…¨ã¦ã®å•†å“ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
+	/*‘S‚Ä‚Ì¤•i‚Ìî•ñ‚ğæ“¾‚·‚éƒƒ\ƒbƒh*/
 	public List getPurchaseRanking() throws IntegrationException{
-
+		
 		ArrayList<PurchaseRankingBean> rankingList=new ArrayList<PurchaseRankingBean>();
 		Connection connection = null;
 		Statement statement = null;
 		ResultSet result = null;
-
+		
 		try{
-			/*ãƒ‡ãƒ¼ã‚¿ãƒ™ãƒ¼ã‚¹ã¸ã®æ¥ç¶š*/
-			connection
+			/*ƒf[ƒ^ƒx[ƒX‚Ö‚ÌÚ‘±*/
+			connection 
 			= new OracleConnector("shop_admin","admin").getConnection();
 		}catch(IntegrationException e){
 			throw new ConnectorException(e.getMessage(), e);
 		}
-
+		
 		try{
-			/*ã‚ªãƒ¼ãƒˆã‚³ãƒŸãƒƒãƒˆæ©Ÿèƒ½ã‚’OFFã«ã™ã‚‹*/
+			/*ƒI[ƒgƒRƒ~ƒbƒg‹@”\‚ğOFF‚É‚·‚é*/
 			connection.setAutoCommit(false);
-
-			/*SQLæ–‡ã‚’DBã«é€ã‚‹ãŸã‚ã®Statementã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ*/
+			
+			/*SQL•¶‚ğDB‚É‘—‚é‚½‚ß‚ÌStatementƒIƒuƒWƒFƒNƒg‚ğ¶¬*/
 			statement = connection.createStatement();
-
-			/*SQLæ–‡ã‚’è¨˜è¿°*/
+			
+			/*SQL•¶‚ğ‹Lq*/
 			String sql = "SELECT product_name, product_price,"+
 						"purchase_count_sum FROM purchase_ranking_view"+
 						"ORDER BY purchase_count_sum DESC";
-
-			/*SQLæ–‡ã‚’å®Ÿè¡Œã—ã€ResultSetã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ç”Ÿæˆ*/
+			
+			/*SQL•¶‚ğÀs‚µAResultSetƒIƒuƒWƒFƒNƒg‚ğ¶¬*/
 			result = statement.executeQuery(sql);
-
+			
 			while(result.next()){
-				/*SELECTã®çµæœã‚’Beanã«å…¥ã‚Œã‚‹*/
+				/*SELECT‚ÌŒ‹‰Ê‚ğBean‚É“ü‚ê‚é*/
 				PurchaseRankingBean ranking = new PurchaseRankingBean();
-
+				
 				ranking.setProductName(result.getString(1));
 				ranking.setProductPrice(Integer.parseInt(result.getString(2)));
 				ranking.setPurchaseCountSum(Integer.parseInt(result.getString(3)));
-
-
-				/*Listã«Beanã‚’å…¥ã‚Œã‚‹*/
+				
+				
+				/*List‚ÉBean‚ğ“ü‚ê‚é*/
 				rankingList.add(ranking);
 			}
-
-
+			
+			
 		}catch(SQLException e){
 			throw new IllegalSQLException(e.getMessage(), e);
 		}finally{
@@ -86,9 +83,9 @@ public class OraPurchaseRankingDao implements PurchaseRankingDao {
 				}
 			}
 		}
-
-		//Productè¡¨å…¨ä»¶ã‚’è¿”ã™ã€‚
+			
+		//Product•\‘SŒ‚ğ•Ô‚·B
 		return rankingList;
-
+		
 	}
 }
