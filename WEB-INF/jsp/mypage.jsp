@@ -146,7 +146,7 @@
 	<ul class="submenu mb10">
 	<li><a href="${pageContext.request.contextPath}/front/top">TOP</a></li>
 	<li><a href="${pageContext.request.contextPath}/front/tos">アカウント設定</a></li>
-	<li><a href="${pageContext.request.contextPath}/front/purchasehistory">購入履歴</a></li>
+	<li><a href="${pageContext.request.contextPath}/front/orderhistory">購入履歴</a></li>
 	<li><a href="${pageContext.request.contextPath}/front/leavecomp">退会手続き</a></li>
 	</ul>
 	</nav>
