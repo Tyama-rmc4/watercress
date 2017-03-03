@@ -84,6 +84,7 @@ public class ShowMemberOrderCommand extends AbstractCommand {
 					memberInformation.put("addr4",fullAddress[3]);
 					
 					memberInformation.put("orderprice",String.valueOf(orderprice));
+					memberInformation.put("totalprice",String.valueOf(orderprice));
 					
 					responseContext.setResult(memberInformation);
 					break;
