@@ -1,22 +1,38 @@
-/*
-  @author 宇津野光
-  @date 2017/02/15
-*/
-
 package command;
 
+import ex.LogicException;
 import logic.RequestContext;
 import logic.ResponseContext;
-import logic.WebRequestContext;
 
-import ex.LogicException;
+/**
+ *@className AbstractCommand
+ *@author Kohichi Tujihashi
+ *@date 2017/03/03
+ *@description
+ */
+public class ShowEntryCodeCommand extends AbstractCommand{
+	/**クライアントからのリクエスト*/
+	private RequestContext requestContext;
 
-public class ShowEntryCodeCommand extends AbstractCommand {
-	public ResponseContext execute(ResponseContext responseContext)
+	public ResponseContext execute( ResponseContext responseContext )
 	throws LogicException{
-		
-		responseContext.setTarget("entrycode");
-		
+
+		RequestContext reqc = getRequestContext();
+
+
+
+
+
+
+		responseContext.setTarget( "entrycode" );
+		//登録確認ページに移動
+		//AppricationControllerのsetAttributeに
+		//登録するためにsetResultメソッドを使ってbeanを登録
 		return responseContext;
 	}
 }
+/**
+
+
+
+*/
