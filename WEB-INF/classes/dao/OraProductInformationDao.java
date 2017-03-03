@@ -64,8 +64,15 @@ public class OraProductInformationDao implements ProductInformationDao {
 				info.setProductSize(result.getString(7));
 				info.setProductColor(result.getString(8));
 				info.setProductReleaseDate(result.getString(9));
-				info.setProductStockCount(Integer.parseInt(result.getString(10)));
-				
+				/*product_stock表の内容が作成されていない場合、
+				  result.getString(10)でnullが返ってくる。
+				  この場合、例外を防ぐため0を返すことにする*/
+				if(result.getString(10) != null){
+					info.setProductStockCount(
+						Integer.parseInt(result.getString(10)));
+				}else{
+					info.setProductStockCount(0);
+				}
 				/*ListにBeanを入れる*/
 				infoList.add(info);
 			}
