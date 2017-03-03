@@ -1,236 +1,253 @@
 /*
   @className OrderDataConfirmationCommand
-  @author ’r“c‘å˜a
+  @author æ± ç”°å¤§å’Œ
   @date 2017/01/31
-  @description ’•¶ˆ—‚ğÀs‚·‚éƒRƒ}ƒ“ƒh‚ÌƒNƒ‰ƒXB
-  ’•¶ˆ—‚Ì—¬‚ê‚ÍA
-  ‚Ü‚¸’•¶‚·‚é¤•i‚ÌİŒÉ‚ª‚ ‚é‚±‚Æ‚ğŠm”F‚·‚éB
-  Ÿ‚Éu’•¶v‚ğ“o˜^‚µA‚»‚ê‚É•‘®‚·‚éŠe¤•i‚Ìu’•¶–¾×v‚ğ“o˜^‚·‚éB
-  u’•¶v‚ÍA‚»‚Ì’•¶‚ğs‚Á‚½‰ïˆõ‚ÌID‚âŠÔ‚Ìî•ñ‚Å‚ ‚èA
-  u’•¶–¾×v‚ÍA‚»‚Ì’•¶‚Å’•¶‚³‚ê‚½¤•i‚ÌID‚ÆŒÂ”‚Ìî•ñ‚Å‚ ‚éB
-  u’•¶v‚ÍPurchaseOrder•\‚ÉAu’•¶–¾×v‚ÍPurchaseOrderDetail•\‚É“o˜^‚·‚éB
-  ÅŒã‚ÉA’•¶‚µ‚½¤•i‚ÌİŒÉ‚ğŒ¸‚ç‚·B
+  @description æ³¨æ–‡å‡¦ç†ã‚’å®Ÿè¡Œã™ã‚‹ã‚³ãƒãƒ³ãƒ‰ã®ã‚¯ãƒ©ã‚¹ã€‚
+  æ³¨æ–‡å‡¦ç†ã®æµã‚Œã¯ã€
+  ã¾ãšæ³¨æ–‡ã™ã‚‹å•†å“ã®åœ¨åº«ãŒã‚ã‚‹ã“ã¨ã‚’ç¢ºèªã™ã‚‹ã€‚
+  æ¬¡ã«ã€Œæ³¨æ–‡ã€ã‚’ç™»éŒ²ã—ã€ãã‚Œã«é™„å±ã™ã‚‹å„å•†å“ã®ã€Œæ³¨æ–‡æ˜ç´°ã€ã‚’ç™»éŒ²ã™ã‚‹ã€‚
+  ã€Œæ³¨æ–‡ã€ã¯ã€ãã®æ³¨æ–‡ã‚’è¡Œã£ãŸä¼šå“¡ã®IDã‚„æ™‚é–“ã®æƒ…å ±ã§ã‚ã‚Šã€
+  ã€Œæ³¨æ–‡æ˜ç´°ã€ã¯ã€ãã®æ³¨æ–‡ã§æ³¨æ–‡ã•ã‚ŒãŸå•†å“ã®IDã¨å€‹æ•°ã®æƒ…å ±ã§ã‚ã‚‹ã€‚
+  ã€Œæ³¨æ–‡ã€ã¯PurchaseOrderè¡¨ã«ã€ã€Œæ³¨æ–‡æ˜ç´°ã€ã¯PurchaseOrderDetailè¡¨ã«ç™»éŒ²ã™ã‚‹ã€‚
+  æœ€å¾Œã«ã€æ³¨æ–‡ã—ãŸå•†å“ã®åœ¨åº«ã‚’æ¸›ã‚‰ã™ã€‚
+  @date 2017/03/03
+  @description éä¼šå“¡ãŒæ³¨æ–‡ã‚’å®Ÿè¡Œã™ã‚‹å ´åˆã®å‡¦ç†ã‚’è¿½åŠ ã€‚
+  ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã‹ã‚‰æƒ…å ±ã‚’å–å¾—ã—ã€memberè¡¨ã¸ã®æƒ…å ±ã®ç™»éŒ²ã‚’è¡Œã†ã€‚
+  
 */
 package command;
 
-import java.util.List;
 import java.util.Iterator;
+import java.util.List;
 
-import ex.LogicException;
-import ex.IntegrationException;
-import logic.RequestContext;
-import logic.ResponseContext;
-import dao.AbstractDaoFactory;
-import dao.PurchaseOrderDao;
-import dao.PurchaseOrderDetailDao;
-import dao.ProductStockDao;
+import bean.MemberBean;
+import bean.ProductStockBean;
 import bean.PurchaseOrderBean;
 import bean.PurchaseOrderDetailBean;
-import bean.ProductStockBean;
+import dao.AbstractDaoFactory;
+import dao.MemberDao;
+import dao.ProductStockDao;
+import dao.PurchaseOrderDao;
+import dao.PurchaseOrderDetailDao;
+import ex.IntegrationException;
+import ex.LogicException;
+import logic.RequestContext;
+import logic.ResponseContext;
 
-/*’•¶ˆ—‚ğÀs‚·‚éƒRƒ}ƒ“ƒh‚ÌƒNƒ‰ƒX*/
+/*æ³¨æ–‡å‡¦ç†ã‚’å®Ÿè¡Œã™ã‚‹ã‚³ãƒãƒ³ãƒ‰ã®ã‚¯ãƒ©ã‚¹*/
 public class OrderExecutionCommand extends AbstractCommand {
-	
-	/*RequestContext‚ğŠi”[‚·‚éƒCƒ“ƒXƒ^ƒ“ƒX•Ï”*/
+
+	/*éä¼šå“¡ã‚’è¡¨ã™member_statusã®ID*/
+	final int temporaryMemberStatus = 0;
+
+	/*RequestContextã‚’æ ¼ç´ã™ã‚‹ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹å¤‰æ•°*/
 	RequestContext requestContext;
-	
-	/*‰º‹L‚Ì‚R‚Â‚Ì•ªŠ„ƒƒ\ƒbƒh‚ğŒÄ‚Ño‚µA’•¶ˆ—‚ğÀs‚·‚éƒƒ\ƒbƒh*/
+
+	/*ä¸‹è¨˜ã®ï¼“ã¤ã®åˆ†å‰²ãƒ¡ã‚½ãƒƒãƒ‰ã‚’å‘¼ã³å‡ºã—ã€æ³¨æ–‡å‡¦ç†ã‚’å®Ÿè¡Œã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException {
-		/*initƒƒ\ƒbƒh‚É‚æ‚Á‚Ä€”õ‚³‚ê‚Ä‚¢‚½RequestContext‚ğæ“¾‚·‚é*/
+		/*initãƒ¡ã‚½ãƒƒãƒ‰ã«ã‚ˆã£ã¦æº–å‚™ã•ã‚Œã¦ã„ãŸRequestContextã‚’å–å¾—ã™ã‚‹*/
 		requestContext = getRequestContext();
-		
-		/*’•¶‚·‚é¤•i‚ÌID‚Ì”z—ñ‚ğƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚©‚çæ“¾‚·‚é*/
-		String[] orderProductsId = 
+
+		/*æ³¨æ–‡ã™ã‚‹å•†å“ã®IDã®é…åˆ—ã‚’ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã‹ã‚‰å–å¾—ã™ã‚‹*/
+		String[] orderProductsId =
 		(String[])requestContext.getSessionAttribute("orderproducts");
-		
-		/*’•¶‚·‚é¤•i‚ÌŒÂ”‚Ì”z—ñ‚ğƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚©‚çæ“¾‚·‚é*/
-		String[] orderCountsAttribute = 
+
+		/*æ³¨æ–‡ã™ã‚‹å•†å“ã®å€‹æ•°ã®é…åˆ—ã‚’ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã‹ã‚‰å–å¾—ã™ã‚‹*/
+		String[] orderCountsAttribute =
 			(String[])requestContext.getSessionAttribute("ordercounts");
-		
-		/*’•¶‚·‚é¤•i‚ÌŒÂ”‚Ì”z—ñ‚ğint”z—ñŒ^‚É•ÏŠ·‚·‚é*/
+
+		/*æ³¨æ–‡ã™ã‚‹å•†å“ã®å€‹æ•°ã®é…åˆ—ã‚’inté…åˆ—å‹ã«å¤‰æ›ã™ã‚‹*/
 		int[] orderCounts = new int[orderCountsAttribute.length];
 		for(int i = 0; i < orderCountsAttribute.length; i++){
 			orderCounts[i] = Integer.parseInt(orderCountsAttribute[i]);
 		}
-		
+
 		try{
-			/*‚Ü‚¸AİŒÉ”‚ÌŠm”F‚ğs‚¤B*/
+			/*ã¾ãšã€åœ¨åº«æ•°ã®ç¢ºèªã‚’è¡Œã†ã€‚*/
 			checkProductStocks(orderProductsId,orderCounts);
-			
-			/*Ÿ‚Éu’•¶v‚Æu’•¶–¾×v‚Ìî•ñ‚ğ“o˜^‚·‚éB*/
+
+			/*æ¬¡ã«ã€Œæ³¨æ–‡ã€ã¨ã€Œæ³¨æ–‡æ˜ç´°ã€ã®æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹ã€‚*/
 			registOrder(orderProductsId,orderCounts);
-			
-			/*ÅŒã‚ÉİŒÉ”‚Ì•ÏX‚ğs‚¤B*/
+
+			/*æœ€å¾Œã«åœ¨åº«æ•°ã®å¤‰æ›´ã‚’è¡Œã†ã€‚*/
 			updateProductStocks(orderProductsId,orderCounts);
-			
+
 		}catch(LogicException e){
 			throw new LogicException(e.getMessage(), e);
 		}
-		
-		/*“]‘—æ‚ÌView‚Ì–¼‘O‚ğƒŒƒXƒ|ƒ“ƒX‚É‰Á‚¦‚é*/
-		responseContext.setTarget("ordercomp"); 
-		
-		/*•K—v‚Èî•ñ‚ğ“ü‚êI‚í‚Á‚½ƒŒƒXƒ|ƒ“ƒX‚ğ•Ô‚·*/
+
+		/*è»¢é€å…ˆã®Viewã®åå‰ã‚’ãƒ¬ã‚¹ãƒãƒ³ã‚¹ã«åŠ ãˆã‚‹*/
+		responseContext.setTarget("ordercomp");
+
+		/*å¿…è¦ãªæƒ…å ±ã‚’å…¥ã‚Œçµ‚ã‚ã£ãŸãƒ¬ã‚¹ãƒãƒ³ã‚¹ã‚’è¿”ã™*/
 		return responseContext;
 	}
-	
-	/*İŒÉ”‚ÌŠm”F‚ğs‚¤ƒƒ\ƒbƒh*/
+
+	/*åœ¨åº«æ•°ã®ç¢ºèªã‚’è¡Œã†ãƒ¡ã‚½ãƒƒãƒ‰*/
 	private void checkProductStocks(String[] orderProductsId,int[] orderCounts)
 	throws LogicException {
-		
+
 		try{
-			/*İŒÉ‚Ìî•ñ‚ÌŠm”F‚Æ“o˜^‚ğs‚¤‚½‚ß‚ÌDAO‚ğæ“¾‚·‚é*/
+			/*åœ¨åº«ã®æƒ…å ±ã®ç¢ºèªã¨ç™»éŒ²ã‚’è¡Œã†ãŸã‚ã®DAOã‚’å–å¾—ã™ã‚‹*/
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
 			ProductStockDao productStockDao = factory.getProductStockDao();
-			
-			/*İŒÉ‚Ìî•ñ‚ğæ“¾‚·‚é*/
+
+			/*åœ¨åº«ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹*/
 			List productStocks = productStockDao.getProductStocks();
-			
-			/*’•¶‚µ‚½¤•i‚ÌİŒÉ”‚ğŠi”[‚·‚é•Ï”‚ğéŒ¾‚·‚é*/
+
+			/*æ³¨æ–‡ã—ãŸå•†å“ã®åœ¨åº«æ•°ã‚’æ ¼ç´ã™ã‚‹å¤‰æ•°ã‚’å®£è¨€ã™ã‚‹*/
 			int[] orderProductStockCounts = new int[orderCounts.length];
-			
+
 			/*
-				’ˆÓ
-				orderProductsId			’•¶‚·‚é¤•i‚ÌID‚Ì”z—ñ
-				orderCounts				’•¶‚·‚éŒÂ”‚Ì”z—ñ
-				orderProductStockCounts	’•¶‚·‚é¤•i‚ÌİŒÉ”‚Ì”z—ñ
+				æ³¨æ„
+				orderProductsId			æ³¨æ–‡ã™ã‚‹å•†å“ã®IDã®é…åˆ—
+				orderCounts				æ³¨æ–‡ã™ã‚‹å€‹æ•°ã®é…åˆ—
+				orderProductStockCounts	æ³¨æ–‡ã™ã‚‹å•†å“ã®åœ¨åº«æ•°ã®é…åˆ—
 			*/
-			
-			/*İŒÉ‚ÌƒŠƒXƒg‚ÌŠes‚ğŠm”F‚µ‚Äˆ—‚ğs‚¤*/
+
+			/*åœ¨åº«ã®ãƒªã‚¹ãƒˆã®å„è¡Œã‚’ç¢ºèªã—ã¦å‡¦ç†ã‚’è¡Œã†*/
 			Iterator iterator = productStocks.iterator();
 			while(iterator.hasNext()){
-				
-				/*İŒÉƒŠƒXƒg‚Ì‚¤‚¿‚Ì‚Ps‚Å‚ ‚éBean‚ğæ“¾‚·‚é*/
+
+				/*åœ¨åº«ãƒªã‚¹ãƒˆã®ã†ã¡ã®ï¼‘è¡Œã§ã‚ã‚‹Beanã‚’å–å¾—ã™ã‚‹*/
 				ProductStockBean productStock
 				= (ProductStockBean)iterator.next();
-				
-				/*‚»‚ÌBean‚©‚ç¤•iID‚ğæ“¾‚·‚é*/
+
+				/*ãã®Beanã‹ã‚‰å•†å“IDã‚’å–å¾—ã™ã‚‹*/
 				String productId = productStock.getProductId();
-				
-				/*’•¶‚·‚é¤•i‚ÌİŒÉ”‚ğæ“¾‚·‚éˆ—‚ğs‚¤B*/
-				/*’•¶‚·‚é¤•i‚ÌID‚Ì”z—ñ‚Ì—v‘f”•ªAƒ‹[ƒv‚·‚éB*/
+
+				/*æ³¨æ–‡ã™ã‚‹å•†å“ã®åœ¨åº«æ•°ã‚’å–å¾—ã™ã‚‹å‡¦ç†ã‚’è¡Œã†ã€‚*/
+				/*æ³¨æ–‡ã™ã‚‹å•†å“ã®IDã®é…åˆ—ã®è¦ç´ æ•°åˆ†ã€ãƒ«ãƒ¼ãƒ—ã™ã‚‹ã€‚*/
 				for(int i = 0; i < orderProductsId.length; i++){
-					
-					/*Œ»İ‚ÌBean‚Ì¤•iID‚ªA
-					’•¶‚·‚é¤•i‚ÌID‚Ì”z—ñi”Ô–Ú‚Æ“¯‚¶‚Å‚ ‚é‚È‚çA*/
+
+					/*ç¾åœ¨ã®Beanã®å•†å“IDãŒã€
+					æ³¨æ–‡ã™ã‚‹å•†å“ã®IDã®é…åˆ—iç•ªç›®ã¨åŒã˜ã§ã‚ã‚‹ãªã‚‰ã€*/
 					if(productId.equals(orderProductsId[i])){
-						
-						/*’•¶‚·‚é¤•i‚ÌİŒÉ”‚Ì”z—ñi”Ô–Ú‚ÉA
-						Œ»İ‚ÌBean‚ÌİŒÉ”‚ğ‘ã“ü‚·‚éB*/
+
+						/*æ³¨æ–‡ã™ã‚‹å•†å“ã®åœ¨åº«æ•°ã®é…åˆ—iç•ªç›®ã«ã€
+						ç¾åœ¨ã®Beanã®åœ¨åº«æ•°ã‚’ä»£å…¥ã™ã‚‹ã€‚*/
 						orderProductStockCounts[i]
 						= productStock.getProductStockCount();
 					}
 				}
 			}
-			
-			/*u’•¶‚·‚éŒÂ”v‚Æu’•¶‚·‚é¤•i‚ÌİŒÉ”v‚ğ”äŠr‚·‚é*/
+
+			/*ã€Œæ³¨æ–‡ã™ã‚‹å€‹æ•°ã€ã¨ã€Œæ³¨æ–‡ã™ã‚‹å•†å“ã®åœ¨åº«æ•°ã€ã‚’æ¯”è¼ƒã™ã‚‹*/
 			for(int i = 0; i < orderCounts.length; i++){
-				/*’•¶‚·‚éŒÂ”‚ª’•¶‚·‚é¤•i‚ÌİŒÉ”‚æ‚è‘½‚¢‚È‚ç—áŠO‘—o*/
+				/*æ³¨æ–‡ã™ã‚‹å€‹æ•°ãŒæ³¨æ–‡ã™ã‚‹å•†å“ã®åœ¨åº«æ•°ã‚ˆã‚Šå¤šã„ãªã‚‰ä¾‹å¤–é€å‡º*/
 				if(orderCounts[i] > orderProductStockCounts[i]){
 					throw new LogicException(
-						orderProductsId[i]+"‚ÌİŒÉ‚ª‘«‚è‚Ü‚¹‚ñB",null);
+						orderProductsId[i]+"ã®åœ¨åº«ãŒè¶³ã‚Šã¾ã›ã‚“ã€‚",null);
 				}
 			}
-			
+
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
-		
+
 	}
-	
-	/*u’•¶v‚Æu’•¶–¾×v‚Ìî•ñ‚ğ“o˜^‚·‚éƒƒ\ƒbƒh*/
+
+	/*ã€Œæ³¨æ–‡ã€ã¨ã€Œæ³¨æ–‡æ˜ç´°ã€ã®æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
 	private void registOrder(String[] orderProductsId,int[] orderCounts)
 	throws LogicException {
 		try{
-			/*’•¶‚Ìî•ñ‚ğ“o˜^‚·‚é‚½‚ß‚ÌDAO‚ğæ“¾‚·‚é*/
+			/*æ³¨æ–‡ã®æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹ãŸã‚ã®DAOã‚’å–å¾—ã™ã‚‹*/
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
 			PurchaseOrderDao purchaseOrderDao = factory.getPurchaseOrderDao();
-			
-			/*’•¶î•ñ‚ğ“o˜^‚·‚é‚½‚ß‚ÌBean‚ğƒCƒ“ƒXƒ^ƒ“ƒX‰»‚·‚é*/
+
+			/*æ³¨æ–‡æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹ãŸã‚ã®Beanã‚’ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ã™ã‚‹*/
 			PurchaseOrderBean purchaseOrder = new PurchaseOrderBean();
-			
-			/*‰ïˆõ‚ÌID‚ğƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚©‚çæ“¾‚µABean‚ÉŠi”[‚·‚é*/
-			String memberIdAttribute
-			= (String)requestContext.getSessionAttribute("login");
-			purchaseOrder.setMemberId(Integer.parseInt(memberIdAttribute));
-			
-			/*x•¥‚¢•û–@‚ğƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚©‚çæ“¾‚µABean‚ÉŠi”[‚·‚é*/
+
+			/*ä¼šå“¡ã®IDã‚’ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã‹ã‚‰å–å¾—ã—ã€Beanã«æ ¼ç´ã™ã‚‹ã€‚
+			  ãƒ­ã‚°ã‚¤ãƒ³ã—ã¦ã„ãªã„ãªã‚‰ã€å…¥åŠ›ã•ã‚ŒãŸæ³¨æ–‡æƒ…å ±ã‚’memberè¡¨ã«
+			  ç™»éŒ²ã—ã¦ã€ãã®éä¼šå“¡æƒ…å ±ã®IDã‚’å–å¾—ã™ã‚‹*/
+			if(requestContext.getSessionAttribute("login") != null){
+				String memberIdAttribute
+				= (String)requestContext.getSessionAttribute("login");
+
+				purchaseOrder.setMemberId(Integer.parseInt(memberIdAttribute));
+			}else{
+				/*éä¼šå“¡æƒ…å ±ã®ç™»éŒ²ã‚’è¡Œã„ã€ãã®æƒ…å ±ã®IDã‚’Beanã«æ ¼ç´*/
+				purchaseOrder.setMemberId(registTemporaryMember());
+			}
+
+			/*æ”¯æ‰•ã„æ–¹æ³•ã‚’ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã‹ã‚‰å–å¾—ã—ã€Beanã«æ ¼ç´ã™ã‚‹*/
 			purchaseOrder.setPurchaseOrderPaymentMethod(
 				(String)requestContext.getSessionAttribute("paymentmethod"));
-			
-			/*’•¶‚Ìî•ñ‚ğ“o˜^‚µAs‚Á‚½’•¶‚Ì’•¶ID‚ğæ“¾‚·‚é*/
+
+			/*æ³¨æ–‡ã®æƒ…å ±ã‚’ç™»éŒ²ã—ã€è¡Œã£ãŸæ³¨æ–‡ã®æ³¨æ–‡IDã‚’å–å¾—ã™ã‚‹*/
 			int purchaseOrderId
 			= purchaseOrderDao.setPurchaseOrder(purchaseOrder);
-			
-			/*’•¶–¾×‚Ìî•ñ‚ğ“o˜^‚·‚é‚½‚ß‚ÌDAO‚ğæ“¾‚·‚é*/
+
+			/*æ³¨æ–‡æ˜ç´°ã®æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹ãŸã‚ã®DAOã‚’å–å¾—ã™ã‚‹*/
 			PurchaseOrderDetailDao purchaseOrderDetailDao
 			= factory.getPurchaseOrderDetailDao();
-			
-			/*’•¶‚·‚é¤•i‚Ìí—Ş”‰ñAˆ—‚ğs‚¤*/
+
+			/*æ³¨æ–‡ã™ã‚‹å•†å“ã®ç¨®é¡æ•°å›ã€å‡¦ç†ã‚’è¡Œã†*/
 			for(int i = 0; i < orderProductsId.length; i++){
-				
-				/*’•¶–¾×î•ñ‚ğ“o˜^‚·‚é‚½‚ß‚ÌBean‚ğƒCƒ“ƒXƒ^ƒ“ƒX‰»‚·‚é*/
+
+				/*æ³¨æ–‡æ˜ç´°æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹ãŸã‚ã®Beanã‚’ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹åŒ–ã™ã‚‹*/
 				PurchaseOrderDetailBean purchaseOrderDetail
 				= new PurchaseOrderDetailBean();
-				
-				/*“o˜^‚µ‚½’•¶‚ÌID‚ğBean‚ÉŠi”[‚·‚é*/
+
+				/*ç™»éŒ²ã—ãŸæ³¨æ–‡ã®IDã‚’Beanã«æ ¼ç´ã™ã‚‹*/
 				purchaseOrderDetail.setPurchaseOrderId(purchaseOrderId);
-				
-				/*’•¶‚·‚é¤•i‚ÌID‚ğBean‚ÉŠi”[‚·‚é*/
+
+				/*æ³¨æ–‡ã™ã‚‹å•†å“ã®IDã‚’Beanã«æ ¼ç´ã™ã‚‹*/
 				purchaseOrderDetail.setProductId(orderProductsId[i]);
-				
-				/*’•¶‚·‚é¤•i‚ÌŒÂ”‚ğBean‚ÉŠi”[‚·‚é*/
+
+				/*æ³¨æ–‡ã™ã‚‹å•†å“ã®å€‹æ•°ã‚’Beanã«æ ¼ç´ã™ã‚‹*/
 				purchaseOrderDetail.setPurchaseCount(orderCounts[i]);
-				
-				/*’•¶–¾×‚Ìî•ñ‚ğ“o˜^‚·‚é*/
+
+				/*æ³¨æ–‡æ˜ç´°ã®æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹*/
 				purchaseOrderDetailDao.setPurchaseOrderDetail(
 					purchaseOrderDetail);
 			}
-			
+
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
 	}
-	
-	/*İŒÉ”‚Ì•ÏX‚ğs‚¤ƒƒ\ƒbƒh*/
+
+	/*åœ¨åº«æ•°ã®å¤‰æ›´ã‚’è¡Œã†ãƒ¡ã‚½ãƒƒãƒ‰*/
 	private void updateProductStocks(String[] orderProductsId,
 		int[] orderCounts)
 	throws LogicException {
 		try{
-			/*İŒÉ‚Ìî•ñ‚ÌŠm”F‚Æ“o˜^‚ğs‚¤‚½‚ß‚ÌDAO‚ğæ“¾‚·‚é*/
+			/*åœ¨åº«ã®æƒ…å ±ã®ç¢ºèªã¨ç™»éŒ²ã‚’è¡Œã†ãŸã‚ã®DAOã‚’å–å¾—ã™ã‚‹*/
 			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
 			ProductStockDao productStockDao = factory.getProductStockDao();
-			
-			/*İŒÉ‚Ìî•ñ‚ğæ“¾‚·‚é*/
+
+			/*åœ¨åº«ã®æƒ…å ±ã‚’å–å¾—ã™ã‚‹*/
 			List productStocks = productStockDao.getProductStocks();
-			
-			/*İŒÉ‚ÌƒŠƒXƒg‚ÌŠes‚ğŠm”F‚µ‚Äˆ—‚ğs‚¤*/
+
+			/*åœ¨åº«ã®ãƒªã‚¹ãƒˆã®å„è¡Œã‚’ç¢ºèªã—ã¦å‡¦ç†ã‚’è¡Œã†*/
 			Iterator iterator = productStocks.iterator();
 			while(iterator.hasNext()){
-				
-				/*İŒÉƒŠƒXƒg‚Ì‚¤‚¿‚Ì‚Ps‚Å‚ ‚éBean‚ğæ“¾‚·‚é*/
+
+				/*åœ¨åº«ãƒªã‚¹ãƒˆã®ã†ã¡ã®ï¼‘è¡Œã§ã‚ã‚‹Beanã‚’å–å¾—ã™ã‚‹*/
 				ProductStockBean productStock
 				= (ProductStockBean)iterator.next();
-				
-				/*‚»‚ÌBean‚©‚ç¤•iID‚ğæ“¾‚·‚é*/
+
+				/*ãã®Beanã‹ã‚‰å•†å“IDã‚’å–å¾—ã™ã‚‹*/
 				String productId = productStock.getProductId();
-				
-				/*’•¶‚µ‚½¤•i‚ÌİŒÉ”‚ğæ“¾‚·‚éˆ—‚ğs‚¤B*/
-				/*’•¶‚µ‚½¤•i‚ÌID‚Ì”z—ñ‚Ì—v‘f”•ªAƒ‹[ƒv‚·‚éB*/
+
+				/*æ³¨æ–‡ã—ãŸå•†å“ã®åœ¨åº«æ•°ã‚’å–å¾—ã™ã‚‹å‡¦ç†ã‚’è¡Œã†ã€‚*/
+				/*æ³¨æ–‡ã—ãŸå•†å“ã®IDã®é…åˆ—ã®è¦ç´ æ•°åˆ†ã€ãƒ«ãƒ¼ãƒ—ã™ã‚‹ã€‚*/
 				for(int i = 0; i < orderProductsId.length; i++){
-					
-					/*Œ»İ‚ÌBean‚Ì¤•iID‚ªA
-					’•¶‚µ‚½¤•i‚ÌID‚Ì”z—ñi”Ô–Ú‚Æ“¯‚¶‚Å‚ ‚é‚È‚çA*/
+
+					/*ç¾åœ¨ã®Beanã®å•†å“IDãŒã€
+					æ³¨æ–‡ã—ãŸå•†å“ã®IDã®é…åˆ—iç•ªç›®ã¨åŒã˜ã§ã‚ã‚‹ãªã‚‰ã€*/
 					if(productId.equals(orderProductsId[i])){
-						
-						/*Œ»İ‚ÌBean‚ÌİŒÉ”‚ğA’•¶‚µ‚½ŒÂ”•ªŒ¸‚ç‚µA*/
+
+						/*ç¾åœ¨ã®Beanã®åœ¨åº«æ•°ã‚’ã€æ³¨æ–‡ã—ãŸå€‹æ•°åˆ†æ¸›ã‚‰ã—ã€*/
 						productStock.setProductStockCount(
 							productStock.getProductStockCount()
 							- orderCounts[i]
 						);
-						
-						/*‚»‚ÌBean‚Ì“à—e‚Ì’Ê‚è‚ÉİŒÉ‚Ì•\‚ğXV‚·‚éB*/
+
+						/*ãã®Beanã®å†…å®¹ã®é€šã‚Šã«åœ¨åº«ã®è¡¨ã‚’æ›´æ–°ã™ã‚‹ã€‚*/
 						productStockDao.setProductStock(productStock);
 					}
 				}
@@ -238,5 +255,65 @@ public class OrderExecutionCommand extends AbstractCommand {
 		}catch(IntegrationException e){
 			throw new LogicException(e.getMessage(), e);
 		}
+	}
+
+	/*éä¼šå“¡ã®æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰*/
+	private int registTemporaryMember()
+	throws LogicException{
+		/*ç™»éŒ²ã•ã‚ŒãŸéä¼šå“¡ã®æƒ…å ±ã®IDã‚’æ ¼ç´ã™ã‚‹ãŸã‚ã®å¤‰æ•°ã‚’å®£è¨€*/
+		int temporaryMemberId = -1;
+
+		/*jspã§ãƒ¦ãƒ¼ã‚¶ãƒ¼ã‹ã‚‰å…¥åŠ›ã•ã‚ŒãŸå€¤ã‚’å–å¾—*/
+		String memberName
+		= (String)requestContext.getSessionAttribute("firstName")
+		+ " " + (String)requestContext.getSessionAttribute("lastName");
+		String memberKana
+		= (String)requestContext.getSessionAttribute("kanaFirstName")
+		+ " " + (String)requestContext.getSessionAttribute("kanaLastName");
+		String memberAddress
+		= (String)requestContext.getSessionAttribute("prefectures") + " "
+		+ (String)requestContext.getSessionAttribute("municipality") + " "
+		+ (String)requestContext.getSessionAttribute("address") + " "
+		+ (String)requestContext.getSessionAttribute("buildingName");
+		String memberZipCode
+		= (String)requestContext.getSessionAttribute("memberZipCode");
+		String memberPhoneNumber
+		= (String)requestContext.getSessionAttribute("memberPhoneNumber");
+
+		/*MemberBeanã‚’ç”Ÿæˆ*/
+		MemberBean memberbean  = new MemberBean();
+
+		/*memberBeanã«æƒ…å ±ã‚’ç™»éŒ²*/
+		memberbean.setMemberName(memberName);
+		memberbean.setMemberKana(memberKana);
+		memberbean.setMemberAddress(memberAddress);
+		memberbean.setMemberZipCode(memberZipCode);
+		memberbean.setMemberPhoneNumber(memberPhoneNumber);
+		memberbean.setMemberStatusId(temporaryMemberStatus);
+
+		try{
+			/*ä¼šå“¡ã®æƒ…å ±ã®ç™»éŒ²ã‚’è¡Œã†ãŸã‚ã®DAOã‚’å–å¾—ã™ã‚‹*/
+			AbstractDaoFactory factory = AbstractDaoFactory.getFactory();
+			MemberDao memberDao = factory.getMemberDao();
+
+			/*è³¼å…¥ã—ãŸéä¼šå“¡ã®æƒ…å ±ã‚’ç™»éŒ²ã™ã‚‹*/
+			memberDao.registMember(memberbean);
+
+			/*ç™»éŒ²ã•ã‚ŒãŸæƒ…å ±ã®IDã‚’å–å¾—ã™ã‚‹ãŸã‚ã«ã€memberè¡¨ã®å…¨ä»¶ã‚’å–å¾—ã™ã‚‹*/
+			List allMemberList = memberDao.getMembers();
+
+			/*memberè¡¨ã®å„è¡Œã‚’ç¢ºèªã™ã‚‹*/
+			Iterator memberIterator = allMemberList.iterator();
+			while(memberIterator.hasNext()){
+				MemberBean member = (MemberBean)memberIterator.next();
+				/*æœ€æ–°ã®æƒ…å ±ã®IDï¼ˆï¼æœ€ã‚‚å¤§ãã„å€¤ã®IDï¼‰ã‚’å¤‰æ•°ã«æ ¼ç´ã™ã‚‹*/
+				if(temporaryMemberId < member.getMemberId()){
+					temporaryMemberId = member.getMemberId();
+				}
+			}
+		}catch(IntegrationException e){
+			throw new LogicException(e.getMessage(), e);
+		}
+		return temporaryMemberId;
 	}
 }

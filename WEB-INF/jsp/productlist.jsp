@@ -36,8 +36,8 @@
 <script src="http://html5shiv.googlecode.com/svn/trunk/html5.js"></script>
 <style>.ddmenu {display: none;}</style>
 <![endif]-->
-<script type="text/javascript" src="js/openclose.js"></script>
-<script type="text/javascript" src="ddmenu_min.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/openclose.js"></script>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/ddmenu_min.js"></script>
 </head>
 
 <body id="top" class="c1">
@@ -59,18 +59,18 @@
 <li class="arrow"><a>CATEGORY</a>
     <ul class="ddmenu">
     <li><a href="productlist?category=tops">TOPS</a></li>
-    <li><a href="productlist?subCategory=outer">サブカテゴリのリンクテスト：outer</a></li>
     <li><a href="productlist?category=bottoms">BOTTOMS</a></li>
     <li><a href="productlist?category=under">UNDER</a></li>
     <li><a href="productlist?category=shoes">SHOES</a></li>
     <li><a href="productlist?category=accessories">ACCESSORIES</a></li>
+    <!--<li><a href="productlist?subCategory=outer">サブカテゴリのリンクテスト：outer</a></li>-->
     </ul>
 </li>
-<li class="arrow"><a href="productlist.html">SALE</a>
+<li class="arrow"><a href="productlist?searchTag=セール">SALE</a>
 </li>
-<li class="arrow"><a href="productlist.html">RANKING</a>
+<li class="arrow"><a href="productlist?sort=purchaseDesc">RANKING</a>
 </li>
-<li class="arrow"><a href="productlist.html">ALLITEM</a>
+<li class="arrow"><a href="productlist">ALLITEM</a>
 </li>
 <li class="arrow"><a>HELP</a>
     <ul class="ddmenu">
@@ -123,11 +123,11 @@
 
 <h1>商品一覧</h1>
 
-<!-- テスト用パラメータ取得 -->
+<!-- テスト用パラメータ取得
 選択カテゴリ：${param.category}
 選択サブカテゴリ：${param.subCategory}
-並べ替え：${paramValues.sort[0]} ${paramValues.sort[1]} ${paramValues.sort[2]}-->
-
+並べ替え：${paramValues.sort[0]} ${paramValues.sort[1]} ${paramValues.sort[2]}
+-->
 <%
 	int productCount = 0;
 %>
@@ -145,23 +145,27 @@
 				<a href ="productdetail?productName=${product.catalog.productName}">
 					<img src="${pageContext.request.contextPath}/images/${product.categoryName}/
 					${product.catalog.productImagePath}" alt="商品の画像">
-				
+					
+					
 					<!-- 各タグの表示 -->
 					<c:forEach var="tagName" items="${product.tagNames}">
 						<c:if test="${tagName == '冬季限定'}">
+							<!--
 							<img class="冬季限定タグ画像のクラス" 
 							src="${pageContext.request.contextPath}/images/tag.hoge" alt="冬季限定">
+							-->
 						</c:if>
 						<c:if test="${tagName == 'セール'}">
+							<!--
 							<img class="セールタグ画像のクラス" 
-						src="${pageContext.request.contextPath}/images/tag.hoge" alt="セール">
+							src="${pageContext.request.contextPath}/images/tag.hoge" alt="セール">
+							-->
 						</c:if>
 					</c:forEach>
 					
 					<!-- 売り切れの表示 -->
 					<c:if test="${product.catalog.productStockCount == 0}">
-						<img class="売り切れ画像のクラス" 
-						src="${pageContext.request.contextPath}/images/soldout.hoge" alt="売り切れ">
+						<span class="sumi">SOLD OUT</span>
 					</c:if>
 					
 					</figure>
