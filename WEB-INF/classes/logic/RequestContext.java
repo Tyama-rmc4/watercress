@@ -4,51 +4,65 @@ package logic;
  *@className RequestContext
  *@author Fumihiro Miyazaki
  *@date 2017/01/26
- *@description ãƒªã‚¯ã‚¨ã‚¹ãƒˆã«é–¢ã™ã‚‹ã‚¯ãƒ©ã‚¹ã®ãƒ©ãƒƒãƒ‘ãƒ¼ã‚¯ãƒ©ã‚¹
+ *@description ƒŠƒNƒGƒXƒg‚ÉŠÖ‚·‚éƒNƒ‰ƒX‚Ìƒ‰ƒbƒp[ƒNƒ‰ƒX
  */
 public interface RequestContext {
-
+	
 	/**
 	 *@see RequestContext#getCommandPath
-	 *@return å®Ÿè¡Œã™ã‚‹ã‚³ãƒžãƒ³ãƒ‰ã®ãƒ‘ã‚¹æƒ…å ±ã‚’è¿”ã™
+	 *@return ŽÀs‚·‚éƒRƒ}ƒ“ƒh‚ÌƒpƒXî•ñ‚ð•Ô‚·
 	 */
 	public String getCommandPath();
-
+	
 	/**
 	 *@see RequestContext#getParameter
-	 *@param key ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆã®ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ã«å¯¾å¿œã—ãŸã‚­ãƒ¼å€¤
-	 *@return ã‚­ãƒ¼å€¤ã«å¯¾å¿œã—ãŸãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿
+	 *@param key ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒg‚Ìƒpƒ‰ƒ[ƒ^‚É‘Î‰ž‚µ‚½ƒL[’l
+	 *@return ƒL[’l‚É‘Î‰ž‚µ‚½ƒpƒ‰ƒ[ƒ^
 	 */
 	public String[] getParameter(String key);
-
+	
 	/**
 	 *@see RequestContext#getRequest
-	 *@return ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±
+	 *@return ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒgî•ñ
 	 */
 	public Object getRequest();
-
+	
 	/**
 	 *@see RequestContext#setRequest
-	 *@param request ã‚¯ãƒ©ã‚¤ã‚¢ãƒ³ãƒˆã‹ã‚‰ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆæƒ…å ±
+	 *@param request ƒNƒ‰ƒCƒAƒ“ƒg‚©‚ç‚ÌƒŠƒNƒGƒXƒgî•ñ
 	 */
 	public void setRequest(Object request);
+	
+	/**
+	 *@see WebRequestContext#setRequestAttribute
+	 *@param key ƒŠƒNƒGƒXƒgƒXƒR[ƒv‚É“o˜^‚µ‚½‚¢’l‚É‘Î‰ž‚µ‚½ƒL[’l
+	 *@param value ƒŠƒNƒGƒXƒgƒXƒR[ƒv‚É“o˜^‚µ‚½‚¢’l
+	 */
+	public void setRequestAttribute(String key, Object value);
 
 	/**
+	 *@see WebRequestContext#getRequestAttribute
+	 *@return ƒŠƒNƒGƒXƒgƒXƒR[ƒv‚É“o˜^‚³‚ê‚Ä‚¢‚éAƒL[’l‚É‘Î‰ž‚µ‚½’l
+	 */
+	public Object getRequestAttribute(String key);
+	
+	
+	/**
 	 *@see WebRequestContext#setSessionAttribute
-	 *@param key ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã«ç™»éŒ²ã—ãŸã„å€¤ã«å¯¾å¿œã—ãŸã‚­ãƒ¼å€¤
-	 *@param value ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã«ç™»éŒ²ã—ãŸã„å€¤
+	 *@param key ƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚É“o˜^‚µ‚½‚¢’l‚É‘Î‰ž‚µ‚½ƒL[’l
+	 *@param value ƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚É“o˜^‚µ‚½‚¢’l
 	 */
 	public void setSessionAttribute(String key, Object value);
 
 	/**
 	 *@see WebRequestContext#getSessionAttribute
-	 *@return ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹ã€ã‚­ãƒ¼å€¤ã«å¯¾å¿œã—ãŸå€¤
+	 *@return ƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚É“o˜^‚³‚ê‚Ä‚¢‚éAƒL[’l‚É‘Î‰ž‚µ‚½’l
 	 */
 	public Object getSessionAttribute(String key);
 
 	/**
 	 *@see WebRequestContext#removeSessionAttribute
-	 *@param key ã‚»ãƒƒã‚·ãƒ§ãƒ³ã‚¹ã‚³ãƒ¼ãƒ—ã«ç™»éŒ²ã•ã‚Œã¦ã„ã‚‹å€¤ã«å¯¾å¿œã—ãŸã‚­ãƒ¼å€¤
+	 *@param key ƒZƒbƒVƒ‡ƒ“ƒXƒR[ƒv‚É“o˜^‚³‚ê‚Ä‚¢‚é’l‚É‘Î‰ž‚µ‚½ƒL[’l
 	 */
 	public void removeSessionAttribute(String key);
 }
