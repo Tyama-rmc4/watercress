@@ -40,8 +40,8 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/ddmenu_min.js"></script>
 <%
 out.print("<script>
-$(".favoButton").click(function() {
-  var num = $(this).data("favonum");
+$(\".favoButton\").click(function() {
+  var num = $(this).data(\"favonum\");
   var button = this;
   if($(this).data('condition') == false){
 
