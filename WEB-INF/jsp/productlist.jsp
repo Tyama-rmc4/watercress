@@ -139,7 +139,7 @@
 		pageContext.setAttribute("productCount",productCount);
 	%>
 	
-	<td width="15%" height="320">
+	<td width="194" height="320">
 		<section class="list" style="position:relative; height:100%;">
 			<figure>
 				<a href ="productdetail?productName=${product.catalog.productName}">
@@ -169,12 +169,14 @@
 					</c:if>
 					
 					</figure>
-					<h4 style="position: absolute; bottom: 0;">${product.catalog.productName}
+					<h4 style="position: absolute">${product.catalog.productName}
 					<br/> ￥${product.catalog.productPrice}<br/></h4>
 				</a>
 		</section>
 	</td>
 	<c:if test="${pageScope.productCount % 5 == 0}" >
+	</tr>
+	<tr height="80">
 	</tr>
 	<tr>
 	</c:if>
