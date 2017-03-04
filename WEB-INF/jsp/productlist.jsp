@@ -45,13 +45,19 @@
 <div id="container">
 
 <header>
-<h1 id="logo"><a href="top.html"><img src="images/logo.png" width="370" height="60" alt="Sample Online Shop"></a></h1>
-<div class="headermenu">
-<ul>
-<a href="userentry.html">会員登録</a>
-<a href="login.html">ログイン</a>
-</ul>
-<div id="cart"><a href="#">CART</a></div>
+	<h1 id="logo">
+		<a href="${pageContext.request.contextPath}/front/top">
+			<img src="${pageContext.request.contextPath}/images/logo.png" width="370" height="60" alt="Sample Online Shop">
+		</a>
+	</h1>
+	<div class="headermenu">
+	<ul>
+		<a href="${pageContext.request.contextPath}/front/userentry">会員登録</a>
+		<a href="${pageContext.request.contextPath}/front/login">ログイン</a>
+	</ul>
+	<div id="cart">
+		<a href="${pageContext.request.contextPath}/front/cart">CART</a>
+	</div>
 </header>
 
 <nav id="menubar">
@@ -74,8 +80,8 @@
 </li>
 <li class="arrow"><a>HELP</a>
     <ul class="ddmenu">
-    <li><a href="contact.html">お問い合わせ</a></li>
-    <li><a href="question.html">Q&A</a></li>
+    <li><a href="${pageContext.request.contextPath}/front/contact">お問い合わせ</a></li>
+    <li><a href="${pageContext.request.contextPath}/front/question">Q&A</a></li>
 </li>
 </ul>
 </nav>
@@ -143,7 +149,7 @@
 		<section class="list" style="position:relative; height:100%;">
 			<figure>
 				<a href ="productdetail?productName=${product.catalog.productName}">
-					<img src="${pageContext.request.contextPath}/images/${product.categoryName}/
+					<img src="${pageContext.request.contextPath}/images/
 					${product.catalog.productImagePath}" alt="商品の画像">
 					
 					
@@ -218,18 +224,17 @@
 <footer>
 <div class="footermenu">
 <ul>
-<a href="companyinfo.html">会社概要　　　</a>
-<a href="tos.html">　　　利用規約</a>
-<a href="sitemap.html">　　　サイトマップ</a>
-<a href="privacypolicy.html">　　　個人情報保護方針</a>
-<a href="deal.html">　　　特定商取引法</a>
-<a href="contact.html">　　　お問い合わせ</a>
-<a href="question.html">　　　Q&A</a>
-<br>
-<br>
+	<a href="${pageContext.request.contextPath}/front/companyinfo">会社概要　　　</a>
+	<a href="${pageContext.request.contextPath}/front/tos">　　　利用規約</a>
+	<a href="${pageContext.request.contextPath}/front/sitemap">　　　サイトマップ</a>
+	<a href="${pageContext.request.contextPath}/front/privacypolicy">　　　個人情報保護方針</a>
+	<a href="${pageContext.request.contextPath}/front/deal">　　　特定商取引法</a>
+	<a href="${pageContext.request.contextPath}/front/contact">　　　お問い合わせ</a>
+	<a href="${pageContext.request.contextPath}/front/question">　　　Q&A</a>
+	<br><br>
 </ul>
 
-<center><small>Copyright&copy; <a href="top.html">Sample Online Shop</a>　All Rights Reserved.</small>
+<center><small>Copyright&copy; <a href="${pageContext.request.contextPath}/front/top">Sample Online Shop</a>　All Rights Reserved.</small>
 <span class="pr"><a href="http://template-party.com/" target="_blank">Web Design:Template-Party</a></span>
 
 </footer>

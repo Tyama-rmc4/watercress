@@ -92,8 +92,8 @@
 <h2>${data.productInformation[0].productName}</h2>
 
 <figure id="item-image">
-<img src="${pageContext.request.contextPath}/images/${data.categoryName}/${data.productImageData[0].imagePath}" alt="写真の説明を入れます" id="item_image1" align="left">
-<img src="${pageContext.request.contextPath}/images/${data.categoryName}/${data.productImageData[0].imagePath}" alt="写真の説明を入れます" id="item_image2" align="left">
+<img src="${pageContext.request.contextPath}/images/${data.productImageData[0].imagePath}" alt="写真の説明を入れます" id="item_image1" align="left">
+<img src="${pageContext.request.contextPath}/images/${data.productImageData[0].imagePath}" alt="写真の説明を入れます" id="item_image2" align="left">
 <p><font size="5"><b id="imgcaption">${data.productInformation[0].productName}</b></font></p>
 <p>
 	<font size="3">
@@ -146,7 +146,7 @@
 <!--商品画像のサムネイル。クリックすると拡大画像を表示する-->
 <p>
 	<c:forEach var="imageData" items="${data.productImageData}">
-		<img src="${pageContext.request.contextPath}/images/${data.categoryName}/${imageData.imagePath}" alt="${data.productInformation[0].productName}" class="thumbnail">
+		<img src="${pageContext.request.contextPath}/images/${imageData.imagePath}" alt="${data.productInformation[0].productName}" class="thumbnail">
 	</c:forEach>
 </p>
 
