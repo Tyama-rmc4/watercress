@@ -1,11 +1,6 @@
 /*
-  @author ‰–àV–ƒl
+  @author å¡©æ¾¤
    @date 2017/02/13
-*/
-/*
-	memo
-	ProductInfomation‚Ìbean‚Ædao‚ğg‚¤
-	ƒJ[ƒg“à‚É•\¦‚·‚é¤•i‚Ìî•ñ‚ğæ‚Á‚Ä‚­‚é
 */
 
 package command;
@@ -43,80 +38,45 @@ public class DeleteCartCommand extends AbstractCommand {
 			RequestContext req = getRequestContext();
 			
 			List cart = new ArrayList();
-			/*¤•i–¼‚Æ¤•iŒÂ”‚ğ“ü‚ê‚écart‚ğì¬*/
+			/*cartã‚’å®£è¨€*/
+			
 			if(req.getSessionAttribute("cart") == null){
 				req.setSessionAttribute("cart",cart);
 			}else{
 				cart = (ArrayList)req.getSessionAttribute("cart");
 			}
 			
-			/*ˆê“I‚ÉProductId‚ğ“ü‚ê‚Ä‚¨‚­String*/
+			/*ä¸€æ™‚çš„ã«product_idã‚’ã„ã‚Œã‚‹*/
 			String tempProductId = null;
 
-			/*¤•iÚ×ƒy[ƒW‚Å‘I‘ğ‚³‚ê‚½¤•i‚ÌA¤•iID‚ªƒJ[ƒg‚É’Ç‰Á‚³‚ê‚é*/
+			/*å•†å“ã®product_idã‚’ãƒªã‚¯ã‚¨ã‚¹ãƒˆã‹ã‚‰å–å¾—*/
 			String searchProductId = req.getParameter( "productid" )[0];
-			System.out.println("searchProductId‚Í"+searchProductId);
 			
-			
-			
-			
-			//ƒZƒbƒVƒ‡ƒ“‚Ìcart‚É“o˜^‚³‚ê‚½id‚ğsearchId‚É“ü‚êAƒf[ƒ^ƒx[ƒX‚©‚ç‚Æ‚Á‚Ä‚«‚½getId‚Æ”ä‚×‚é‚½‚ß‚Ì•Ï”
 			String getId = null;
 			String searchId = null;
 			String loopS = "-1";
 			
-			
-			//cart‚Ì’†‚©‚çproductid‚Ì‚İ‚ğlist‚Ö“ü‚ê‚é
 			List<String> productImagePath = new ArrayList<String>();
 			List<String> productId = new ArrayList<String>();
 			
 			Map<String,String> productInformation = new HashMap<String,String>();
-			//Map<String,Object> returnProducts = new HashMap<String,Object>();
+			/*å•†å“ã‚’è¡¨ã™mapã®å®£è¨€*/
 			
-			/*
-			‰º‚Ìfor•¶‚Åcart“à‚Ìkey’l‚É“o˜^‚µ‚½prodctid‚Ì‚İæ‚èo‚µ‚Ä
-			list‚É’Ç‰Á‚µ‚Ä‚¢‚­
-			*/
-			
-			
-			
-			//cart‚Ì’†‚É‚ ‚é¤•i‚Ì”‚¾‚¯ƒ‹[ƒv
+			//cartã®ãªã‹ã‹ã‚‰ã€è©²å½“ã™ã‚‹product_idã‚’æŒã¤å•†å“ã‚’ã‚«ãƒ¼ãƒˆã‹ã‚‰å‰Šé™¤
 			cart = (ArrayList)req.getSessionAttribute( "cart" );
 			for(int i = 0;i < cart.size();i++){
-				/*
-				’†g‚ÍÀ¿productInformation‚Æ“¯‚¶Map
-				produtInformation‚ğg‚¤‚Æ‚¨‚©‚µ‚­‚È‚é‚Ì‚Å
-				local‚ÌMap‚ğg‚¤
-				*/
+				
 				Map<String,String> localM = new HashMap<String,String>();
-				/*
-				cart“à‚É“ü‚Á‚Ä‚¢‚éMap‚ğæ‚Á‚Ä‚­‚é
-				*/
+				
 				localM = (HashMap)cart.get(i);
-				if(localM == null){
-					System.out.println("localM‚ªnull‚Å‚·@cart‚ ‚è‚Ü‚·“à");
-				}
-					loopS = localM.get("productId");
-				if(loopS == null){
-				System.out.println("loopS‚ªnull‚Å‚·@cart‚ ‚è‚Ü‚·“à");
-				}
-				//cart.remove(i);
-				System.out.println("‚±‚ê‚ÍloopS:"+loopS);
-				System.out.println("‚±‚ê‚ÍsearchProductId:"+searchProductId);
-				/*for•¶‚Å‰ñ‚³‚ê‚Ä‚¢‚éloopS‚Ì’†‚ÉA¤•iÚ×ƒy[ƒW‚©‚ç’Ç‰Á‚³‚ê‚½¤•i‚ÌproductId‚ÅA‚·‚Å‚É‘¶İ‚µ‚Ä‚¢‚éƒJ[ƒg“à‚É“¯‚¶productId‚ğ‚Á‚Ä‚¢‚é¤•i‚ª–³‚¢‚©’T‚·B
-				‚·‚Å‚ÉproductId‚ª“o˜^‚³‚ê‚Ä‚¢‚½ê‡‚Í’•¶”‚Ì‚İ‚Ì•ÏX‚É‚È‚é*/
+				loopS = localM.get("productId");
+				
 				if(loopS.equals(searchProductId)){
-					System.out.println("¤•i‚Ì’•¶”‚¾‚¯•ÏX");
-					req.setSessionAttribute("str",new String("‘I‘ğ‚³‚ê‚½¤•i‚ğƒJ[ƒg“à‚©‚çíœ‚µ‚Ü‚µ‚½B"));
-					
-					
-					
-					
-					/*‚»‚Ì‚·‚Å‚É‘¶İ‚µ‚Ä‚¢‚éproductId‚ğ‚Á‚Ä‚¢‚éproductInformation‚ÉA¤•i’•¶”‚Ì‚İ•ÏX‚µ‚½localM‚Åã‘‚«*/
+					req.setSessionAttribute("str",new String("å•†å“ã‚’å‰Šé™¤ã—ã¾ã—ãŸ"));
+
 					productInformation = localM;
 					
-					/*‰º‚Ì‚Æ‚±‚ë‚Åcart.add‚µ‚Ä‚½‚Ì‚ªŠÔˆá‚¢*/
-					cart.remove(i, productInformation);
+					cart.remove(i);
 					req.setSessionAttribute( "cart" , cart );
 					
 					break;
@@ -125,7 +85,7 @@ public class DeleteCartCommand extends AbstractCommand {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		responseContext.setTarget("addcart");
+		responseContext.setTarget("cartdeletecomp");
 			
 		return responseContext;
 	}
