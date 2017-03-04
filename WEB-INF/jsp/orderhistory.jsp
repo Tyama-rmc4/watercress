@@ -76,25 +76,54 @@
 
 <h2 class="type1">注文履歴</h2><br>
 
-<!--<input type="hidden" name="pageNum" value="1">-->
+<input type="hidden" name="pageNum" value="1">
 
 <%
+	int pageNum = (Integer)request.getAttribute("pageNum");
+	int counter = 1;
 	int sumPrice = 0;
 	Map<String,Object> data = (HashMap<String,Object>)request.getAttribute("data");
 
 	List<String> keyList = new ArrayList<String>();
+	
 	for (Map.Entry<String,Object> entry : data.entrySet()) {
-		keyList.add(entry.getKey()); 
+		
+			keyList.add(entry.getKey()); 
+		
+	}
+	
+	request.setAttribute("keyList",keyList);
+	
+	String[] dates = keyList.toArray( new String[0] );
+	
+	for( int i = 0; i < dates.length - 1; i ++ ){
+		for( int j = dates.length - 1; j > i; j -- ){
+			if (dates[i].compareTo ( dates[j] ) > 0){
+				String work = dates[i];
+				dates[i] = dates[j];
+				dates[j] = work;
+			}
+		}
+	}
+	
+	List<String> orderDates = new ArrayList<String>();
+	
+	System.out.println ( pageNum );
+	
+	for (int i = 0; i < dates.length; i ++){
+		if((pageNum - 1) * 10 <= i && i <= pageNum * 10){
+			orderDates.add ( dates[i] );
+		}
 	}
 	
 	List<List> products = new ArrayList<List>();
-	for(int i=0;i<keyList.size();i++){
-		products.add(((ArrayList)data.get(keyList.get(i))));
+	for(int i=0;i<orderDates.size();i++){
+		products.add(((ArrayList)data.get(orderDates.get(i))));
 	}
 
 	int count = 0;
 	
-	Iterator keiesIterator =keyList.iterator();
+	Iterator keiesIterator =orderDates.iterator();
 	while(keiesIterator.hasNext()){
 		String key = (String)keiesIterator.next();
 		
@@ -147,7 +176,25 @@ ${pageContext.request.contextPath}
 
 </div>
 <!--/sub-->
+<c:if test="${requestScope.pageNum > 1}" >
+	<a href ="${pageContext.request.contextPath}/front/orderhistory?pageNum=${requestScope.pageNum - 1}">前のページへ</a>
+</c:if>
+<!-- 商品数10件毎に１個、ページ移動ボタンを増やす -->
+<%
+	int pageCount = 0;
+%>
+<c:forEach items="${requestScope.keyList}" step="10">
+		<%
+			pageCount += 1;
+			pageContext.setAttribute("pageCount",pageCount);
+		%>
+	<a href ="${pageContext.request.contextPath}/front/orderhistory?pageNum=${pageScope.pageCount}">${pageScope.pageCount}</a>
+</c:forEach>
 
+<!-- 現在のページが最後のページでなければ、次のページへ移動するリンクを表示 -->
+<c:if test="${requestScope.pageNum < pageScope.pageCount}" >
+	<a href ="${pageContext.request.contextPath}/front/orderhistory?pageNum=${requestScope.pageNum+1}">次のページへ</a>
+</c:if>
 <p id="pagetop"><a href="#">↑ PAGE TOP</a></p>
 
 </div>

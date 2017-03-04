@@ -40,7 +40,11 @@ public class ShowOrderHistoryCommand extends AbstractCommand{
 		String[] pageParam = requestContext.getParameter("pageNum");
 		if(pageParam != null){
 			pageNum = Integer.parseInt(pageParam[0]);
+			requestContext.setRequestAttribute("pageNum", pageNum );
+		}else{
+			requestContext.setRequestAttribute("pageNum", 1 );
 		}
+
 		/*memberId‚ðŽó‚¯Žæ‚é*/
 		int memberId = Integer.parseInt(requestContext.getSessionAttribute("login").toString()) ;
 
@@ -131,7 +135,7 @@ public class ShowOrderHistoryCommand extends AbstractCommand{
 				}
 
 				if(memberId == purchaseHistoryBean.getMemberId()){
-					//if((pageNum - 1) * 10 <= i && i < pageNum * 10){
+
 					purchaseHistories1 = new ArrayList();
 
 					/*“ú•t‚Ì‘Ž®•ÏŠ·*/
@@ -148,8 +152,7 @@ public class ShowOrderHistoryCommand extends AbstractCommand{
 
 					purchaseHistories2.add(purchaseHistories1);
 
-					//i++;
-					//}
+
 				}
 			}
 
@@ -168,8 +171,11 @@ public class ShowOrderHistoryCommand extends AbstractCommand{
 					List newPurchaseProducts = new ArrayList();
 					/*V‚½‚ÈƒŠƒXƒg‚Éw“ü‚µ‚½¤•i‚ðŠi”[*/
 					newPurchaseProducts.add(purchase2Products);
+					//++i;
+					//if((pageNum - 1) * 10 <= i && i < pageNum * 10){
 					/*purchaseMap‚ÉƒL[‚ð‚»‚Ì“ú•tA’l‚É‚»‚ÌV‚½‚ÈƒŠƒXƒg‚ðŠi”[*/
 					purchaseMap.put(((PurchaseHistoryBean)(purchase2Products.get(0))).getPurchaseOrderDate(),newPurchaseProducts);
+					//}
 				/*purchaseMap‚ÌƒL[(“ú•t)‚Æw“ü‚µ‚½“ú•t‚ªˆê’v‚µ‚½ê‡‚Ìˆ—*/
 				}else{
 					/*w“ü‚µ‚½¤•i‚Ì“ú•t‚Éˆê’v‚µ‚½ƒŠƒXƒg‚ðŠi”[*/
