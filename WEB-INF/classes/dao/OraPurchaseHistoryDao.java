@@ -68,7 +68,7 @@ public class OraPurchaseHistoryDao implements PurchaseHistoryDao {
 					result.getString(4));
 				purchaseHistory.setPurchaseOrderDetailId(result.getInt(5));
 				purchaseHistory.setProductId(result.getString(6));
-				purchaseHistory.setPurchaseCount(result.getInt(3));
+				purchaseHistory.setPurchaseCount(result.getInt(7));
 				/*ƒŠƒXƒg‚ÉBean‚ðŠi”[‚·‚é*/
 				purchaseHistories.add(purchaseHistory);
 			}
