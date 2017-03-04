@@ -39,68 +39,15 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/openclose.js"></script>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/ddmenu_min.js"></script>
 <%
-out.print("<script>
-$(\".favoButton\").click(function() {
-  var num = $(this).data(\"favonum\");
-  var button = this;
-  if($(this).data('condition') == false){
-
-    $.ajax({
-	//コマンドを指定
-      url: '");
-      %>
+out.print("<script>$(\".favoButton\").click(function() {var num = $(this).data(\"favonum\");var button = this;if($(this).data('condition') == false){ $.ajax({url: '");%>
       ${pageContext.request.contextPath}
-      <%
-      out.print("/front/addfavorite?productId=");
-      %>
+      <%out.print("/front/addfavorite?productId=");%>
       ${productId}
-      <%
-      out.print("',
-      type: 'POST',
-      dataType: 'json',
-      data: {favonum: num},
-    })
-    .done(function(data, textStatus, jqXHR) {
-      if(data.result == true){
-        $(button).css('backgroundColor', '#FF0');
-        $(button).data('condition',true);
-      }
-    })
-    .fail(function(data) {
-      console.log("error");
-    });
-    
-  }
-
-  else if($(this).data('condition') == true){
-    $.ajax({
-      url: '");
-      %>
+      <%out.print("',type: 'POST', dataType: 'json',data: {favonum: num},}).done(function(data, textStatus, jqXHR) {if(data.result == true){$(button).css('backgroundColor', '#FF0');$(button).data('condition',true);}}).fail(function(data) {console.log(\"error\");});}else if($(this).data('condition') == true){$.ajax({url: '");%>
       ${pageContext.request.contextPath}
-      <%
-      out.print("/front/removefavorite?productId=',");
-      %>
+      <%out.print("/front/removefavorite?productId=',");%>
       ${productId}
-      <%
-      out.print("type: 'POST',
-      dataType: 'json',
-      data: {favonum: num},
-    })
-    .done(function(data, textStatus, jqXHR) {
-
-      if(data.result == true){
-
-        $(button).css('backgroundColor', '');
-
-        $(button).data('condition',false);
-      }
-    })
-    .fail(function(data) {
-      console.log("error");
-    });
-  }
-});</script>");
-%>
+      <%out.print("type: 'POST',dataType: 'json',data: {favonum: num},}).done(function(data, textStatus, jqXHR) {if(data.result == true){$(button).css('backgroundColor', '');$(button).data('condition',false);}}).fail(function(data) {console.log(\"error\");});}});</script>");%>
 </head>
 
 <body id="top" class="c1">
