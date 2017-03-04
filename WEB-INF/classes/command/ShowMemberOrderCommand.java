@@ -1,6 +1,6 @@
 /*
   @author 窪田
-  @date 2017/02/07
+  @date 2017/03/03
 */
 
 package command;
@@ -60,9 +60,7 @@ public class ShowMemberOrderCommand extends AbstractCommand {
 				String tempMemberId = String.valueOf(memberBean.getMemberId());
 				
 				if(memberId.equals(tempMemberId)){
-					System.out.println("会員id一致");
 					String[] name = spritFullName(memberBean.getMemberName());
-					System.out.println("名前"+name[0]);
 					memberInformation.put("firstname",name[0]);
 					memberInformation.put("name",name[1]);
 					
@@ -86,7 +84,7 @@ public class ShowMemberOrderCommand extends AbstractCommand {
 					memberInformation.put("orderprice",String.valueOf(orderprice));
 					memberInformation.put("totalprice",String.valueOf(orderprice));
 					
-					responseContext.setResult(memberInformation);
+					requestContext.setSessionAttribute("memberInformation",memberInformation);
 					break;
 				}
 			}
@@ -101,7 +99,7 @@ public class ShowMemberOrderCommand extends AbstractCommand {
 	}
 	
 	/*
-		DBの形式「山田 太郎を分割してString[]に格納する」
+		DBの形式「山田 太郎」を分割してString[]に格納する
 		@return String[]	//[0]:山田,[1]:太郎
 	*/
 	private String[] spritFullName(String fullName){
@@ -111,7 +109,7 @@ public class ShowMemberOrderCommand extends AbstractCommand {
 	}
 	
 	/*
-		@return cartに登録されている商品の金額合計を返す
+		@return cartに登録されている商品の合計金額を返す
 	*/
 	private int getOrdertotal(ArrayList cart){
 	
