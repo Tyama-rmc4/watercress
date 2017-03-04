@@ -28,7 +28,7 @@ public class ShowMemberOrderCommand extends AbstractCommand {
 		
 		RequestContext requestContext = getRequestContext();
 		
-		String memberId = requestContext.getParameter("member_id")[0];
+		String memberId = (String) requestContext.getSessionAttribute("member_id");
 		/*会員情報をリクエストから取得*/
 		
 		ArrayList cart = (ArrayList)requestContext.getSessionAttribute("cart");
