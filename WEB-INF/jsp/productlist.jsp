@@ -173,6 +173,9 @@
 					<c:if test="${product.catalog.productStockCount == 0}">
 						<span class="sumi">SOLD OUT</span>
 					</c:if>
+					<!-- 売り切れの表示 -->
+					
+					<span class="favo">☆</span>
 					
 					</figure>
 					<h4 style="position: absolute">${product.catalog.productName}

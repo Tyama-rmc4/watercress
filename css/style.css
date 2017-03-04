@@ -322,7 +322,17 @@ ul.ddmenu li a:hover {
 	-ms-transform: rotate(45deg) translate(37px,-15px);
 	transform: rotate(45deg) translate(37px,-15px);
 }
-
+.favo {
+	font-size: 24px;	/*文字サイズ*/
+	color: #000;		/*文字色*/
+	background: #FFF;	/*背景色*/
+	text-align: center;
+	display: block;
+	width: 120px;
+	position: absolute;
+	right: 0px;
+	top: 0px;
+}
 /*商品詳細ページの画像切り替え
 ---------------------------------------------------------------------------*/
 /*大きな画像のボックスと説明文を入れるボックス*/
