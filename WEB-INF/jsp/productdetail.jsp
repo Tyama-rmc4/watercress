@@ -252,7 +252,7 @@ document.getElementById("cartIn").addEventListener("click",function(){
 			+ "," + document.getElementById("size").value;
 		var productId = document.getElementById(productIdElmId).innerHTML;
 		
-		window.location.href = "${pageContext.request.contextPath}/front/cartaddcomp"
+		window.location.href = "${pageContext.request.contextPath}/front/addcart"
 		+ "?productid=" + productId
 		+ "&itemcount=" + itemCount;
 	}
