@@ -22,7 +22,7 @@ public class FilterLogInCommand extends AbstractCommand {
 	/* 会員表を取得し、メールアドレスとパスワードが一致する会員を検索する */
 	public ResponseContext execute(ResponseContext responseContext)
 	throws LogicException{
-		System.out.println("--FilterLogInCommand--");
+//		System.out.println("--FilterLogInCommand--");
 
 		try{
 			RequestContext reqc = getRequestContext();
@@ -48,6 +48,11 @@ public class FilterLogInCommand extends AbstractCommand {
 			if(flag){
 				System.out.println("メールアドレスが違います");		//ここを書き換えてjspに表示したい(余裕があれば)
 				reqc.setSessionAttribute("login", "NG");
+
+				/*ログイン失敗時に表示するメッセージ*/
+				reqc.setSessionAttribute("message1", new String("ログインに失敗しました。以下の内容が原因の可能性があります。"));
+				reqc.setSessionAttribute("message2", new String("・入力メールアドレスに間違いがある。パスワードが違う。"));
+				reqc.setSessionAttribute("message3", new String("・入力されたメールアドレスは登録がされていないか、本登録が済んでいません"));
 			}
 
 			responseContext.setTarget((String)reqc.getSessionAttribute("target"));
@@ -58,20 +63,37 @@ public class FilterLogInCommand extends AbstractCommand {
 
 		return responseContext;
 	}
-
-	/* 会員情報が登録されているかチェック */
-	private static void checkPassword(MemberBean member, RequestContext reqc) {
+	/* パスワードが正しいかチェック */
+	private static void checkPassword
+		(MemberBean member, RequestContext reqc) {
 		/* 入力されたパスワードと、
-			メールアドレスに応じたパスワードが同じ場合(ログイン成功)、
-			セッションにmember_idを登録*/
+			メールアドレスに応じたパスワードが同じ場合 */
 		if(member.getMemberPassword().equals(reqc.getParameter("pass")[0])) {
-//			System.out.println("ログイン成功");
-			reqc.setSessionAttribute("login", String.valueOf(member.getMemberId()));
-		/* メールアドレスまたはパスワードが違う場合(ログイン失敗)、
+			/* 通常会員の場合(ログイン成功)、セッションにmember_idを登録 */
+			if(member.getMemberStatusId() == 1) {
+//				System.out.println("ログイン成功");
+				reqc.setSessionAttribute("login", String.valueOf(member.getMemberId()));
+			/* 未入会・退会済の場合 */
+			}else {
+				System.out.println("退会済、または未入会のユーザです");	//ここを書き換えてjspに表示したい(余裕があれば)
+				reqc.setSessionAttribute("login", "NG");
+				/*ログイン失敗時に表示するメッセージ*/
+				reqc.setSessionAttribute("message1", new String("ログインに失敗しました。以下の内容が原因の可能性があります。"));
+				reqc.setSessionAttribute("message2", new String("・入力メールアドレスに間違いがある。パスワードが違う。"));
+				reqc.setSessionAttribute("message3", new String("・入力されたメールアドレスは登録がされていないか、本登録が済んでいません"));
+
+			}
+		/* パスワードが違う場合(ログイン失敗)、
 			セッションにログインが失敗したことを登録*/
 		}else{
 			System.out.println("パスワードが違います");				//ここを書き換えてjspに表示したい(余裕があれば)
 			reqc.setSessionAttribute("login", "NG");
+
+			/*ログイン失敗時に表示するメッセージ*/
+			reqc.setSessionAttribute("message1", new String("ログインに失敗しました。以下の内容が原因の可能性があります。"));
+			reqc.setSessionAttribute("message2", new String("・入力メールアドレスに間違いがある。パスワードが違う。"));
+			reqc.setSessionAttribute("message3", new String("・入力されたメールアドレスは登録がされていないか、本登録が済んでいません"));
+
 		}
 	}
 }

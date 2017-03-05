@@ -47,6 +47,10 @@ public class LogInCommand extends AbstractCommand {
 			if(flag){
 				System.out.println("メールアドレスが違います");		//ここを書き換えてjspに表示したい(余裕があれば)
 				reqc.setSessionAttribute("login", "NG");
+				/*ログイン失敗時に表示するメッセージ*/
+				reqc.setSessionAttribute("message1", new String("ログインに失敗しました。以下の内容が原因の可能性があります。"));
+				reqc.setSessionAttribute("message2", new String("・入力メールアドレスに間違いがある。パスワードが違う。"));
+				reqc.setSessionAttribute("message3", new String("・入力されたメールアドレスは登録がされていないか、本登録が済んでいません"));
 			}
 
 			/* ここからフィルター機能に近い動作 */
@@ -58,9 +62,18 @@ public class LogInCommand extends AbstractCommand {
 				再度ログイン画面へ飛ばす */
 			if(login == null || "".equals(login) || "NG".equals(login)) {
 				responseContext.setTarget("login");
+				/*ログイン失敗時に表示するメッセージ*/
+				reqc.setSessionAttribute("message1", new String("ログインに失敗しました。以下の内容が原因の可能性があります。"));
+				reqc.setSessionAttribute("message2", new String("・入力メールアドレスに間違いがある。パスワードが違う。"));
+				reqc.setSessionAttribute("message3", new String("・入力されたメールアドレスは登録がされていないか、本登録が済んでいません"));
+
 			/* ログイン成功の場合、トップページへ飛ばす */
 			}else {
 				responseContext.setTarget("logincomp");
+				/*成功の場合エラーメッセージを削除*/
+				reqc.removeSessionAttribute("message1");
+				reqc.removeSessionAttribute("message2");
+				reqc.removeSessionAttribute("message3");
 			}
 
 		}catch(IntegrationException e){
@@ -84,6 +97,11 @@ public class LogInCommand extends AbstractCommand {
 		}else{
 			System.out.println("パスワードが違います");				//ここを書き換えてjspに表示したい(余裕があれば)
 			reqc.setSessionAttribute("login", "NG");
+
+			/*ログイン失敗時に表示するメッセージ*/
+				reqc.setSessionAttribute("message1", new String("ログインに失敗しました。以下の内容が原因の可能性があります。"));
+				reqc.setSessionAttribute("message2", new String("・入力メールアドレスに間違いがある。パスワードが違う。"));
+				reqc.setSessionAttribute("message3", new String("・入力されたメールアドレスは登録がされていないか、本登録が済んでいません"));
 		}
 	}
 }
